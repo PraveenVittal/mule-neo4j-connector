@@ -1,0 +1,38 @@
+#Linux
+*~
+
+#Mac OS X
+.DS_Store
+
+# Maven
+target/
+
+# Java
+*.class
+*.jar
+*.war
+
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# eclipse
+bin/
+.classpath
+.settings/
+.project
+.factorypath
+.metadata
+
+# Mule Studio
+.studio
+demo/**/src/test/resources/input/*
+demo/**/src/test/resources/output/*
+demo/**/catalog
+
+*.log
+*automation-credentials.properties
+*.pem
+muleLicenseKey.lic
