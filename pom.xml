@@ -15,10 +15,12 @@
     </parent>
 
     <properties>
-        <category>Community</category>
+        <category>Select</category>
         <licensePath>LICENSE.md</licensePath>
         <devkit.studio.package.skip>false</devkit.studio.package.skip>
+        <neo4j-java-driver.version>1.2.1</neo4j-java-driver.version>
     </properties>
+
     <repositories>
         <repository>
             <id>mulesoft-releases</id>
@@ -43,7 +45,7 @@
         <dependency>
             <groupId>org.neo4j.driver</groupId>
             <artifactId>neo4j-java-driver</artifactId>
-            <version>1.2.0</version>
+            <version>${neo4j-java-driver.version}</version>
         </dependency>
     </dependencies>
 </project>

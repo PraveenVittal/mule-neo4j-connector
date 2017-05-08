@@ -14,9 +14,9 @@ public interface Neo4JClient {
 
     public List<Map<String,Object>> read(String query,Map<String,Object> parameters);
 
-    public List<Map<String,Object>> write(String query);
+    public void write(String query);
 
-    public List<Map<String,Object>> write(String query,Map<String,Object> parameters);
+    public void write(String query,Map<String,Object> parameters);
 
     public void close();
 }
