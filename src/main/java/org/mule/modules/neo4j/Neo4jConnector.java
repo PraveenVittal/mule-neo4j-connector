@@ -1,44 +1,42 @@
+/**
+ * (c) 2003-2017 MuleSoft, Inc. The software in this package is published under the terms of the Commercial Free Software license V.1 a copy of which has been included with this distribution in the LICENSE.md file.
+ */
 package org.mule.modules.neo4j;
 
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.licensing.RequiresEnterpriseLicense;
+import org.mule.api.annotations.lifecycle.OnException;
 import org.mule.modules.neo4j.config.Config;
+import org.mule.modules.neo4j.exception.Neo4JHandlerException;
 import org.mule.modules.neo4j.internal.Neo4JClientImpl;
 
 import java.util.List;
 import java.util.Map;
 
-@Connector(name="neo4j", friendlyName="Neo4j")
-@RequiresEnterpriseLicense
-public class Neo4jConnector {
+@Connector(name = "neo4j", friendlyName = "Neo4j") @RequiresEnterpriseLicense @OnException(handler = Neo4JHandlerException.class) public class Neo4jConnector {
 
-    @org.mule.api.annotations.Config
-    Config config;
+    @org.mule.api.annotations.Config Config config;
 
-    @Processor
-    public List<Map<String,Object>> read(String query) {
-            return getClient().read(query);
+    @Processor public List<Map<String, Object>> read(String query) {
+        return getClient().read(query);
 
     }
 
-    @Processor
-    public List<Map<String,Object>> readWithParameters(String query,Map<String,Object> parameters) {
-        return getClient().read(query,parameters);
+    @Processor public List<Map<String, Object>> readWithParameters(String query, Map<String, Object> parameters) {
+        return getClient().read(query, parameters);
 
     }
 
-    @Processor
-    public void write(String query) {
+    @Processor public void write(String query) {
         getClient().write(query);
     }
 
-    @Processor
-    public void writeWithParameters(String query,Map<String,Object> parameters) {
-        getClient().write(query,parameters);
+    @Processor public void writeWithParameters(String query, Map<String, Object> parameters) {
+        getClient().write(query, parameters);
     }
 
-    private Neo4JClientImpl getClient(){
+    private Neo4JClientImpl getClient() {
         return getConfig().getClient();
     }
 
