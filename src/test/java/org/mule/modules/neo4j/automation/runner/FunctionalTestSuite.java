@@ -31,6 +31,9 @@ public class FunctionalTestSuite {
     private static final Neo4JClientImpl client = new Neo4JClientImpl();
 
     @BeforeClass public static void initialiseSuite() throws Exception {
+
+        cleanData();
+        
         Map<String, Object> config = new HashMap<>();
         Properties properties = ConfigurationUtils.getAutomationCredentialsProperties();
 
