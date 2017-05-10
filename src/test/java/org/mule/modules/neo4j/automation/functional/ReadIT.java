@@ -18,6 +18,6 @@ public class ReadIT extends AbstractTestCases {
     @Test public void readTest() throws IOException {
         List<Map<String, Object>> result = getConnector().read(readResourceStatement("/read/fixtures/ReadIT.txt"));
 
-        assertThat(getGson().toJson(getParser().parse(readResourceStatement("/read/assertions/ReadIT.json")).getAsJsonArray()), equalTo(getGson().toJson(result)));
+        assertThat(getGson().toJson(result), equalTo(getGson().toJson(getParser().parse(readResourceStatement("/read/assertions/ReadIT.json")).getAsJsonArray())));
     }
 }

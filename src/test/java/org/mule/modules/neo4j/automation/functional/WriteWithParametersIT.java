@@ -24,6 +24,6 @@ public class WriteWithParametersIT extends AbstractTestCases {
 
         List<Map<String, Object>> result = getConnector().readWithParameters(readResourceStatement("/write/validatorQuery/WriteWithParametersIT.txt"), parameters);
 
-        assertThat(getGson().toJson(getParser().parse(readResourceStatement("/write/assertions/WriteWithParametersIT.json")).getAsJsonArray()), equalTo(getGson().toJson(result)));
+        assertThat(getGson().toJson(result), equalTo(getGson().toJson(getParser().parse(readResourceStatement("/write/assertions/WriteWithParametersIT.json")).getAsJsonArray())));
     }
 }

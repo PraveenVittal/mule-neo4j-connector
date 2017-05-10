@@ -19,6 +19,6 @@ public class WriteIT extends AbstractTestCases {
         getConnector().write(readResourceStatement("/write/fixtures/WriteIT.txt"));
         List<Map<String, Object>> result = getConnector().read(readResourceStatement("/write/validatorQuery/WriteIT.txt"));
 
-        assertThat(getGson().toJson(getParser().parse(readResourceStatement("/write/assertions/WriteIT.json")).getAsJsonArray()), equalTo(getGson().toJson(result)));
+        assertThat(getGson().toJson(result), equalTo(getGson().toJson(getParser().parse(readResourceStatement("/write/assertions/WriteIT.json")).getAsJsonArray())));
     }
 }

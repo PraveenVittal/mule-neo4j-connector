@@ -15,6 +15,7 @@ import org.mule.modules.neo4j.automation.functional.WriteWithParametersIT;
 import org.mule.modules.neo4j.internal.Neo4JClientImpl;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -38,7 +39,7 @@ public class FunctionalTestSuite {
         config.put("url", properties.getProperty("config.url"));
 
         client.connect(config);
-        client.write(readResourceStatement("/populate/baseData.txt"));
+        client.write(readResourceStatement("/populate/dataSet.txt"));
     }
 
     @AfterClass public static void shutdownSuite() throws Exception {
@@ -46,8 +47,8 @@ public class FunctionalTestSuite {
         client.close();
     }
 
-    private static void cleanData() {
-        client.write("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
+    private static void cleanData() throws IOException {
+        client.write(readResourceStatement("/populate/removeQuery.txt"));
     }
 
 }

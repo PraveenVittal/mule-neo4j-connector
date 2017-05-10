@@ -1,0 +1,2 @@
+MATCH (n:Person) OPTIONAL MATCH (n)-[r]-() DELETE n,r
+MATCH (a:Movie) OPTIONAL MATCH (a)-[b]-() DELETE a,b

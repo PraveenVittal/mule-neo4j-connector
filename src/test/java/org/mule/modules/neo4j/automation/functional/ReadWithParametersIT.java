@@ -23,6 +23,6 @@ public class ReadWithParametersIT extends AbstractTestCases {
         }.getType());
         List<Map<String, Object>> result = getConnector().readWithParameters(readResourceStatement("/read/fixtures/ReadWithParametersIT.txt"), parameters);
 
-        assertThat(getGson().toJson(getParser().parse(readResourceStatement("/read/assertions/ReadWithParametersIT.json")).getAsJsonArray()), equalTo(getGson().toJson(result)));
+        assertThat(getGson().toJson(result), equalTo(getGson().toJson(getParser().parse(readResourceStatement("/read/assertions/ReadWithParametersIT.json")).getAsJsonArray())));
     }
 }
