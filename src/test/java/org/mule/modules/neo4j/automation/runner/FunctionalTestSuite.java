@@ -3,6 +3,13 @@
  */
 package org.mule.modules.neo4j.automation.runner;
 
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.readResourceStatement;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -15,13 +22,6 @@ import org.mule.modules.neo4j.automation.functional.WriteWithParametersIT;
 import org.mule.modules.neo4j.internal.Neo4JClientImpl;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.readResourceStatement;
-
 @RunWith(Suite.class) @SuiteClasses({
         ReadIT.class, ReadWithParametersIT.class, WriteIT.class, WriteWithParametersIT.class
 })
@@ -32,8 +32,6 @@ public class FunctionalTestSuite {
 
     @BeforeClass public static void initialiseSuite() throws Exception {
 
-        cleanData();
-        
         Map<String, Object> config = new HashMap<>();
         Properties properties = ConfigurationUtils.getAutomationCredentialsProperties();
 
@@ -42,6 +40,9 @@ public class FunctionalTestSuite {
         config.put("url", properties.getProperty("config.url"));
 
         client.connect(config);
+
+        cleanData();
+
         client.write(readResourceStatement("/populate/dataSet.txt"));
     }
 

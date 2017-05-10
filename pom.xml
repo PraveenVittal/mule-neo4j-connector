@@ -19,8 +19,59 @@
         <licensePath>LICENSE.md</licensePath>
         <devkit.studio.package.skip>false</devkit.studio.package.skip>
         <neo4j-java-driver.version>1.2.1</neo4j-java-driver.version>
+        <ctf.connector.class>org.mule.modules.neo4j.Neo4jConnector</ctf.connector.class>
     </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <enableAssertions>false</enableAssertions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <argLine>${jacoco.ut.agent}</argLine>
+                            <includes>
+                                <include>**/unit/*.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>integration-tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <properties>
+                                <property>
+                                    <name>listener</name>
+                                    <value>org.mule.tools.devkit.ctf.listeners.ConnectorTestFrameworkRunListener</value>
+                                </property>
+                            </properties>
+                            <argLine>${jacoco.it.agent}</argLine>
+                            <includes>
+                                <include>**/runner/FunctionalTestSuite.java</include>
+                                <include>**/system/*.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/functional/*IT.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     <repositories>
         <repository>
             <id>mulesoft-releases</id>
