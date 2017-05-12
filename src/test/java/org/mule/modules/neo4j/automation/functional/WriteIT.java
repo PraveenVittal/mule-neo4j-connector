@@ -3,6 +3,7 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -11,14 +12,33 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.readResourceStatement;
 
 public class WriteIT extends AbstractTestCases {
 
-    @Test public void writeTest() throws IOException {
-        getConnector().write(readResourceStatement("/write/fixtures/WriteIT.txt"));
-        List<Map<String, Object>> result = getConnector().read(readResourceStatement("/write/validatorQuery/WriteIT.txt"));
+    @Test
+    public void writeTest() throws IOException {
+        String query = "CREATE (a:Person {name: \"John Cena\", born: toInt(1977)})";
+        String validator = "MATCH (a:Person) WHERE a.name = \"John Cena\" RETURN a.name,a.born";
+        String expected = "[{\"a.name\":\"John Cena\",\"a.born\":1977}]";
 
-        assertThat(getGson().toJson(result), equalTo(getGson().toJson(getParser().parse(readResourceStatement("/write/assertions/WriteIT.json")).getAsJsonArray())));
+        getConnector().write(query, null);
+
+        List<Map<String, Object>> result = getConnector().read(validator, null);
+
+        assertThat(getGson().toJson(result), equalTo(getGson().toJson(getParser().parse(expected).getAsJsonArray())));
+    }
+
+    @Test
+    public void writeParamTest() throws IOException {
+        String query = "CREATE (a:Person {name: $name, born: toInt($born)})";
+        String validator = "MATCH (a:Person) WHERE a.name = $name RETURN a.name,a.born";
+        String expected = "[{\"a.name\":\"Johnny Tolengo\",\"a.born\":1934}]";
+        Map<String, Object> param = ImmutableMap.<String, Object>builder().put("name", "Johnny Tolengo").put("born", 1934).build();
+
+        getConnector().write(query, param);
+
+        List<Map<String, Object>> result = getConnector().read(validator, param);
+
+        assertThat(getGson().toJson(result), equalTo(getGson().toJson(getParser().parse(expected).getAsJsonArray())));
     }
 }

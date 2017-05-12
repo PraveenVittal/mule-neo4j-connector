@@ -3,21 +3,33 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.readResourceStatement;
 
 public class ReadIT extends AbstractTestCases {
 
-    @Test public void readTest() throws IOException {
-        List<Map<String, Object>> result = getConnector().read(readResourceStatement("/read/fixtures/ReadIT.txt"));
+    @Test
+    public void readTest() {
+        String query = "MATCH (a {name: \"Tom Hanks\"}) RETURN a.name,a.born";
+        String expected = "[{\"a.name\":\"Tom Hanks\",\"a.born\":1956}]";
 
-        assertThat(getGson().toJson(result), equalTo(getGson().toJson(getParser().parse(readResourceStatement("/read/assertions/ReadIT.json")).getAsJsonArray())));
+        List<Map<String, Object>> result = getConnector().read(query, null);
+        assertThat(getGson().toJson(result), equalTo(getGson().toJson(getParser().parse(expected).getAsJsonArray())));
+    }
+
+    @Test
+    public void readParamTest() {
+        String query = "MATCH (a {name: $name}) RETURN a.name,a.born";
+        String expected = "[{\"a.name\":\"Tom Hanks\",\"a.born\":1956}]";
+        Map<String, Object> param = ImmutableMap.<String, Object>builder().put("name", "Tom Hanks").put("born", 1956).build();
+
+        List<Map<String, Object>> result = getConnector().read(query, param);
+        assertThat(getGson().toJson(result), equalTo(getGson().toJson(getParser().parse(expected).getAsJsonArray())));
     }
 }

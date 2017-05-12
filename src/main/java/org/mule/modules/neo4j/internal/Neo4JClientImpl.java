@@ -6,8 +6,13 @@ package org.mule.modules.neo4j.internal;
 import org.neo4j.driver.v1.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.String.format;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.join;
 
 public class Neo4JClientImpl implements Neo4JClient {
 
@@ -21,56 +26,47 @@ public class Neo4JClientImpl implements Neo4JClient {
         session = neo4jClient.session();
         session.readTransaction(new TransactionWork<Boolean>() {
 
-            @Override public Boolean execute(Transaction tx) {
+            @Override
+            public Boolean execute(Transaction tx) {
                 tx.run("MATCH (a) RETURN a LIMIT 1");
                 return true;
             }
         });
     }
 
-    @Override public List<Map<String, Object>> read(final String query) {
+    @Override
+    public List<Map<String, Object>> read(final String query, final Map<String, Object> parameters) {
         return session.readTransaction(new TransactionWork<List<Map<String, Object>>>() {
 
-            @Override public List<Map<String, Object>> execute(Transaction tx) {
-                return Neo4JClientImpl.this.runTransaction(tx, query);
-            }
-        });
-    }
-
-    @Override public List<Map<String, Object>> read(final String query, final Map<String, Object> parameters) {
-        return session.readTransaction(new TransactionWork<List<Map<String, Object>>>() {
-
-            @Override public List<Map<String, Object>> execute(Transaction tx) {
+            @Override
+            public List<Map<String, Object>> execute(Transaction tx) {
                 return Neo4JClientImpl.this.runTransaction(tx, query, parameters);
             }
         });
     }
 
-    @Override public void write(final String query) {
+    @Override
+    public void write(final String query, final Map<String, Object> parameters) {
         session.writeTransaction(new TransactionWork<List<Map<String, Object>>>() {
 
-            @Override public List<Map<String, Object>> execute(Transaction tx) {
-                return Neo4JClientImpl.this.runTransaction(tx, query);
-            }
-        });
-    }
-
-    @Override public void write(final String query, final Map<String, Object> parameters) {
-        session.writeTransaction(new TransactionWork<List<Map<String, Object>>>() {
-
-            @Override public List<Map<String, Object>> execute(Transaction tx) {
+            @Override
+            public List<Map<String, Object>> execute(Transaction tx) {
                 return Neo4JClientImpl.this.runTransaction(tx, query, parameters);
             }
         });
     }
 
-    private List<Map<String, Object>> runTransaction(Transaction tx, String query) {
-        List<Map<String, Object>> result = new ArrayList<>();
-        StatementResult stResults = tx.run(query);
-        while (stResults.hasNext()) {
-            result.add(stResults.next().asMap());
+    @Override
+    public void createNodes(List<Map<String, Object>> parameters, List<String> labels) {
+        String labelz = "";
+        Map<String, Object> props = new HashMap<>();
+        props.put("props", parameters);
+
+        if (!isEmpty(labels)) {
+            labelz = format(":%s", join(labels, ":"));
         }
-        return result;
+
+        write(format("UNWIND $props AS map CREATE (n%s) SET n = map", labelz), props);
     }
 
     private List<Map<String, Object>> runTransaction(Transaction tx, String query, Map<String, Object> parameters) {
@@ -82,7 +78,8 @@ public class Neo4JClientImpl implements Neo4JClient {
         return result;
     }
 
-    @Override public void close() {
+    @Override
+    public void close() {
         session.close();
         neo4jClient.close();
     }

@@ -6,9 +6,11 @@ package org.mule.modules.neo4j.exception;
 import org.mule.api.annotations.Handle;
 import org.mule.api.annotations.components.Handler;
 
-@Handler public class Neo4JHandlerException {
+@Handler
+public class Neo4JHandlerException {
 
-    @Handle public void customHandler(Exception exception) throws Exception {
+    @Handle
+    public void customHandler(Exception exception) throws Exception {
         throw new Neo4JConnectorException(exception);
     }
 }

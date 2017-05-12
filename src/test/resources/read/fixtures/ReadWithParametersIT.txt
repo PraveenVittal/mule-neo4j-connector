@@ -1,1 +1,0 @@
-MATCH (a:Person) WHERE a.name = $name RETURN a.name,a.born

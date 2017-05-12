@@ -20,20 +20,28 @@ import java.util.Map;
 
 import static org.mule.api.ConnectionExceptionCode.*;
 
-@ConnectionManagement(friendlyName = "Configuration") public class Config {
+@ConnectionManagement(friendlyName = "Configuration")
+public class Config {
 
-    @Configurable @Placement(order = 1) @FriendlyName("Connection URL") private String url;
+    @Configurable
+    @Placement(order = 1)
+    @FriendlyName("Connection URL")
+    private String url;
 
     private Neo4JClientImpl client;
 
     /**
      * Connect
      *
-     * @param username A username from Neo4j
-     * @param password A password from Neo4j
+     * @param username
+     *            A username from Neo4j
+     * @param password
+     *            A password from Neo4j
      * @throws ConnectionException
      */
-    @Connect @TestConnectivity public void connect(@ConnectionKey String username, @Password String password) throws ConnectionException {
+    @Connect
+    @TestConnectivity
+    public void connect(@ConnectionKey String username, @Password String password) throws ConnectionException {
         client = new Neo4JClientImpl();
 
         Map<String, Object> map = new HashMap<>();
@@ -55,18 +63,21 @@ import static org.mule.api.ConnectionExceptionCode.*;
     /**
      * Disconnect
      */
-    @Disconnect public void disconnect() {
+    @Disconnect
+    public void disconnect() {
         getClient().close();
     }
 
     /**
      * Are we connected
      */
-    @ValidateConnection public boolean isConnected() {
+    @ValidateConnection
+    public boolean isConnected() {
         return getClient() != null;
     }
 
-    @ConnectionIdentifier public String connectionId() {
+    @ConnectionIdentifier
+    public String connectionId() {
         return getClient().toString();
     }
 

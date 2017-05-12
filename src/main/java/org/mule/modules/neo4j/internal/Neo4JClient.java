@@ -10,13 +10,11 @@ public interface Neo4JClient {
 
     public void connect(Map<String, Object> map) throws Exception;
 
-    public List<Map<String, Object>> read(String query);
-
     public List<Map<String, Object>> read(String query, Map<String, Object> parameters);
 
-    public void write(String query);
-
     public void write(String query, Map<String, Object> parameters);
+
+    public void createNodes(List<Map<String, Object>> parameters, List<String> labels);
 
     public void close();
 }

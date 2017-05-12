@@ -21,7 +21,8 @@ public class ConfigIT {
     private String username;
     private String password;
 
-    @Before public void setUp() throws ConfigurationLoadingFailedException {
+    @Before
+    public void setUp() throws ConfigurationLoadingFailedException {
         final Properties properties = ConfigurationUtils.getAutomationCredentialsProperties();
 
         setUsername(properties.getProperty("config.username"));
@@ -31,24 +32,28 @@ public class ConfigIT {
         config.setUrl(properties.getProperty("config.url"));
     }
 
-    //TODO: Change Matchers.notNullValue for other verification type
-    @Test public void testConnection() throws ConnectionException {
+    // TODO: Change Matchers.notNullValue for other verification type
+    @Test
+    public void testConnection() throws ConnectionException {
         getConfig().connect(username, password);
         assertThat(getConfig(), Matchers.notNullValue());
         getConfig().disconnect();
     }
 
-    @Test(expected = ConnectionException.class) public void testIllegalArgument() throws ConnectionException {
+    @Test(expected = ConnectionException.class)
+    public void testIllegalArgument() throws ConnectionException {
         getConfig().setUrl("invalidURLFormat");
         getConfig().connect(username, password);
     }
 
-    @Test(expected = ConnectionException.class) public void testClientException() throws ConnectionException {
+    @Test(expected = ConnectionException.class)
+    public void testClientException() throws ConnectionException {
         getConfig().setUrl(getConfig().getUrl().replace("bolt", "http"));
         getConfig().connect(username, password);
     }
 
-    @Test(expected = ConnectionException.class) public void testServiceUnavailableException() throws ConnectionException {
+    @Test(expected = ConnectionException.class)
+    public void testServiceUnavailableException() throws ConnectionException {
         getConfig().setUrl("bolt://localhost:80/");
         getConfig().connect(username, password);
     }

@@ -1,1 +1,0 @@
-MATCH (francella:Person {name:'Guillermo Francella', born:1955}) RETURN francella.name,francella.born
