@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:neo4j="http://www.mulesoft.org/schema/mule/neo4j" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/neo4j http://www.mulesoft.org/schema/mule/neo4j/current/mule-neo4j.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8082" doc:name="HTTP Listener Configuration"/>
+    <http:listener-config name="HTTP_Listener_Configuration1" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <neo4j:config name="Neo4j__Configuration" username="${config.username}" password="${config.password}" url="${config.url}" doc:name="Neo4j: Configuration"/>
+    <flow name="writedb-without-params">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/writedb-without-params" allowedMethods="GET" doc:name="HTTP"/>
+        <neo4j:write config-ref="Neo4j__Configuration" query="CREATE (a:Person {name:'Tom Hanks', born:1956})" doc:name="Write node"/>
+        <neo4j:read config-ref="Neo4j__Configuration" query="MATCH (a:Person {name:'Tom Hanks', born:1956}) RETURN a.name,a.born" doc:name="Read node"/>
+        <neo4j:write config-ref="Neo4j__Configuration" query="MATCH (a:Person {name:'Tom Hanks', born:1956}) DELETE a" doc:name="Delete node"/>
+        <json:object-to-json-transformer doc:name="Map to JSON"/>
+    </flow>
+    <flow name="writedb-with-params">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/writedb-with-params" allowedMethods="GET" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Populate data">
+            <dw:set-variable variableName="parameters"><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	"name":"Sylvester Stallone",
+	"born":1946
+}]]></dw:set-variable>
+        </dw:transform-message>
+        <neo4j:write config-ref="Neo4j__Configuration" query="CREATE (a:Person {name: $name, born: toInt($born)})" parameters-ref="#[flowVars.parameters]" doc:name="Write node"/>
+        <neo4j:read config-ref="Neo4j__Configuration" query="MATCH (a:Person) WHERE a.name = $name RETURN a.name,a.born" parameters-ref="#[flowVars.parameters]" doc:name="Read node"/>
+        <neo4j:write config-ref="Neo4j__Configuration" query="MATCH (a:Person) WHERE a.name = $name DELETE a" parameters-ref="#[flowVars.parameters]" doc:name="Delete node"/>
+        <json:object-to-json-transformer doc:name="Map to JSON"/>
+    </flow>
+    <flow name="createdb-nodes">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/createdb-nodes" allowedMethods="GET" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Populate data">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+[
+	{
+		"name":"John Cena",
+		"born":1977
+	},
+	{
+		"name":"Richard Darin",
+		"born":1957
+	},
+	{
+		"name":"William Francella",
+		"born":1955
+	}
+	
+]
+]]></dw:set-payload>
+            <dw:set-variable variableName="labels"><![CDATA[%dw 1.0
+%output application/java
+---
+["Person","CreateDemo"]]]></dw:set-variable>
+        </dw:transform-message>
+        <neo4j:create-nodes config-ref="Neo4j__Configuration" labels-ref="#[flowVars.labels]" doc:name="Create nodes"/>
+        <neo4j:read config-ref="Neo4j__Configuration" query="MATCH (a:CreateDemo) RETURN a.name,a.born" doc:name="Read nodes"/>
+        <neo4j:write config-ref="Neo4j__Configuration" query="MATCH (a:CreateDemo) DELETE a" doc:name="Delete nodes"/>
+        <json:object-to-json-transformer doc:name="Map to JSON"/>
+    </flow>
+</mule>
