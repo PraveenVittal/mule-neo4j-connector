@@ -19,14 +19,14 @@ import java.util.Map;
 
 @Connector(name = "neo4j", friendlyName = "Neo4j")
 @RequiresEnterpriseLicense
-@OnException(handler=Neo4JHandlerException.class)
+@OnException(handler = Neo4JHandlerException.class)
 public class Neo4jConnector {
 
     @org.mule.api.annotations.Config
     Config config;
 
     @Processor
-    public List<Map<String, Object>> read(@Default("#[payload]") String query, @Optional @RefOnly  Map<String, Object> parameters) {
+    public List<Map<String, Object>> read(@Default("#[payload]") String query, @Optional @RefOnly Map<String, Object> parameters) {
         return getClient().read(query, parameters);
 
     }
@@ -39,6 +39,12 @@ public class Neo4jConnector {
     @Processor
     public void createNodes(@Default("#[payload]") @RefOnly List<Map<String, Object>> parameters, @Optional @RefOnly List<String> labels) {
         getClient().createNodes(parameters, labels);
+    }
+
+    @Processor
+    public void createRelationBetweenNodes(@Optional @RefOnly List<String> labelsA, @Optional @RefOnly List<String> labelsB, @Default("#[payload]") String condition,
+            @RefOnly String labelR, @Optional @RefOnly Map<String, Object> relProps) {
+        getClient().createRelationBetweenNodes(labelsA, labelsB, condition, labelR, relProps);
     }
 
     private Neo4JClientImpl getClient() {

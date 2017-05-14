@@ -3,10 +3,10 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.io.IOUtils;
 
 public class TestDataBuilder {
 

@@ -15,16 +15,12 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class CreateIT extends AbstractTestCases {
+public class CreateNodesIT extends AbstractTestCases {
 
-    @Test public void createNodeWithoutLabel() {
-        Map<String, Object> node = ImmutableMap.<String, Object>builder()
-                .put("name", "George Porcel")
-                .put("born", 1936)
-                .build();
-        List<Map<String, Object>> props = ImmutableList.<Map<String, Object>>builder()
-                .add(node)
-                .build();
+    @Test
+    public void createNodeWithoutLabel() {
+        Map<String, Object> node = ImmutableMap.<String, Object>builder().put("name", "George Porcel").put("born", 1936).build();
+        List<Map<String, Object>> props = ImmutableList.<Map<String, Object>>builder().add(node).build();
 
         getConnector().createNodes(props, null);
         assertThat(getConnector().read("MATCH (a) WHERE a.name=$name AND a.born=$born RETURN a", node).size(), equalTo(props.size()));
@@ -32,13 +28,11 @@ public class CreateIT extends AbstractTestCases {
         getConnector().write("MATCH (a) WHERE a.name=$name AND a.born=$born DELETE a", node);
     }
 
-    @Test public void createNodeWithLabel() {
+    @Test
+    public void createNodeWithLabel() {
         String labelValidator = "createNodeWithLabel";
         List<Map<String, Object>> props = ImmutableList.<Map<String, Object>>builder()
-                .add(ImmutableMap.<String, Object>builder()
-                        .put("name", "Emile Dissi")
-                        .put("born", 1943)
-                        .build())
+                .add(ImmutableMap.<String, Object>builder().put("name", "Emile Dissi").put("born", 1943).build())
                 .build();
 
         getConnector().createNodes(props, asList(labelValidator));
@@ -47,34 +41,24 @@ public class CreateIT extends AbstractTestCases {
         getConnector().write(format("MATCH (a:%s) DELETE a", labelValidator), null);
     }
 
-    @Test public void createNodeWithLabels() {
+    @Test
+    public void createNodeWithLabels() {
         String labelValidator = "createNodeWithLabels";
         List<Map<String, Object>> props = ImmutableList.<Map<String, Object>>builder()
-                .add(ImmutableMap.<String, Object>builder()
-                        .put("name", "Charly Bala")
-                        .put("born", 1925)
-                        .build())
+                .add(ImmutableMap.<String, Object>builder().put("name", "Charly Bala").put("born", 1925).build())
                 .build();
 
         getConnector().createNodes(props, asList("Person", "Actor", labelValidator));
         assertThat(getConnector().read(format("MATCH (a:%s) RETURN a", labelValidator), null).size(), equalTo(props.size()));
     }
 
-    @Test public void createNodesWithLabels() {
+    @Test
+    public void createNodesWithLabels() {
         String labelValidator = "createNodesWithLabels";
         List<Map<String, Object>> props = ImmutableList.<Map<String, Object>>builder()
-                .add(ImmutableMap.<String, Object>builder()
-                        .put("name", "Charly G")
-                        .put("born", 1958)
-                        .build())
-                .add(ImmutableMap.<String, Object>builder()
-                        .put("name", "William Francella")
-                        .put("born", 1955)
-                        .build())
-                .add(ImmutableMap.<String, Object>builder()
-                        .put("name", "Richard Darin")
-                        .put("born", 1957)
-                        .build())
+                .add(ImmutableMap.<String, Object>builder().put("name", "Charly G").put("born", 1958).build())
+                .add(ImmutableMap.<String, Object>builder().put("name", "William Francella").put("born", 1955).build())
+                .add(ImmutableMap.<String, Object>builder().put("name", "Richard Darin").put("born", 1957).build())
                 .build();
 
         getConnector().createNodes(props, asList("Person", "Actor", labelValidator));

@@ -3,9 +3,19 @@
  */
 package org.mule.modules.neo4j.config;
 
-import com.google.common.collect.ImmutableMap;
+import static org.mule.api.ConnectionExceptionCode.CANNOT_REACH;
+import static org.mule.api.ConnectionExceptionCode.INCORRECT_CREDENTIALS;
+import static org.mule.api.ConnectionExceptionCode.UNKNOWN_HOST;
+
+import java.util.Map;
+
 import org.mule.api.ConnectionException;
-import org.mule.api.annotations.*;
+import org.mule.api.annotations.Configurable;
+import org.mule.api.annotations.Connect;
+import org.mule.api.annotations.ConnectionIdentifier;
+import org.mule.api.annotations.Disconnect;
+import org.mule.api.annotations.TestConnectivity;
+import org.mule.api.annotations.ValidateConnection;
 import org.mule.api.annotations.components.ConnectionManagement;
 import org.mule.api.annotations.display.FriendlyName;
 import org.mule.api.annotations.display.Password;
@@ -16,9 +26,7 @@ import org.neo4j.driver.v1.exceptions.AuthenticationException;
 import org.neo4j.driver.v1.exceptions.ClientException;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
-import java.util.Map;
-
-import static org.mule.api.ConnectionExceptionCode.*;
+import com.google.common.collect.ImmutableMap;
 
 @ConnectionManagement(friendlyName = "Configuration")
 public class Config {
@@ -44,11 +52,7 @@ public class Config {
     public void connect(@ConnectionKey String username, @Password String password) throws ConnectionException {
         client = new Neo4JClientImpl();
 
-        Map<String, Object> map = ImmutableMap.<String,Object>builder()
-                .put("username", username)
-                .put("password", password)
-                .put("url", url)
-                .build();
+        Map<String, Object> map = ImmutableMap.<String, Object>builder().put("username", username).put("password", password).put("url", url).build();
 
         try {
             getClient().connect(map);

@@ -14,14 +14,16 @@ import static org.junit.Assert.assertThat;
 
 public class WriteIT extends AbstractTestCases {
 
-    @Test public void writeTest() throws IOException {
+    @Test
+    public void writeTest() throws IOException {
         getConnector().write("CREATE (a:Person {name: \"John Cena\", born: toInt(1977)})", null);
 
         assertThat(getGson().toJson(getConnector().read("MATCH (a:Person) WHERE a.name = \"John Cena\" RETURN a.name,a.born", null)),
                 equalTo(getGson().toJson(getParser().parse("[{\"a.name\":\"John Cena\",\"a.born\":1977}]").getAsJsonArray())));
     }
 
-    @Test public void writeParamTest() throws IOException {
+    @Test
+    public void writeParamTest() throws IOException {
         Map<String, Object> param = ImmutableMap.<String, Object>builder().put("name", "Johnny Tolengo").put("born", 1934).build();
 
         getConnector().write("CREATE (a:Person {name: $name, born: toInt($born)})", param);

@@ -18,30 +18,21 @@ public class ReadIT extends AbstractTestCases {
 
     @Test
     public void readANode() throws JsonProcessingException {
-        assertThat(
-                new ObjectMapper().writeValueAsString(
-                        getConnector().read(format("MATCH (a {name: \"Tom Hanks\"}) RETURN a", null), null)),
+        assertThat(new ObjectMapper().writeValueAsString(getConnector().read(format("MATCH (a {name: \"Tom Hanks\"}) RETURN a", null), null)),
                 equalTo("[{\"a\":{\"born\":1956,\"name\":\"Tom Hanks\"}}]"));
     }
 
     @Test
     public void readTest() {
         assertThat(getGson().toJson(getConnector().read("MATCH (a {name: \"Tom Hanks\"}) RETURN a.name,a.born", null)),
-                equalTo(getGson().toJson(
-                        getParser().parse("[{\"a.name\":\"Tom Hanks\",\"a.born\":1956}]").getAsJsonArray()
-                )));
+                equalTo(getGson().toJson(getParser().parse("[{\"a.name\":\"Tom Hanks\",\"a.born\":1956}]").getAsJsonArray())));
     }
 
     @Test
     public void readParamTest() {
-        Map<String, Object> param = ImmutableMap.<String, Object>builder()
-                .put("name", "Tom Hanks")
-                .put("born", 1956)
-                .build();
+        Map<String, Object> param = ImmutableMap.<String, Object>builder().put("name", "Tom Hanks").put("born", 1956).build();
 
         assertThat(getGson().toJson(getConnector().read("MATCH (a {name: $name}) RETURN a.name,a.born", param)),
-                equalTo(getGson().toJson(
-                        getParser().parse("[{\"a.name\":\"Tom Hanks\",\"a.born\":1956}]").getAsJsonArray()
-                )));
+                equalTo(getGson().toJson(getParser().parse("[{\"a.name\":\"Tom Hanks\",\"a.born\":1956}]").getAsJsonArray())));
     }
 }

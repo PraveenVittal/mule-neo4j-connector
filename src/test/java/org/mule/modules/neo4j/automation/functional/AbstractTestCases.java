@@ -3,11 +3,12 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
+import org.mule.modules.neo4j.Neo4jConnector;
+import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
-import org.mule.modules.neo4j.Neo4jConnector;
-import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 
 public class AbstractTestCases extends AbstractTestCase<Neo4jConnector> {
 

@@ -5,6 +5,7 @@ package org.mule.modules.neo4j.internal;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.collections.MapUtils;
 import org.mule.modules.neo4j.exception.Neo4JConnectorException;
 import org.neo4j.driver.internal.InternalNode;
 import org.neo4j.driver.internal.InternalPath;
@@ -27,11 +28,7 @@ public class Neo4JClientImpl implements Neo4JClient {
 
     private Driver neo4jClient;
     private Session session;
-    private List<Class<?>> internals = ImmutableList.<Class<?>>builder()
-            .add(InternalNode.class)
-            .add(InternalRelationship.class)
-            .add(InternalPath.class)
-            .build();
+    private List<Class<?>> internals = ImmutableList.<Class<?>>builder().add(InternalNode.class).add(InternalRelationship.class).add(InternalPath.class).build();
 
     public void connect(Map<String, Object> map) {
         neo4jClient = GraphDatabase.driver(String.class.cast(map.get("url")), AuthTokens.basic(String.class.cast(map.get("username")), String.class.cast(map.get("password"))));
@@ -55,7 +52,7 @@ public class Neo4JClientImpl implements Neo4JClient {
             public List<Map<String, Object>> execute(Transaction tx) {
                 try {
                     return Neo4JClientImpl.this.runTransaction(tx, query, parameters);
-                } catch (NoSuchMethodException|IllegalAccessException|InvocationTargetException e){
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     throw new Neo4JConnectorException(e);
                 }
             }
@@ -70,7 +67,7 @@ public class Neo4JClientImpl implements Neo4JClient {
             public List<Map<String, Object>> execute(Transaction tx) {
                 try {
                     return Neo4JClientImpl.this.runTransaction(tx, query, parameters);
-                } catch (NoSuchMethodException|IllegalAccessException|InvocationTargetException e){
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     throw new Neo4JConnectorException(e);
                 }
             }
@@ -79,16 +76,21 @@ public class Neo4JClientImpl implements Neo4JClient {
 
     @Override
     public void createNodes(List<Map<String, Object>> parameters, List<String> labels) {
-        String labelz = "";
-        Map<String, Object> props = ImmutableMap.<String,Object>builder()
-                .put("props", parameters)
-                .build();
+        Map<String, Object> props = ImmutableMap.<String, Object>builder().put("props", parameters).build();
+        write(format("UNWIND $props AS map CREATE (n%s) SET n = map", concatLabels(labels)), props);
+    }
 
-        if (!isEmpty(labels)) {
-            labelz = format(":%s", join(labels, ":"));
+    @Override
+    public void createRelationBetweenNodes(List<String> labelsA, List<String> labelsB, String condition, String labelR, Map<String, Object> relProps) {
+        String propsMap = "";
+        Map<String, Object> props = null;
+
+        if (!MapUtils.isEmpty(relProps)) {
+            propsMap = "$props";
+            props = ImmutableMap.<String, Object>builder().put("props", relProps).build();
         }
 
-        write(format("UNWIND $props AS map CREATE (n%s) SET n = map", labelz), props);
+        write(format("MATCH (a%s),(b%s) WHERE %s CREATE (a)-[r:%s %s]->(b) RETURN r", concatLabels(labelsA), concatLabels(labelsB), condition, labelR, propsMap), props);
     }
 
     private List<Map<String, Object>> runTransaction(Transaction tx, String query, Map<String, Object> parameters)
@@ -96,11 +98,11 @@ public class Neo4JClientImpl implements Neo4JClient {
         List<Map<String, Object>> result = new ArrayList<>();
         StatementResult stResults = tx.run(query, parameters);
         while (stResults.hasNext()) {
-            Map<String,Object> map = stResults.next().asMap();
-            Map<String,Object> resultMap = new HashMap<>();
+            Map<String, Object> map = stResults.next().asMap();
+            Map<String, Object> resultMap = new HashMap<>();
 
-            for (String key: map.keySet()) {
-                resultMap.put(key,convertInternalsToObject(map.get(key)));
+            for (String key : map.keySet()) {
+                resultMap.put(key, convertInternalsToObject(map.get(key)));
             }
 
             result.add(resultMap);
@@ -110,19 +112,26 @@ public class Neo4JClientImpl implements Neo4JClient {
 
     private Object convertInternalsToObject(Object obj) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        if(!internals.contains(obj.getClass())){
+        if (!internals.contains(obj.getClass())) {
             return obj;
         } else {
-            Method asValue = obj.getClass().getMethod("asValue",null);
-            InternalValue val = InternalValue.class.cast(asValue.invoke(obj,null));
-            Map<String,Object> map = val.asMap();
-            Map<String,Object> result = new HashMap<>();
+            Method asValue = obj.getClass().getMethod("asValue", null);
+            Map<String, Object> map = InternalValue.class.cast(asValue.invoke(obj, null)).asMap();
+            Map<String, Object> result = new HashMap<>();
 
             for (String key : map.keySet()) {
-                result.put(key,convertInternalsToObject(map.get(key)));
+                result.put(key, convertInternalsToObject(map.get(key)));
             }
 
             return result;
+        }
+    }
+
+    private String concatLabels(List<String> labels) {
+        if (!isEmpty(labels)) {
+            return format(":%s", join(labels, ":"));
+        } else {
+            return "";
         }
     }
 

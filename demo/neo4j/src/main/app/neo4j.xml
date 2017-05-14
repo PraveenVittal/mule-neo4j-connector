@@ -16,7 +16,7 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
     <flow name="writedb-without-params">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/writedb-without-params" allowedMethods="GET" doc:name="HTTP"/>
         <neo4j:write config-ref="Neo4j__Configuration" query="CREATE (a:Person {name:'Tom Hanks', born:1956})" doc:name="Write node"/>
-        <neo4j:read config-ref="Neo4j__Configuration" query="MATCH (a:Person {name:'Tom Hanks', born:1956}) RETURN a.name,a.born" doc:name="Read node"/>
+        <neo4j:read config-ref="Neo4j__Configuration" query="MATCH (a:Person {name:'Tom Hanks', born:1956}) RETURN a" doc:name="Read node"/>
         <neo4j:write config-ref="Neo4j__Configuration" query="MATCH (a:Person {name:'Tom Hanks', born:1956}) DELETE a" doc:name="Delete node"/>
         <json:object-to-json-transformer doc:name="Map to JSON"/>
     </flow>
@@ -66,6 +66,57 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
         <neo4j:create-nodes config-ref="Neo4j__Configuration" labels-ref="#[flowVars.labels]" doc:name="Create nodes"/>
         <neo4j:read config-ref="Neo4j__Configuration" query="MATCH (a:CreateDemo) RETURN a.name,a.born" doc:name="Read nodes"/>
         <neo4j:write config-ref="Neo4j__Configuration" query="MATCH (a:CreateDemo) DELETE a" doc:name="Delete nodes"/>
+        <json:object-to-json-transformer doc:name="Map to JSON"/>
+    </flow>
+    <flow name="createdb-relation">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/createdb-relation" allowedMethods="GET" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Populate data for nodes">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+[
+	{
+		"name":"Tom Hanks"
+	},
+	{
+		"name":"Keanu Reeves"
+	}
+]
+]]></dw:set-payload>
+            <dw:set-variable variableName="labels"><![CDATA[%dw 1.0
+%output application/java
+---
+["Person"]]]></dw:set-variable>
+        </dw:transform-message>
+        <neo4j:create-nodes config-ref="Neo4j__Configuration" labels-ref="#[flowVars.labels]" doc:name="Create nodes"/>
+        <dw:transform-message doc:name="Populate data for relation">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+"a.name = \"Tom Hanks\" AND b.name = \"Keanu Reeves\""]]></dw:set-payload>
+            <dw:set-variable variableName="labelsA"><![CDATA[%dw 1.0
+%output application/java
+---
+["Person"]]]></dw:set-variable>
+            <dw:set-variable variableName="labelsB"><![CDATA[%dw 1.0
+%output application/java
+---
+["Person"]]]></dw:set-variable>
+            <dw:set-variable variableName="labelR"><![CDATA[%dw 1.0
+%output application/java
+---
+"TestFullRelation"]]></dw:set-variable>
+            <dw:set-variable variableName="relationProps"><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	"relation":"1on1",
+	"knowsFrom":"A Movie"
+}]]></dw:set-variable>
+        </dw:transform-message>
+        <neo4j:create-relation-between-nodes config-ref="Neo4j__Configuration" labelR="#[flowVars.labelR]" labelsA-ref="#[flowVars.labelsA]" labelsB-ref="#[flowVars.labelsB]" relProps-ref="#[flowVars.relationProps]" doc:name="Create relation"/>
+        <neo4j:read config-ref="Neo4j__Configuration" query="MATCH (a)&lt;-[r:TestFullRelation]-(b) RETURN r" doc:name="Read relation"/>
+        <neo4j:write config-ref="Neo4j__Configuration" query="MATCH (a:Person)-[r]-() DELETE a,r" doc:name="Delete nodes &amp; relation"/>
         <json:object-to-json-transformer doc:name="Map to JSON"/>
     </flow>
 </mule>

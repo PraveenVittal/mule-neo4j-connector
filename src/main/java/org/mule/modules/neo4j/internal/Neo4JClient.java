@@ -16,5 +16,7 @@ public interface Neo4JClient {
 
     public void createNodes(List<Map<String, Object>> parameters, List<String> labels);
 
+    public void createRelationBetweenNodes(List<String> labelsA, List<String> labelB, String condition, String labelR, Map<String, Object> relProps);
+
     public void close();
 }

@@ -9,7 +9,8 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.mule.modules.neo4j.automation.functional.CreateIT;
+import org.mule.modules.neo4j.automation.functional.CreateNodesIT;
+import org.mule.modules.neo4j.automation.functional.CreateRelationBetweenNodesIT;
 import org.mule.modules.neo4j.automation.functional.ReadIT;
 import org.mule.modules.neo4j.automation.functional.WriteIT;
 import org.mule.modules.neo4j.internal.Neo4JClientImpl;
@@ -25,7 +26,8 @@ import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.readR
 @SuiteClasses({
     ReadIT.class,
     WriteIT.class,
-    CreateIT.class
+    CreateNodesIT.class,
+    CreateRelationBetweenNodesIT.class
 })
 
 public class FunctionalTestSuite {

@@ -3,6 +3,10 @@
  */
 package org.mule.modules.neo4j.automation.system;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.Properties;
+
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,10 +14,6 @@ import org.mule.api.ConnectionException;
 import org.mule.modules.neo4j.config.Config;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 import org.mule.tools.devkit.ctf.exceptions.ConfigurationLoadingFailedException;
-
-import java.util.Properties;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ConfigIT {
 
