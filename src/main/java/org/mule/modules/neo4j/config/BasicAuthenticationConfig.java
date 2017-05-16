@@ -3,12 +3,6 @@
  */
 package org.mule.modules.neo4j.config;
 
-import static org.mule.api.ConnectionExceptionCode.CANNOT_REACH;
-import static org.mule.api.ConnectionExceptionCode.INCORRECT_CREDENTIALS;
-import static org.mule.api.ConnectionExceptionCode.UNKNOWN_HOST;
-
-import java.util.Map;
-
 import org.mule.api.ConnectionException;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Connect;
@@ -21,41 +15,47 @@ import org.mule.api.annotations.display.FriendlyName;
 import org.mule.api.annotations.display.Password;
 import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.param.ConnectionKey;
-import org.mule.modules.neo4j.internal.Neo4JClientImpl;
+import org.mule.modules.neo4j.internal.client.Neo4JClient;
+import org.mule.modules.neo4j.internal.client.Neo4JClientImpl;
+import org.mule.modules.neo4j.internal.connection.Neo4JConnection;
+import org.mule.modules.neo4j.internal.connection.basic.BasicAuthenticationConnectionBuilder;
 import org.neo4j.driver.v1.exceptions.AuthenticationException;
 import org.neo4j.driver.v1.exceptions.ClientException;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
-import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
 
-@ConnectionManagement(friendlyName = "Configuration")
-public class Config {
+import static org.mule.api.ConnectionExceptionCode.CANNOT_REACH;
+import static org.mule.api.ConnectionExceptionCode.INCORRECT_CREDENTIALS;
+import static org.mule.api.ConnectionExceptionCode.UNKNOWN_HOST;
+
+@ConnectionManagement(friendlyName = "Basic Authentication Configuration")
+public class BasicAuthenticationConfig {
 
     @Configurable
     @Placement(order = 1)
     @FriendlyName("Connection URL")
     private String url;
 
-    private Neo4JClientImpl client;
+    private Neo4JConnection connection;
 
     /**
      * Connect
      *
-     * @param username
-     *            A username from Neo4j
-     * @param password
-     *            A password from Neo4j
+     * @param username A username from Neo4j
+     * @param password A password from Neo4j
      * @throws ConnectionException
      */
     @Connect
     @TestConnectivity
     public void connect(@ConnectionKey String username, @Password String password) throws ConnectionException {
-        client = new Neo4JClientImpl();
-
-        Map<String, Object> map = ImmutableMap.<String, Object>builder().put("username", username).put("password", password).put("url", url).build();
-
         try {
-            getClient().connect(map);
+            this.connection = new BasicAuthenticationConnectionBuilder()
+                    .withUrl(url)
+                    .withUsername(username)
+                    .withPassword(password)
+                    .create();
+            this.connection.validate();
         } catch (ClientException | AuthenticationException e) {
             throw new ConnectionException(INCORRECT_CREDENTIALS, e.code(), e.getMessage());
         } catch (IllegalArgumentException | SecurityException e) {
@@ -70,7 +70,11 @@ public class Config {
      */
     @Disconnect
     public void disconnect() {
-        getClient().close();
+        try {
+            connection.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -78,12 +82,17 @@ public class Config {
      */
     @ValidateConnection
     public boolean isConnected() {
-        return getClient() != null;
+        try {
+            connection.validate();
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     @ConnectionIdentifier
     public String connectionId() {
-        return getClient().toString();
+        return connection.getId();
     }
 
     public String getUrl() {
@@ -94,11 +103,7 @@ public class Config {
         this.url = url;
     }
 
-    public Neo4JClientImpl getClient() {
-        return client;
-    }
-
-    public void setClient(Neo4JClientImpl client) {
-        this.client = client;
+    public Neo4JClient getClient() {
+        return new Neo4JClientImpl(connection);
     }
 }

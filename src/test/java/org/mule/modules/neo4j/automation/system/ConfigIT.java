@@ -11,13 +11,13 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.ConnectionException;
-import org.mule.modules.neo4j.config.Config;
+import org.mule.modules.neo4j.config.BasicAuthenticationConfig;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 import org.mule.tools.devkit.ctf.exceptions.ConfigurationLoadingFailedException;
 
 public class ConfigIT {
 
-    private Config config;
+    private BasicAuthenticationConfig config;
     private String username;
     private String password;
 
@@ -28,7 +28,7 @@ public class ConfigIT {
         setUsername(properties.getProperty("config.username"));
         setPassword(properties.getProperty("config.password"));
 
-        setConfig(new Config());
+        setConfig(new BasicAuthenticationConfig());
         config.setUrl(properties.getProperty("config.url"));
     }
 
@@ -58,11 +58,11 @@ public class ConfigIT {
         getConfig().connect(username, password);
     }
 
-    public Config getConfig() {
+    public BasicAuthenticationConfig getConfig() {
         return config;
     }
 
-    public void setConfig(Config config) {
+    public void setConfig(BasicAuthenticationConfig config) {
         this.config = config;
     }
 

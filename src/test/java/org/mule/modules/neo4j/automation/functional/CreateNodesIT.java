@@ -23,9 +23,9 @@ public class CreateNodesIT extends AbstractTestCases {
         List<Map<String, Object>> props = ImmutableList.<Map<String, Object>>builder().add(node).build();
 
         getConnector().createNodes(props, null);
-        assertThat(getConnector().read("MATCH (a) WHERE a.name=$name AND a.born=$born RETURN a", node).size(), equalTo(props.size()));
+        assertThat(getConnector().execute("MATCH (a) WHERE a.name=$name AND a.born=$born RETURN a", node).size(), equalTo(props.size()));
 
-        getConnector().write("MATCH (a) WHERE a.name=$name AND a.born=$born DELETE a", node);
+        getConnector().execute("MATCH (a) WHERE a.name=$name AND a.born=$born DELETE a", node);
     }
 
     @Test
@@ -36,9 +36,9 @@ public class CreateNodesIT extends AbstractTestCases {
                 .build();
 
         getConnector().createNodes(props, asList(labelValidator));
-        assertThat(getConnector().read(format("MATCH (a:%s) RETURN a", labelValidator), null).size(), equalTo(props.size()));
+        assertThat(getConnector().execute(format("MATCH (a:%s) RETURN a", labelValidator), null).size(), equalTo(props.size()));
 
-        getConnector().write(format("MATCH (a:%s) DELETE a", labelValidator), null);
+        getConnector().execute(format("MATCH (a:%s) DELETE a", labelValidator), null);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class CreateNodesIT extends AbstractTestCases {
                 .build();
 
         getConnector().createNodes(props, asList("Person", "Actor", labelValidator));
-        assertThat(getConnector().read(format("MATCH (a:%s) RETURN a", labelValidator), null).size(), equalTo(props.size()));
+        assertThat(getConnector().execute(format("MATCH (a:%s) RETURN a", labelValidator), null).size(), equalTo(props.size()));
     }
 
     @Test
@@ -62,6 +62,6 @@ public class CreateNodesIT extends AbstractTestCases {
                 .build();
 
         getConnector().createNodes(props, asList("Person", "Actor", labelValidator));
-        assertThat(getConnector().read(format("MATCH (a:%s) RETURN a", labelValidator), null).size(), equalTo(props.size()));
+        assertThat(getConnector().execute(format("MATCH (a:%s) RETURN a", labelValidator), null).size(), equalTo(props.size()));
     }
 }

@@ -20,7 +20,7 @@ public class CreateRelationBetweenNodesIT extends AbstractTestCases {
     public void createSimpleRelation() throws JsonProcessingException {
         getConnector().createRelationBetweenNodes(null, null, "a.name = \"Tom Hanks\" AND b.name = \"Keanu Reeves\"", "TestSimpleRelation", null);
 
-        assertThat(new ObjectMapper().writeValueAsString(getConnector().read("MATCH (a)<-[r:TestSimpleRelation]-(b) RETURN r", null)), equalTo("[{\"r\":{}}]"));
+        assertThat(new ObjectMapper().writeValueAsString(getConnector().execute("MATCH (a)<-[r:TestSimpleRelation]-(b) RETURN r", null)), equalTo("[{\"r\":{}}]"));
     }
 
     @Test
@@ -29,7 +29,7 @@ public class CreateRelationBetweenNodesIT extends AbstractTestCases {
 
         getConnector().createRelationBetweenNodes(asList("Person"), asList("Person"), "a.name = \"Tom Hanks\" AND b.name = \"Keanu Reeves\"", "TestFullRelation", props);
 
-        assertThat(new ObjectMapper().writeValueAsString(getConnector().read("MATCH (a)<-[r:TestFullRelation]-(b) RETURN r", null)),
+        assertThat(new ObjectMapper().writeValueAsString(getConnector().execute("MATCH (a)<-[r:TestFullRelation]-(b) RETURN r", null)),
                 equalTo("[{\"r\":{\"knowsFrom\":\"A Movie\",\"relation\":\"1on1\"}}]"));
     }
 }

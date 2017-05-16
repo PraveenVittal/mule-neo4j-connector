@@ -3,6 +3,7 @@
  */
 package org.mule.modules.neo4j;
 
+import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.licensing.RequiresEnterpriseLicense;
@@ -10,9 +11,9 @@ import org.mule.api.annotations.lifecycle.OnException;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
 import org.mule.api.annotations.param.RefOnly;
-import org.mule.modules.neo4j.config.Config;
+import org.mule.modules.neo4j.config.BasicAuthenticationConfig;
 import org.mule.modules.neo4j.exception.Neo4JHandlerException;
-import org.mule.modules.neo4j.internal.Neo4JClientImpl;
+import org.mule.modules.neo4j.internal.client.Neo4JClient;
 
 import java.util.List;
 import java.util.Map;
@@ -22,18 +23,12 @@ import java.util.Map;
 @OnException(handler = Neo4JHandlerException.class)
 public class Neo4jConnector {
 
-    @org.mule.api.annotations.Config
-    Config config;
+    @Config
+    private BasicAuthenticationConfig config;
 
     @Processor
-    public List<Map<String, Object>> read(@Default("#[payload]") String query, @Optional @RefOnly Map<String, Object> parameters) {
-        return getClient().read(query, parameters);
-
-    }
-
-    @Processor
-    public void write(@Default("#[payload]") String query, @Optional @RefOnly Map<String, Object> parameters) {
-        getClient().write(query, parameters);
+    public List<Map<String, Object>> execute(@Default("#[payload]") String query, @Optional @RefOnly Map<String, Object> parameters) {
+        return getClient().execute(query, parameters);
     }
 
     @Processor
@@ -47,15 +42,15 @@ public class Neo4jConnector {
         getClient().createRelationBetweenNodes(labelsA, labelsB, condition, labelR, relProps);
     }
 
-    private Neo4JClientImpl getClient() {
+    private Neo4JClient getClient() {
         return getConfig().getClient();
     }
 
-    public Config getConfig() {
+    public BasicAuthenticationConfig getConfig() {
         return config;
     }
 
-    public void setConfig(Config config) {
+    public void setConfig(BasicAuthenticationConfig config) {
         this.config = config;
     }
 }
