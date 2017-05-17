@@ -1,7 +1,7 @@
 /**
  * (c) 2003-2017 MuleSoft, Inc. The software in this package is published under the terms of the Commercial Free Software license V.1 a copy of which has been included with this distribution in the LICENSE.md file.
  */
-package org.mule.modules.neo4j;
+package org.mule.modules.neo4j.internal.connector;
 
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
@@ -11,8 +11,9 @@ import org.mule.api.annotations.lifecycle.OnException;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
 import org.mule.api.annotations.param.RefOnly;
-import org.mule.modules.neo4j.config.BasicAuthenticationConfig;
-import org.mule.modules.neo4j.exception.Neo4JHandlerException;
+import org.mule.modules.neo4j.internal.client.Neo4JClientImpl;
+import org.mule.modules.neo4j.internal.connection.basic.BasicAuthenticationConfig;
+import org.mule.modules.neo4j.internal.exception.Neo4JExceptionHandler;
 import org.mule.modules.neo4j.internal.client.Neo4JClient;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 @Connector(name = "neo4j", friendlyName = "Neo4j")
 @RequiresEnterpriseLicense
-@OnException(handler = Neo4JHandlerException.class)
+@OnException(handler = Neo4JExceptionHandler.class)
 public class Neo4jConnector {
 
     @Config
@@ -32,18 +33,27 @@ public class Neo4jConnector {
     }
 
     @Processor
-    public void createNodes(@Default("#[payload]") @RefOnly List<Map<String, Object>> parameters, @Optional @RefOnly List<String> labels) {
-        getClient().createNodes(parameters, labels);
+    public void createNode(@Default("#[payload]") String label, @Optional @RefOnly Map<String, Object> parameters) {
+        getClient().createNode(label, parameters);
     }
 
     @Processor
-    public void createRelationBetweenNodes(@Optional @RefOnly List<String> labelsA, @Optional @RefOnly List<String> labelsB, @Default("#[payload]") String condition,
-            @RefOnly String labelR, @Optional @RefOnly Map<String, Object> relProps) {
-        getClient().createRelationBetweenNodes(labelsA, labelsB, condition, labelR, relProps);
+    public List<Map<String, Object>> selectNodes(@Default("#[payload]") String label, @Optional @RefOnly Map<String, Object> parameters) {
+        return getClient().selectNodes(label, parameters);
+    }
+
+    @Processor
+    public void updateNodes(@Default("#[payload]") String label, @Optional @RefOnly Map<String, Object> parameters, @RefOnly Map<String, Object> setParameters) {
+        getClient().updateNodes(label, parameters, setParameters);
+    }
+
+    @Processor
+    public void deleteNodes(@Default("#[payload]") String label, @Optional @RefOnly Map<String, Object> parameters) {
+        getClient().deleteNodes(label, parameters);
     }
 
     private Neo4JClient getClient() {
-        return getConfig().getClient();
+        return new Neo4JClientImpl(getConfig().getConnection());
     }
 
     public BasicAuthenticationConfig getConfig() {

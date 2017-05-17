@@ -10,7 +10,11 @@ public interface Neo4JClient {
 
     List<Map<String, Object>> execute(String query, Map<String, Object> parameters);
 
-    void createNodes(List<Map<String, Object>> parameters, List<String> labels);
+    void createNode(String label, Map<String, Object> parameters);
 
-    void createRelationBetweenNodes(List<String> labelsA, List<String> labelB, String condition, String labelR, Map<String, Object> relProps);
+    List<Map<String, Object>> selectNodes(String label, Map<String, Object> parameters);
+
+    void updateNodes(String label, Map<String, Object> parameters, Map<String, Object> setParameters);
+
+    void deleteNodes(String label, Map<String, Object> parameters);
 }

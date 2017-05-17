@@ -3,14 +3,25 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import com.google.common.collect.ImmutableMap;
 
-import org.apache.commons.io.IOUtils;
+import java.util.Map;
 
 public class TestDataBuilder {
 
-    public static String readResourceStatement(String fileName) throws IOException {
-        return IOUtils.toString(TestDataBuilder.class.getResourceAsStream(fileName), StandardCharsets.UTF_8);
+    private static final String TEST_LABEL = "TestLabel";
+    private static final String PARAMS_STRING = "{name:\"Tom Hanks\",born:1956}";
+    private static final Map<String, Object> PARAMS_MAP = ImmutableMap.<String, Object>builder().put("name", "Tom Hanks").put("born", 1956).build();
+
+    public static String getTestLabel() {
+        return TEST_LABEL;
+    }
+
+    public static Map<String, Object> getParamsMap() {
+        return PARAMS_MAP;
+    }
+
+    public static String getParamsString() {
+        return PARAMS_STRING;
     }
 }

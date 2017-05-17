@@ -3,35 +3,27 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
-import org.mule.modules.neo4j.Neo4jConnector;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.After;
+import org.mule.modules.neo4j.internal.connector.Neo4jConnector;
 import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
+import static java.lang.String.format;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.getTestLabel;
 
 public class AbstractTestCases extends AbstractTestCase<Neo4jConnector> {
-
-    private JsonParser parser = new JsonParser();
-    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public AbstractTestCases() {
         super(Neo4jConnector.class);
     }
 
-    public JsonParser getParser() {
-        return parser;
+    protected String getTestLabelNode() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(getConnector().execute(format("MATCH (a:%s) RETURN a", getTestLabel()), null));
     }
 
-    public void setParser(JsonParser parser) {
-        this.parser = parser;
-    }
-
-    public Gson getGson() {
-        return gson;
-    }
-
-    public void setGson(Gson gson) {
-        this.gson = gson;
+    @After
+    public void tearDown() {
+        getConnector().execute(format("MATCH (a:%s) DELETE a", getTestLabel()), null);
     }
 }

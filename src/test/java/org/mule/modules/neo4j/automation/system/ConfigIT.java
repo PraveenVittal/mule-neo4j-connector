@@ -11,7 +11,7 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.ConnectionException;
-import org.mule.modules.neo4j.config.BasicAuthenticationConfig;
+import org.mule.modules.neo4j.internal.connection.basic.BasicAuthenticationConfig;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 import org.mule.tools.devkit.ctf.exceptions.ConfigurationLoadingFailedException;
 

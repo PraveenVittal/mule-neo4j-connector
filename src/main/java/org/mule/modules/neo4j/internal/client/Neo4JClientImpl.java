@@ -4,27 +4,51 @@
 package org.mule.modules.neo4j.internal.client;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.collections.MapUtils;
 import org.mule.modules.neo4j.internal.connection.Neo4JConnection;
+import org.mule.modules.neo4j.internal.util.FormatFunction;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Joiner.on;
+import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.base.Strings.emptyToNull;
+import static com.google.common.collect.Iterables.transform;
 import static java.lang.String.format;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.join;
 
 public class Neo4JClientImpl implements Neo4JClient {
 
+    private static final Map<String, Object> EMPTY_MAP = Collections.emptyMap();
     private final Neo4JConnection connection;
 
     public Neo4JClientImpl(Neo4JConnection connection) {
         this.connection = connection;
+    }
+
+    @Override
+    public void createNode(String label, Map<String, Object> parameters) {
+        execute("CREATE (a:`%s` %s) RETURN a", label, parameters);
+    }
+
+    @Override
+    public List<Map<String, Object>> selectNodes(String label, Map<String, Object> parameters) {
+        return execute("MATCH (a:`%s` %s) RETURN a", label, parameters);
+    }
+
+    @Override
+    public void updateNodes(String label, Map<String, Object> parameters, Map<String, Object> setParameters) {
+        execute("MATCH (a:`%s` %s) %s RETURN a", label, parameters, setParameters);
+    }
+
+    @Override
+    public void deleteNodes(String label, Map<String, Object> parameters) {
+        execute("MATCH (a:`%s` %s) DELETE a", label, parameters);
     }
 
     @Override
@@ -40,37 +64,29 @@ public class Neo4JClientImpl implements Neo4JClient {
         return result;
     }
 
+    private List<Map<String, Object>> execute(String cql, String label, Map<String, Object> parameters) {
+        return execute(cql, label, parameters, EMPTY_MAP);
+    }
+
+    private List<Map<String, Object>> execute(String cql, String label, Map<String, Object> parameters, Map<String, Object> setParameters) {
+        return execute(format(cql, label,
+                wrapAndJoin("{%s}", "`%1$s`:$props.`%1$s`", parameters),
+                wrapAndJoin("SET %s", "a.`%1$s` = $setProps.`%1$s`", setParameters)),
+                ImmutableMap.<String, Object>builder()
+                        .put("props", fromNullable(parameters).or(EMPTY_MAP))
+                        .put("setProps", fromNullable(setParameters).or(EMPTY_MAP))
+                        .build());
+    }
+
+    private String wrapAndJoin(String wrapper, String template, Map<String, Object> parameters) {
+        return fromNullable(emptyToNull(on(",").join(transform(fromNullable(parameters).or(EMPTY_MAP).keySet(), new FormatFunction(template))))).transform(new FormatFunction(wrapper)).or("");
+    }
+
     private Object convert(Value value) {
         Map<String, Object> result = new HashMap<>();
         for (String key : value.keys()) {
             result.put(key, convert(value.get(key)));
         }
         return result.isEmpty() ? value.asObject() : result;
-    }
-
-    @Override
-    public void createNodes(List<Map<String, Object>> parameters, List<String> labels) {
-        execute(format("UNWIND $props AS map CREATE (n%s) SET n = map", concatLabels(labels)), ImmutableMap.<String, Object>builder().put("props", parameters).build());
-    }
-
-    @Override
-    public void createRelationBetweenNodes(List<String> labelsA, List<String> labelsB, String condition, String labelR, Map<String, Object> relProps) {
-        String propsMap = "";
-        Map<String, Object> props = null;
-
-        if (!MapUtils.isEmpty(relProps)) {
-            propsMap = "$props";
-            props = ImmutableMap.<String, Object>builder().put("props", relProps).build();
-        }
-
-        execute(format("MATCH (a%s),(b%s) WHERE %s CREATE (a)-[r:%s %s]->(b) RETURN r", concatLabels(labelsA), concatLabels(labelsB), condition, labelR, propsMap), props);
-    }
-
-    private String concatLabels(List<String> labels) {
-        if (!isEmpty(labels)) {
-            return format(":%s", join(labels, ":"));
-        } else {
-            return "";
-        }
     }
 }
