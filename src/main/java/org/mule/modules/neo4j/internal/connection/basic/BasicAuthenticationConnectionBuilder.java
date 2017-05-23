@@ -7,12 +7,12 @@ import org.mule.modules.neo4j.internal.connection.ConnectionBuilder;
 
 public class BasicAuthenticationConnectionBuilder implements ConnectionBuilder<BasicAuthenticationConnection> {
 
-    private String url;
+    private String boltUrl;
     private String username;
     private String password;
 
-    public BasicAuthenticationConnectionBuilder withUrl(String url) {
-        this.url = url;
+    public BasicAuthenticationConnectionBuilder withBoltUrl(String boltUrl) {
+        this.boltUrl = boltUrl;
         return this;
     }
 
@@ -27,6 +27,6 @@ public class BasicAuthenticationConnectionBuilder implements ConnectionBuilder<B
     }
 
     public BasicAuthenticationConnection create() {
-        return new BasicAuthenticationConnection(url, username, password);
+        return new BasicAuthenticationConnection(boltUrl, username, password);
     }
 }

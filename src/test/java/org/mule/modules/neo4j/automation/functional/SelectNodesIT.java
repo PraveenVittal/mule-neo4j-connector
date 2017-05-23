@@ -4,30 +4,29 @@
 package org.mule.modules.neo4j.automation.functional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.getParamsMap;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.getTestLabel;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_MAP;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 
 public class SelectNodesIT extends AbstractTestCases {
 
     @After
     public void setUp() {
-        getConnector().createNode(getTestLabel(), getParamsMap());
+        getConnector().createNode(TEST_LABEL, PARAMS_MAP);
     }
 
     @Test
     public void selecNodesIT() throws JsonProcessingException {
-        assertThat(new ObjectMapper().writeValueAsString(getConnector().selectNodes(getTestLabel(), null)), equalTo(getTestLabelNode()));
+        assertThat(objectToJsonString(getConnector().selectNodes(TEST_LABEL, null)), equalTo(getTestLabelNode()));
     }
 
     @Test
     public void selectNodesWithParamsIT() throws JsonProcessingException {
-        assertThat(new ObjectMapper().writeValueAsString(getConnector().selectNodes(getTestLabel(), getParamsMap())), equalTo(getTestLabelNode()));
+        assertThat(objectToJsonString(getConnector().selectNodes(TEST_LABEL, PARAMS_MAP)), equalTo(getTestLabelNode()));
     }
 
 }

@@ -3,6 +3,13 @@
  */
 package org.mule.modules.neo4j.internal.connection.basic;
 
+import static org.mule.api.ConnectionExceptionCode.CANNOT_REACH;
+import static org.mule.api.ConnectionExceptionCode.INCORRECT_CREDENTIALS;
+import static org.mule.api.ConnectionExceptionCode.UNKNOWN_HOST;
+
+import java.io.IOException;
+import java.util.Map;
+
 import org.mule.api.ConnectionException;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Connect;
@@ -20,21 +27,23 @@ import org.neo4j.driver.v1.exceptions.AuthenticationException;
 import org.neo4j.driver.v1.exceptions.ClientException;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
-import java.io.IOException;
+import com.google.common.collect.ImmutableMap;
 
-import static org.mule.api.ConnectionExceptionCode.CANNOT_REACH;
-import static org.mule.api.ConnectionExceptionCode.INCORRECT_CREDENTIALS;
-import static org.mule.api.ConnectionExceptionCode.UNKNOWN_HOST;
-
-@ConnectionManagement(friendlyName = "Basic Authentication Configuration")
+@ConnectionManagement(friendlyName = "Basic Authentication")
 public class BasicAuthenticationConfig {
 
     @Configurable
     @Placement(order = 1)
-    @FriendlyName("Connection URL")
-    private String url;
+    @FriendlyName("BOLT URL")
+    private String boltUrl;
+
+    @Configurable
+    @Placement(order = 2)
+    @FriendlyName("REST URL")
+    private String restUrl;
 
     private Neo4JConnection connection;
+    private Map<String, Object> metadataInfoConnection;
 
     /**
      * Connect
@@ -49,8 +58,9 @@ public class BasicAuthenticationConfig {
     @TestConnectivity
     public void connect(@ConnectionKey String username, @Password String password) throws ConnectionException {
         try {
-            this.connection = new BasicAuthenticationConnectionBuilder().withUrl(url).withUsername(username).withPassword(password).create();
+            this.connection = new BasicAuthenticationConnectionBuilder().withBoltUrl(boltUrl).withUsername(username).withPassword(password).create();
             this.connection.validate();
+            this.metadataInfoConnection = ImmutableMap.<String, Object>builder().put("username", username).put("password", password).put("restUrl", restUrl).build();
         } catch (ClientException | AuthenticationException e) {
             throw new ConnectionException(INCORRECT_CREDENTIALS, e.code(), e.getMessage());
         } catch (IllegalArgumentException | SecurityException e) {
@@ -90,15 +100,28 @@ public class BasicAuthenticationConfig {
         return connection.getId();
     }
 
-    public String getUrl() {
-        return url;
+    public String getBoltUrl() {
+        return boltUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setBoltUrl(String boltUrl) {
+        this.boltUrl = boltUrl;
     }
 
     public Neo4JConnection getConnection() {
         return connection;
     }
+
+    public Map<String, Object> getMetadataInfoConnection() {
+        return metadataInfoConnection;
+    }
+
+    public String getRestUrl() {
+        return restUrl;
+    }
+
+    public void setRestUrl(String restUrl) {
+        this.restUrl = restUrl;
+    }
+
 }

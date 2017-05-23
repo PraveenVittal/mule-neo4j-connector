@@ -4,35 +4,32 @@
 package org.mule.modules.neo4j.automation.functional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.getParamsMap;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.getTestLabel;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.*;
 
 public class UpdateNodesIT extends AbstractTestCases {
 
     @Before
     public void setUp() {
-        getConnector().createNode(getTestLabel(), getParamsMap());
+        getConnector().createNode(TEST_LABEL, PARAMS_MAP);
     }
 
     @Test
     public void updateNodesTest() throws JsonProcessingException {
-        assertThat(getTestLabelNode(), equalTo("[{\"a\":{\"born\":1956,\"name\":\"Tom Hanks\"}}]"));
-        getConnector().updateNodes(getTestLabel(), null, ImmutableMap.<String, Object>builder().put("born", 1980).build());
-        assertThat(getTestLabelNode(), equalTo("[{\"a\":{\"born\":1980,\"name\":\"Tom Hanks\"}}]"));
+        assertThat(getTestLabelNode(), equalTo(TOMHANKS_NODE));
+        getConnector().updateNodes(TEST_LABEL, null, TOMHANKS_BORN_PARAM);
+        assertThat(getTestLabelNode(), equalTo(TOMHANKS_NODE_1980));
     }
 
     @Test
     public void updateNodesWithParamsTest() throws JsonProcessingException {
-        assertThat(getTestLabelNode(), equalTo("[{\"a\":{\"born\":1956,\"name\":\"Tom Hanks\"}}]"));
-        getConnector().updateNodes(getTestLabel(), ImmutableMap.<String, Object>builder().put("name", "Tom Hanks").build(),
-                ImmutableMap.<String, Object>builder().put("born", 1980).build());
-        assertThat(getTestLabelNode(), equalTo("[{\"a\":{\"born\":1980,\"name\":\"Tom Hanks\"}}]"));
+        assertThat(getTestLabelNode(), equalTo(TOMHANKS_NODE));
+        getConnector().updateNodes(TEST_LABEL, TOMHANKS_NAME_PARAM, TOMHANKS_BORN_PARAM);
+        assertThat(getTestLabelNode(), equalTo(TOMHANKS_NODE_1980));
 
     }
 

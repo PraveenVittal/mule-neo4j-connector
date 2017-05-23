@@ -8,20 +8,22 @@ import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.getParamsMap;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.getTestLabel;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.EMPTY_NODE;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_MAP;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TOMHANKS_NODE;
 
 public class CreateNodeIT extends AbstractTestCases {
 
     @Test
     public void createNodeTest() throws JsonProcessingException {
-        getConnector().createNode(getTestLabel(), null);
-        assertThat(getTestLabelNode(), equalTo("[{\"a\":{}}]"));
+        getConnector().createNode(TEST_LABEL, null);
+        assertThat(getTestLabelNode(), equalTo(EMPTY_NODE));
     }
 
     @Test
     public void createNodeWithParamsTest() throws JsonProcessingException {
-        getConnector().createNode(getTestLabel(), getParamsMap());
-        assertThat(getTestLabelNode(), equalTo("[{\"a\":{\"born\":1956,\"name\":\"Tom Hanks\"}}]"));
+        getConnector().createNode(TEST_LABEL, PARAMS_MAP);
+        assertThat(getTestLabelNode(), equalTo(TOMHANKS_NODE));
     }
 }

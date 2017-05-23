@@ -5,16 +5,20 @@ package org.mule.modules.neo4j.internal.connector;
 
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
+import org.mule.api.annotations.MetaDataScope;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.licensing.RequiresEnterpriseLicense;
 import org.mule.api.annotations.lifecycle.OnException;
 import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.param.Optional;
 import org.mule.api.annotations.param.RefOnly;
+import org.mule.modules.neo4j.internal.client.Neo4JClient;
 import org.mule.modules.neo4j.internal.client.Neo4JClientImpl;
+import org.mule.modules.neo4j.internal.client.Neo4JMetadataClient;
+import org.mule.modules.neo4j.internal.client.Neo4JMetadataClientImpl;
 import org.mule.modules.neo4j.internal.connection.basic.BasicAuthenticationConfig;
 import org.mule.modules.neo4j.internal.exception.Neo4JExceptionHandler;
-import org.mule.modules.neo4j.internal.client.Neo4JClient;
+import org.mule.modules.neo4j.internal.metadata.InvokeMetaData;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,7 @@ import java.util.Map;
 @Connector(name = "neo4j", friendlyName = "Neo4j")
 @RequiresEnterpriseLicense
 @OnException(handler = Neo4JExceptionHandler.class)
+@MetaDataScope(InvokeMetaData.class)
 public class Neo4jConnector {
 
     @Config
@@ -54,6 +59,10 @@ public class Neo4jConnector {
 
     private Neo4JClient getClient() {
         return new Neo4JClientImpl(getConfig().getConnection());
+    }
+
+    public Neo4JMetadataClient getMetadataClient() {
+        return new Neo4JMetadataClientImpl(getConfig().getMetadataInfoConnection());
     }
 
     public BasicAuthenticationConfig getConfig() {

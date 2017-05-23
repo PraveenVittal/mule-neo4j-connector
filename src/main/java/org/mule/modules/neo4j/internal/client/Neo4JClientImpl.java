@@ -3,12 +3,11 @@
  */
 package org.mule.modules.neo4j.internal.client;
 
-import com.google.common.collect.ImmutableMap;
-import org.mule.modules.neo4j.internal.connection.Neo4JConnection;
-import org.mule.modules.neo4j.internal.util.FormatFunction;
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.Value;
-import org.neo4j.driver.v1.util.Pair;
+import static com.google.common.base.Joiner.on;
+import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.base.Strings.emptyToNull;
+import static com.google.common.collect.Iterables.transform;
+import static java.lang.String.format;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,11 +15,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.base.Joiner.on;
-import static com.google.common.base.Optional.fromNullable;
-import static com.google.common.base.Strings.emptyToNull;
-import static com.google.common.collect.Iterables.transform;
-import static java.lang.String.format;
+import org.mule.modules.neo4j.internal.connection.Neo4JConnection;
+import org.mule.modules.neo4j.internal.util.FormatFunction;
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.Value;
+import org.neo4j.driver.v1.util.Pair;
+
+import com.google.common.collect.ImmutableMap;
 
 public class Neo4JClientImpl implements Neo4JClient {
 
@@ -69,17 +70,13 @@ public class Neo4JClientImpl implements Neo4JClient {
     }
 
     private List<Map<String, Object>> execute(String cql, String label, Map<String, Object> parameters, Map<String, Object> setParameters) {
-        return execute(format(cql, label,
-                wrapAndJoin("{%s}", "`%1$s`:$props.`%1$s`", parameters),
-                wrapAndJoin("SET %s", "a.`%1$s` = $setProps.`%1$s`", setParameters)),
-                ImmutableMap.<String, Object>builder()
-                        .put("props", fromNullable(parameters).or(EMPTY_MAP))
-                        .put("setProps", fromNullable(setParameters).or(EMPTY_MAP))
-                        .build());
+        return execute(format(cql, label, wrapAndJoin("{%s}", "`%1$s`:$props.`%1$s`", parameters), wrapAndJoin("SET %s", "a.`%1$s` = $setProps.`%1$s`", setParameters)),
+                ImmutableMap.<String, Object>builder().put("props", fromNullable(parameters).or(EMPTY_MAP)).put("setProps", fromNullable(setParameters).or(EMPTY_MAP)).build());
     }
 
     private String wrapAndJoin(String wrapper, String template, Map<String, Object> parameters) {
-        return fromNullable(emptyToNull(on(",").join(transform(fromNullable(parameters).or(EMPTY_MAP).keySet(), new FormatFunction(template))))).transform(new FormatFunction(wrapper)).or("");
+        return fromNullable(emptyToNull(on(",").join(transform(fromNullable(parameters).or(EMPTY_MAP).keySet(), new FormatFunction(template)))))
+                .transform(new FormatFunction(wrapper)).or("");
     }
 
     private Object convert(Value value) {

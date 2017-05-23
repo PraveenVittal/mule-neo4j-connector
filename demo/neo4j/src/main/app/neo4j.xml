@@ -12,7 +12,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
     <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8082" doc:name="HTTP Listener Configuration"/>
     <http:listener-config name="HTTP_Listener_Configuration1" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
-    <neo4j:config name="Neo4j__Configuration" username="${config.username}" password="${config.password}" url="${config.url}" doc:name="Neo4j: Configuration"/>
+    <neo4j:config name="Neo4j__Configuration" username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" doc:name="Neo4j: Configuration"/>
     <flow name="writedb-without-params">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/writedb-without-params" allowedMethods="GET" doc:name="HTTP"/>
         <neo4j:write config-ref="Neo4j__Configuration" query="CREATE (a:Person {name:'Tom Hanks', born:1956})" doc:name="Write node"/>

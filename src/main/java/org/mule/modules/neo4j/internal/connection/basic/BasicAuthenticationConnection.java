@@ -3,21 +3,25 @@
  */
 package org.mule.modules.neo4j.internal.connection.basic;
 
+import java.io.IOException;
+import java.util.UUID;
+
 import org.mule.modules.neo4j.internal.connection.Neo4JConnection;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 
-import java.io.IOException;
-import java.util.UUID;
-
 public class BasicAuthenticationConnection implements Neo4JConnection {
 
     private final Driver neo4jClient;
     private final Session session;
+    private final String username;
+    private final String password;
 
     public BasicAuthenticationConnection(String url, String username, String password) {
+        this.username = username;
+        this.password = password;
         neo4jClient = GraphDatabase.driver(url, AuthTokens.basic(username, password));
         session = neo4jClient.session();
     }

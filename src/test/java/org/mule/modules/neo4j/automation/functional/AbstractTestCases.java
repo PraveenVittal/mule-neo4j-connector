@@ -10,7 +10,9 @@ import org.mule.modules.neo4j.internal.connector.Neo4jConnector;
 import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 
 import static java.lang.String.format;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.getTestLabel;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.QUERY_DELETE_A_NODE;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.QUERY_RETURN_A_NODE;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 
 public class AbstractTestCases extends AbstractTestCase<Neo4jConnector> {
 
@@ -19,11 +21,15 @@ public class AbstractTestCases extends AbstractTestCase<Neo4jConnector> {
     }
 
     protected String getTestLabelNode() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(getConnector().execute(format("MATCH (a:%s) RETURN a", getTestLabel()), null));
+        return objectToJsonString(getConnector().execute(format(QUERY_RETURN_A_NODE, TEST_LABEL), null));
+    }
+
+    public String objectToJsonString(Object obj) throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(obj);
     }
 
     @After
     public void tearDown() {
-        getConnector().execute(format("MATCH (a:%s) DELETE a", getTestLabel()), null);
+        getConnector().execute(format(QUERY_DELETE_A_NODE, TEST_LABEL), null);
     }
 }
