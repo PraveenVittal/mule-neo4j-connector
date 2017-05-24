@@ -3,27 +3,28 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.junit.Test;
-
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.EMPTY_NODE;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_MAP;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TOMHANKS_NODE;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class CreateNodeIT extends AbstractTestCases {
 
     @Test
     public void createNodeTest() throws JsonProcessingException {
         getConnector().createNode(TEST_LABEL, null);
-        assertThat(getTestLabelNode(), equalTo(EMPTY_NODE));
+        assertThat(getTestLabelNode(TEST_LABEL), equalTo(EMPTY_NODE));
     }
 
     @Test
     public void createNodeWithParamsTest() throws JsonProcessingException {
         getConnector().createNode(TEST_LABEL, PARAMS_MAP);
-        assertThat(getTestLabelNode(), equalTo(TOMHANKS_NODE));
+        assertThat(getTestLabelNode(TEST_LABEL), equalTo(TOMHANKS_NODE));
     }
 }

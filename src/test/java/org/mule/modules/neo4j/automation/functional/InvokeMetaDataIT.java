@@ -3,6 +3,20 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
+import static java.lang.String.format;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.CREATE_CONSTRAINT_BORN;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.CREATE_CONSTRAINT_HEIGHT;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.CREATE_CONSTRAINT_NAME;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.CREATE_INDEX_QUERY;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.DROP_CONSTRAINT_BORN;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.DROP_CONSTRAINT_HEIGHT;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.DROP_CONSTRAINT_NAME;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.DROP_INDEX_QUERY;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.METADATA_KEYS;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.METADATA_NODE_PROPERTIES;
+
+import java.io.IOException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,22 +27,7 @@ import org.mule.tools.devkit.ctf.junit.AbstractMetaDataTestCase;
 import org.mule.tools.devkit.ctf.junit.MetaDataTest;
 import org.mule.tools.devkit.ctf.junit.RunOnlyOn;
 
-import java.io.IOException;
-
-import static java.lang.String.format;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.CREATE_CONSTRAINT_NAME;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.CREATE_INDEX_QUERY;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.METADATA_KEYS;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.CREATE_CONSTRAINT_BORN;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.CREATE_CONSTRAINT_HEIGHT;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.METADATA_NODE_PROPERTIES;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.DROP_INDEX_QUERY;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.DROP_CONSTRAINT_NAME;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.DROP_CONSTRAINT_BORN;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.DROP_CONSTRAINT_HEIGHT;
-
-
-public class InvokeMetaDataIT extends AbstractMetaDataTestCase<Neo4jConnector>{
+public class InvokeMetaDataIT extends AbstractMetaDataTestCase<Neo4jConnector> {
 
     public InvokeMetaDataIT() {
         super(METADATA_KEYS, InvokeMetaData.class, Neo4jConnector.class);
@@ -36,7 +35,6 @@ public class InvokeMetaDataIT extends AbstractMetaDataTestCase<Neo4jConnector>{
 
     @Before
     public void setUp() {
-
 
         // Create Constraints on DB for Keys
         getConnector().execute(format(CREATE_INDEX_QUERY, METADATA_KEYS.get(0)), null);
@@ -69,7 +67,7 @@ public class InvokeMetaDataIT extends AbstractMetaDataTestCase<Neo4jConnector>{
 
         // Delete Nodes
         for (String label : METADATA_KEYS) {
-            getConnector().deleteNodes(label, null);
+            getConnector().deleteNodes(label, true, null);
         }
     }
 }

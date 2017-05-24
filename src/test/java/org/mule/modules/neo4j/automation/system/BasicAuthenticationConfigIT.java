@@ -3,6 +3,16 @@
  */
 package org.mule.modules.neo4j.automation.system;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+
+import java.util.List;
+import java.util.Properties;
+
+import javax.ws.rs.ProcessingException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.ConnectionException;
@@ -10,15 +20,6 @@ import org.mule.modules.neo4j.internal.client.Neo4JMetadataClientImpl;
 import org.mule.modules.neo4j.internal.connection.basic.BasicAuthenticationConfig;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 import org.mule.tools.devkit.ctf.exceptions.ConfigurationLoadingFailedException;
-
-import javax.ws.rs.ProcessingException;
-import java.util.List;
-import java.util.Properties;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 
 public class BasicAuthenticationConfigIT {
 
@@ -32,7 +33,7 @@ public class BasicAuthenticationConfigIT {
 
         config = new BasicAuthenticationConfig();
         username = properties.getProperty("config.username");
-        password =  properties.getProperty("config.password");
+        password = properties.getProperty("config.password");
 
         config.setBoltUrl(properties.getProperty("config.boltUrl"));
         config.setRestUrl(properties.getProperty("config.restUrl"));
@@ -71,27 +72,27 @@ public class BasicAuthenticationConfigIT {
     }
 
     @Test(expected = ProcessingException.class)
-    public void testInvalidRestUrl() throws ConnectionException{
+    public void testInvalidRestUrl() throws ConnectionException {
         config.setRestUrl(config.getBoltUrl().replace("http", "bolt"));
-        config.connect(username,password);
+        config.connect(username, password);
         getLabelsWithRestConnection();
     }
 
     @Test(expected = NullPointerException.class)
     public void testNullRestUrl() throws ConnectionException {
         config.setRestUrl(null);
-        config.connect(username,password);
+        config.connect(username, password);
         getLabelsWithRestConnection();
     }
 
     @Test(expected = ProcessingException.class)
     public void testEmptyRestUrl() throws ConnectionException {
         config.setRestUrl("");
-        config.connect(username,password);
+        config.connect(username, password);
         getLabelsWithRestConnection();
     }
 
-    private List<String> getLabelsWithRestConnection(){
+    private List<String> getLabelsWithRestConnection() {
         return (new Neo4JMetadataClientImpl(config.getMetadataInfoConnection())).getLabels();
     }
 }

@@ -3,15 +3,20 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import static java.lang.String.format;
 
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 public class TestDataBuilder {
 
     public static final String TEST_LABEL = "TestLabel";
+    public static final String TEST_LABEL2 = "TestLabel2";
+    public static final String TEST_REL = "TestRel";
+    public static final String CREATE_TEST_RELATION = format("MATCH (a:%s),(b:%s) CREATE (a)-[r:%s]->(b) RETURN r", TEST_LABEL, TEST_LABEL2, TEST_REL);
     public static final String EMPTY_JSON_LIST = "[]";
     public static final String QUERY_RETURN_A_NODE = "MATCH (a:%s) RETURN a";
     public static final String QUERY_DELETE_A_NODE = "MATCH (a:%s) DELETE a";
@@ -30,11 +35,10 @@ public class TestDataBuilder {
     public static final String DROP_CONSTRAINT_BORN = "DROP CONSTRAINT ON ( a:%s ) ASSERT a.born IS UNIQUE";
     public static final String DROP_CONSTRAINT_HEIGHT = "DROP CONSTRAINT ON ( a:%s ) ASSERT a.height IS UNIQUE";
 
-
     public static final List<String> METADATA_KEYS = ImmutableList.<String>builder().add("KEY1").add("KEY2").add("KEY3").add("KEY4").build();
 
     public static final Map<String, Object> PARAMS_MAP = ImmutableMap.<String, Object>builder().put("name", "Tom Hanks").put("born", 1956).build();
-    public static final Map<String,Object> TOMHANKS_NAME_PARAM = ImmutableMap.<String, Object>builder().put("name", "Tom Hanks").build();
-    public static final Map<String,Object> TOMHANKS_BORN_PARAM = ImmutableMap.<String, Object>builder().put("born", 1980).build();
-    public static final Map<String,Object> METADATA_NODE_PROPERTIES = ImmutableMap.<String, Object>builder().put("name", "metadata").put("born", 2017).put("height", 1.78).build();
+    public static final Map<String, Object> TOMHANKS_NAME_PARAM = ImmutableMap.<String, Object>builder().put("name", "Tom Hanks").build();
+    public static final Map<String, Object> TOMHANKS_BORN_PARAM = ImmutableMap.<String, Object>builder().put("born", 1980).build();
+    public static final Map<String, Object> METADATA_NODE_PROPERTIES = ImmutableMap.<String, Object>builder().put("name", "metadata").put("born", 2017).put("height", 1.78).build();
 }

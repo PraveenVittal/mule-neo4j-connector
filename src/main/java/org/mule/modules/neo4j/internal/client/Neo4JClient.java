@@ -16,5 +16,5 @@ public interface Neo4JClient {
 
     void updateNodes(String label, Map<String, Object> parameters, Map<String, Object> setParameters);
 
-    void deleteNodes(String label, Map<String, Object> parameters);
+    void deleteNodes(String label, boolean removeRelationships, Map<String, Object> parameters);
 }

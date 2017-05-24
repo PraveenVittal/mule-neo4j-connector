@@ -3,14 +3,15 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.junit.After;
-import org.junit.Test;
-
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_MAP;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
+
+import org.junit.After;
+import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class SelectNodesIT extends AbstractTestCases {
 
@@ -21,12 +22,12 @@ public class SelectNodesIT extends AbstractTestCases {
 
     @Test
     public void selecNodesIT() throws JsonProcessingException {
-        assertThat(objectToJsonString(getConnector().selectNodes(TEST_LABEL, null)), equalTo(getTestLabelNode()));
+        assertThat(objectToJsonString(getConnector().selectNodes(TEST_LABEL, null)), equalTo(getTestLabelNode(TEST_LABEL)));
     }
 
     @Test
     public void selectNodesWithParamsIT() throws JsonProcessingException {
-        assertThat(objectToJsonString(getConnector().selectNodes(TEST_LABEL, PARAMS_MAP)), equalTo(getTestLabelNode()));
+        assertThat(objectToJsonString(getConnector().selectNodes(TEST_LABEL, PARAMS_MAP)), equalTo(getTestLabelNode(TEST_LABEL)));
     }
 
 }

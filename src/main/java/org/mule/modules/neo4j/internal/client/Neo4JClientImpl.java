@@ -48,8 +48,8 @@ public class Neo4JClientImpl implements Neo4JClient {
     }
 
     @Override
-    public void deleteNodes(String label, Map<String, Object> parameters) {
-        execute("MATCH (a:`%s` %s) DELETE a", label, parameters);
+    public void deleteNodes(String label, boolean removeRelationships, Map<String, Object> parameters) {
+        execute(format("MATCH (a:`%%s` %%s) %s DELETE a", removeRelationships ? "DETACH" : ""), label, parameters);
     }
 
     @Override

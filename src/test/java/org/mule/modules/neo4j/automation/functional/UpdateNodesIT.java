@@ -3,13 +3,19 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_MAP;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TOMHANKS_BORN_PARAM;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TOMHANKS_NAME_PARAM;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TOMHANKS_NODE;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TOMHANKS_NODE_1980;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class UpdateNodesIT extends AbstractTestCases {
 
@@ -20,16 +26,16 @@ public class UpdateNodesIT extends AbstractTestCases {
 
     @Test
     public void updateNodesTest() throws JsonProcessingException {
-        assertThat(getTestLabelNode(), equalTo(TOMHANKS_NODE));
+        assertThat(getTestLabelNode(TEST_LABEL), equalTo(TOMHANKS_NODE));
         getConnector().updateNodes(TEST_LABEL, null, TOMHANKS_BORN_PARAM);
-        assertThat(getTestLabelNode(), equalTo(TOMHANKS_NODE_1980));
+        assertThat(getTestLabelNode(TEST_LABEL), equalTo(TOMHANKS_NODE_1980));
     }
 
     @Test
     public void updateNodesWithParamsTest() throws JsonProcessingException {
-        assertThat(getTestLabelNode(), equalTo(TOMHANKS_NODE));
+        assertThat(getTestLabelNode(TEST_LABEL), equalTo(TOMHANKS_NODE));
         getConnector().updateNodes(TEST_LABEL, TOMHANKS_NAME_PARAM, TOMHANKS_BORN_PARAM);
-        assertThat(getTestLabelNode(), equalTo(TOMHANKS_NODE_1980));
+        assertThat(getTestLabelNode(TEST_LABEL), equalTo(TOMHANKS_NODE_1980));
 
     }
 

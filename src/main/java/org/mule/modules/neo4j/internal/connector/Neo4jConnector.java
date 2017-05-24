@@ -3,13 +3,19 @@
  */
 package org.mule.modules.neo4j.internal.connector;
 
+import java.util.List;
+import java.util.Map;
+
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.MetaDataScope;
 import org.mule.api.annotations.Processor;
+import org.mule.api.annotations.display.FriendlyName;
 import org.mule.api.annotations.licensing.RequiresEnterpriseLicense;
 import org.mule.api.annotations.lifecycle.OnException;
 import org.mule.api.annotations.param.Default;
+import org.mule.api.annotations.param.MetaDataKeyParam;
+import org.mule.api.annotations.param.MetaDataKeyParamAffectsType;
 import org.mule.api.annotations.param.Optional;
 import org.mule.api.annotations.param.RefOnly;
 import org.mule.modules.neo4j.internal.client.Neo4JClient;
@@ -20,8 +26,8 @@ import org.mule.modules.neo4j.internal.connection.basic.BasicAuthenticationConfi
 import org.mule.modules.neo4j.internal.exception.Neo4JExceptionHandler;
 import org.mule.modules.neo4j.internal.metadata.InvokeMetaData;
 
-import java.util.List;
-import java.util.Map;
+import static org.mule.api.annotations.param.MetaDataKeyParamAffectsType.BOTH;
+import static org.mule.api.annotations.param.MetaDataKeyParamAffectsType.INPUT;
 
 @Connector(name = "neo4j", friendlyName = "Neo4j")
 @RequiresEnterpriseLicense
@@ -38,23 +44,26 @@ public class Neo4jConnector {
     }
 
     @Processor
-    public void createNode(@Default("#[payload]") String label, @Optional @RefOnly Map<String, Object> parameters) {
+    public void createNode(@MetaDataKeyParam(affects = INPUT) @Default("#[payload]") String label, @Optional @RefOnly Map<String, Object> parameters) {
         getClient().createNode(label, parameters);
     }
 
     @Processor
-    public List<Map<String, Object>> selectNodes(@Default("#[payload]") String label, @Optional @RefOnly Map<String, Object> parameters) {
+    public List<Map<String, Object>> selectNodes(@MetaDataKeyParam(affects = BOTH) @Default("#[payload]") String label,
+            @Optional @RefOnly Map<String, Object> parameters) {
         return getClient().selectNodes(label, parameters);
     }
 
     @Processor
-    public void updateNodes(@Default("#[payload]") String label, @Optional @RefOnly Map<String, Object> parameters, @RefOnly Map<String, Object> setParameters) {
+    public void updateNodes(@MetaDataKeyParam(affects = INPUT) @Default("#[payload]") String label, @Optional @RefOnly Map<String, Object> parameters,
+            @RefOnly Map<String, Object> setParameters) {
         getClient().updateNodes(label, parameters, setParameters);
     }
 
     @Processor
-    public void deleteNodes(@Default("#[payload]") String label, @Optional @RefOnly Map<String, Object> parameters) {
-        getClient().deleteNodes(label, parameters);
+    public void deleteNodes(@MetaDataKeyParam(affects = INPUT) @Default("#[payload]") String label,
+            @FriendlyName("Also remove existing relationships") boolean removeRelationships, @Optional @RefOnly Map<String, Object> parameters) {
+        getClient().deleteNodes(label, removeRelationships, parameters);
     }
 
     private Neo4JClient getClient() {
