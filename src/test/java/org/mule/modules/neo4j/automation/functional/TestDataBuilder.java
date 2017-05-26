@@ -19,7 +19,7 @@ public class TestDataBuilder {
     public static final String CREATE_TEST_RELATION = format("MATCH (a:%s),(b:%s) CREATE (a)-[r:%s]->(b) RETURN r", TEST_LABEL, TEST_LABEL2, TEST_REL);
     public static final String EMPTY_JSON_LIST = "[]";
     public static final String QUERY_RETURN_A_NODE = "MATCH (a:%s) RETURN a";
-    public static final String QUERY_DELETE_A_NODE = "MATCH (a:%s) DELETE a";
+    public static final String QUERY_DELETE_A_NODE = "MATCH (a:%s) DETACH DELETE a";
     public static final String EMPTY_NODE = "[{\"a\":{}}]";
     public static final String PARAMS_STRING = "{name:\"Tom Hanks\",born:1956}";
     public static final String TOMHANKS_NODE = "[{\"a\":{\"name\":\"Tom Hanks\",\"born\":1956}}]";
