@@ -22,8 +22,8 @@ public class TestDataBuilder {
     public static final String QUERY_DELETE_A_NODE = "MATCH (a:%s) DELETE a";
     public static final String EMPTY_NODE = "[{\"a\":{}}]";
     public static final String PARAMS_STRING = "{name:\"Tom Hanks\",born:1956}";
-    public static final String TOMHANKS_NODE = "[{\"a\":{\"born\":1956,\"name\":\"Tom Hanks\"}}]";
-    public static final String TOMHANKS_NODE_1980 = "[{\"a\":{\"born\":1980,\"name\":\"Tom Hanks\"}}]";
+    public static final String TOMHANKS_NODE = "[{\"a\":{\"name\":\"Tom Hanks\",\"born\":1956}}]";
+    public static final String TOMHANKS_NODE_1980 = "[{\"a\":{\"name\":\"Tom Hanks\",\"born\":1980}}]";
     public static final String CREATE_A_NODE_QUERY = "CREATE (a:%s %s) RETURN a";
     public static final String CREATE_A_WITH_PARAMS_NODE_QUERY = "CREATE (a:%s {name: $name, born: toInt($born)}) RETURN a";
     public static final String CREATE_INDEX_QUERY = "CREATE INDEX on :%s(name)";
