@@ -35,8 +35,6 @@ public class InvokeMetaDataIT extends AbstractMetaDataTestCase<Neo4jConnector> {
 
     @Before
     public void setUp() {
-
-        // Create Constraints on DB for Keys
         getConnector().execute(format(CREATE_INDEX_QUERY, METADATA_KEYS.get(0)), null);
         getConnector().execute(format(CREATE_CONSTRAINT_NAME, METADATA_KEYS.get(2)), null);
         getConnector().execute(format(CREATE_CONSTRAINT_NAME, METADATA_KEYS.get(3)), null);
@@ -58,14 +56,12 @@ public class InvokeMetaDataIT extends AbstractMetaDataTestCase<Neo4jConnector> {
 
     @After
     public void tearDown() {
-        // Delete Constraints on DB for Keys
         getConnector().execute(format(DROP_INDEX_QUERY, METADATA_KEYS.get(0)), null);
         getConnector().execute(format(DROP_CONSTRAINT_NAME, METADATA_KEYS.get(2)), null);
         getConnector().execute(format(DROP_CONSTRAINT_NAME, METADATA_KEYS.get(3)), null);
         getConnector().execute(format(DROP_CONSTRAINT_BORN, METADATA_KEYS.get(3)), null);
         getConnector().execute(format(DROP_CONSTRAINT_HEIGHT, METADATA_KEYS.get(3)), null);
 
-        // Delete Nodes
         for (String label : METADATA_KEYS) {
             getConnector().deleteNodes(label, true, null);
         }
