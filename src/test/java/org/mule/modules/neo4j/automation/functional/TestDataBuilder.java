@@ -17,13 +17,9 @@ public class TestDataBuilder {
     public static final String TEST_LABEL2 = "TestLabel2";
     public static final String TEST_REL = "TestRel";
     public static final String CREATE_TEST_RELATION = format("MATCH (a:%s),(b:%s) CREATE (a)-[r:%s]->(b) RETURN r", TEST_LABEL, TEST_LABEL2, TEST_REL);
-    public static final String EMPTY_JSON_LIST = "[]";
     public static final String QUERY_RETURN_A_NODE = "MATCH (a:%s) RETURN a";
     public static final String QUERY_DELETE_A_NODE = "MATCH (a:%s) DETACH DELETE a";
-    public static final String EMPTY_NODE = "[{\"a\":{}}]";
     public static final String PARAMS_STRING = "{name:\"Tom Hanks\",born:1956}";
-    public static final String TOMHANKS_NODE = "[{\"a\":{\"name\":\"Tom Hanks\",\"born\":1956}}]";
-    public static final String TOMHANKS_NODE_1980 = "[{\"a\":{\"name\":\"Tom Hanks\",\"born\":1980}}]";
     public static final String CREATE_A_NODE_QUERY = "CREATE (a:%s %s) RETURN a";
     public static final String CREATE_A_WITH_PARAMS_NODE_QUERY = "CREATE (a:%s {name: $name, born: toInt($born)}) RETURN a";
     public static final String CREATE_INDEX_QUERY = "CREATE INDEX on :%s(name)";
@@ -36,6 +32,11 @@ public class TestDataBuilder {
     public static final String DROP_CONSTRAINT_HEIGHT = "DROP CONSTRAINT ON ( a:%s ) ASSERT a.height IS UNIQUE";
 
     public static final List<String> METADATA_KEYS = ImmutableList.<String>builder().add("KEY1").add("KEY2").add("KEY3").add("KEY4").build();
+
+    public static final Map<String,Object> TOMHANKS_NODE = ImmutableMap.<String,Object>builder().put("born",1956L).put("name","Tom Hanks").build();
+    public static final Map<String,Object> TOMHANKS_NODE_1980 = ImmutableMap.<String,Object>builder().put("born",1980L).put("name","Tom Hanks").build();
+    public static final Map<String,Object> A_NODE = ImmutableMap.<String,Object>builder().put("a",TOMHANKS_NODE).build();
+    public static final Map<String,Object> A_NODE_1980 = ImmutableMap.<String,Object>builder().put("a",TOMHANKS_NODE_1980).build();
 
     public static final Map<String, Object> PARAMS_MAP = ImmutableMap.<String, Object>builder().put("name", "Tom Hanks").put("born", 1956).build();
     public static final Map<String, Object> TOMHANKS_NAME_PARAM = ImmutableMap.<String, Object>builder().put("name", "Tom Hanks").build();

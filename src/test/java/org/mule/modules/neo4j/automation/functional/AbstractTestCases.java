@@ -14,18 +14,17 @@ import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
+import java.util.Map;
+
 public class AbstractTestCases extends AbstractTestCase<Neo4jConnector> {
 
     public AbstractTestCases() {
         super(Neo4jConnector.class);
     }
 
-    protected String getTestLabelNode(String label) throws JsonProcessingException {
-        return objectToJsonString(getConnector().execute(format(QUERY_RETURN_A_NODE, label), null));
-    }
-
-    public String objectToJsonString(Object obj) throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(obj);
+    protected List<Map<String, Object>> getTestLabelNode(String label) throws JsonProcessingException {
+        return getConnector().execute(format(QUERY_RETURN_A_NODE, label), null);
     }
 
     @Before

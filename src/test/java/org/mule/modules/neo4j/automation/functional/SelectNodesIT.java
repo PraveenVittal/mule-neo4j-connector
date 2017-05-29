@@ -3,8 +3,10 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.A_NODE;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_MAP;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 
@@ -22,12 +24,12 @@ public class SelectNodesIT extends AbstractTestCases {
 
     @Test
     public void selecNodesIT() throws JsonProcessingException {
-        assertThat(objectToJsonString(getConnector().selectNodes(TEST_LABEL, null)), equalTo(getTestLabelNode(TEST_LABEL)));
+        assertThat(getConnector().selectNodes(TEST_LABEL, null), contains(A_NODE));
     }
 
     @Test
     public void selectNodesWithParamsIT() throws JsonProcessingException {
-        assertThat(objectToJsonString(getConnector().selectNodes(TEST_LABEL, PARAMS_MAP)), equalTo(getTestLabelNode(TEST_LABEL)));
+        assertThat(getConnector().selectNodes(TEST_LABEL, PARAMS_MAP), contains(A_NODE));
     }
 
 }
