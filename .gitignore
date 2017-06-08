@@ -34,5 +34,7 @@ demo/**/catalog
 
 *.log
 *automation-credentials.properties
+*cert.properties
 *.pem
+*.ts
 muleLicenseKey.lic

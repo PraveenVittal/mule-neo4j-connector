@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:neo4j="http://www.mulesoft.org/schema/mule/neo4j" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/neo4j http://www.mulesoft.org/schema/mule/neo4j/current/mule-neo4j.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8082" doc:name="HTTP Listener Configuration"/>
+    <http:listener-config name="HTTP_Listener_Configuration1" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <neo4j:config name="Neo4j__Configuration" username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" doc:name="Neo4j: Configuration" restUrl="${config.restUrl}"/>
+    <flow name="CRUD">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/CRUD" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Create params">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+}]]></dw:set-payload>
+            <dw:set-variable variableName="params"><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	"name":"Tom Hanks",
+	"born": 1956
+}]]></dw:set-variable>
+        </dw:transform-message>
+        <neo4j:create-node config-ref="Neo4j__Configuration" label="Person" parameters-ref="#[flowVars.params]" doc:name="Create Node"/>
+        <neo4j:select-nodes config-ref="Neo4j__Configuration" label="Person" doc:name="Select Node"/>
+        <neo4j:delete-nodes config-ref="Neo4j__Configuration" label="Person" doc:name="Delete Node"/>
+        <json:object-to-json-transformer doc:name="JSON value"/>
+    </flow>
+    <flow name="Update-node">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/UpdateNode" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Create params">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+}]]></dw:set-payload>
+            <dw:set-variable variableName="params"><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	"name":"Tom Hanks",
+	"born": 1956
+}]]></dw:set-variable>
+            <dw:set-variable variableName="newParams"><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	"born":1980
+}]]></dw:set-variable>
+        </dw:transform-message>
+        <neo4j:create-node config-ref="Neo4j__Configuration" label="Person" parameters-ref="#[payload]" doc:name="Create Node"/>
+        <neo4j:update-nodes config-ref="Neo4j__Configuration" label="Person" parameters-ref="#[flowVars.params]" setParameters-ref="#[flowVars.'newParams']" doc:name="Update Node"/>
+        <neo4j:select-nodes config-ref="Neo4j__Configuration" label="Person" doc:name="Select Node"/>
+        <neo4j:delete-nodes config-ref="Neo4j__Configuration" label="Person" doc:name="Delete Node"/>
+        <json:object-to-json-transformer doc:name="JSON value"/>
+    </flow>
+    <flow name="Delete-node-with-Relationships">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/deleteNodes" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Create params">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+}]]></dw:set-payload>
+            <dw:set-variable variableName="paramsNode1"><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	"name":"Tom Hanks",
+	"born": 1956
+}]]></dw:set-variable>
+            <dw:set-variable variableName="paramsNode2"><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	"name":"Sylvester Stallone",
+	"born": 1946
+}]]></dw:set-variable>
+            <dw:set-variable variableName="relationshipStatement"><![CDATA[%dw 1.0
+%output application/java
+---
+"MATCH (a:Person {name:\"Tom Hanks\"}),(b:Person {name:\"Sylvester Stallone\"}) CREATE (a)-[r:RELATIONSHIP]->(b)"]]></dw:set-variable>
+        </dw:transform-message>
+        <neo4j:create-node config-ref="Neo4j__Configuration" label="Person" parameters-ref="#[flowVars.paramsNode1]" doc:name="Create Node 1"/>
+        <neo4j:create-node config-ref="Neo4j__Configuration" label="Person" parameters-ref="#[flowVars.paramsNode2]" doc:name="Create Node 2"/>
+        <neo4j:execute config-ref="Neo4j__Configuration" query="#[flowVars.relationshipStatement]" doc:name="Set nodes relationship"/>
+        <neo4j:delete-nodes config-ref="Neo4j__Configuration" label="Person" removeRelationships="true" parameters-ref="#[flowVars.paramsNode2]" doc:name="Delete Node 2"/>
+        <neo4j:select-nodes config-ref="Neo4j__Configuration" label="Person" doc:name="Select Person Nodes"/>
+        <json:object-to-json-transformer doc:name="JSON value"/>
+        <neo4j:delete-nodes config-ref="Neo4j__Configuration" label="Person" removeRelationships="true" parameters-ref="#[flowVars.paramsNode1]" doc:name="Delete Node 1"/>
+    </flow>
+</mule>

@@ -33,10 +33,10 @@ public class TestDataBuilder {
 
     public static final List<String> METADATA_KEYS = ImmutableList.<String>builder().add("KEY1").add("KEY2").add("KEY3").add("KEY4").build();
 
-    public static final Map<String,Object> TOMHANKS_NODE = ImmutableMap.<String,Object>builder().put("born",1956L).put("name","Tom Hanks").build();
-    public static final Map<String,Object> TOMHANKS_NODE_1980 = ImmutableMap.<String,Object>builder().put("born",1980L).put("name","Tom Hanks").build();
-    public static final Map<String,Object> A_NODE = ImmutableMap.<String,Object>builder().put("a",TOMHANKS_NODE).build();
-    public static final Map<String,Object> A_NODE_1980 = ImmutableMap.<String,Object>builder().put("a",TOMHANKS_NODE_1980).build();
+    public static final Map<String, Object> TOMHANKS_NODE = ImmutableMap.<String, Object>builder().put("born", 1956L).put("name", "Tom Hanks").build();
+    public static final Map<String, Object> TOMHANKS_NODE_1980 = ImmutableMap.<String, Object>builder().put("born", 1980L).put("name", "Tom Hanks").build();
+    public static final Map<String, Object> A_NODE = ImmutableMap.<String, Object>builder().put("a", TOMHANKS_NODE).build();
+    public static final Map<String, Object> A_NODE_1980 = ImmutableMap.<String, Object>builder().put("a", TOMHANKS_NODE_1980).build();
 
     public static final Map<String, Object> PARAMS_MAP = ImmutableMap.<String, Object>builder().put("name", "Tom Hanks").put("born", 1956).build();
     public static final Map<String, Object> TOMHANKS_NAME_PARAM = ImmutableMap.<String, Object>builder().put("name", "Tom Hanks").build();

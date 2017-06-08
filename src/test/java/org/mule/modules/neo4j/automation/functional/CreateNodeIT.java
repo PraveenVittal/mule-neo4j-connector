@@ -4,13 +4,12 @@
 package org.mule.modules.neo4j.automation.functional;
 
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.*;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.A_NODE;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_MAP;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

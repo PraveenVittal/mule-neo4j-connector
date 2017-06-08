@@ -1,25 +1,21 @@
-# Neo4j Anypoint Connector
+Neo4J Connector
+=============================
 
-[Connector description including destination service or application with]
+The Anypoint Connector for Neo4J is a closed-source, SDK-based connector that provides automation of processes for Neo4J operations.
 
-# Mule supported versions
+## Author
+MuleSoft Inc.
 
-# [Destination service or application name] supported versions
-Example:
+## Supported Mule runtime versions
+Mule 3.7.x, 3.8.x
 
-#Service or application supported modules
+## Neo4J Bolt API supported versions
+Neo4J API 1.2.1
 
+## Supported modules
 
+* CQL
+* Nodes
 
-# Installation 
-For beta connectors you can download the source code and build it with devkit to find it available on your local repository. Then you can add it to Studio
-
-For released connectors you can download them from the update site in Anypoint Studio. 
-Open Anypoint Studio, go to Help → Install New Software and select Anypoint Connectors Update Site where you’ll find all avaliable connectors.
-
-#Usage
-For information about usage our documentation at http://github.com/mulesoft/neo4j.
-
-# Reporting Issues
-
-We use GitHub:Issues for tracking issues with this connector. You can report new issues at this link http://github.com/mulesoft/neo4j/issues.
+## Installation and Usage
+You can access the full documentation [here](doc/user-manual.adoc).

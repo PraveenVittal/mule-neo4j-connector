@@ -5,9 +5,13 @@ package org.mule.modules.neo4j.automation.functional;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.*;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.A_NODE;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.CREATE_A_NODE_QUERY;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.CREATE_A_WITH_PARAMS_NODE_QUERY;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_MAP;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_STRING;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 
 import org.junit.Test;
 

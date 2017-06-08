@@ -4,7 +4,13 @@
 package org.mule.modules.neo4j.automation.functional;
 
 import static java.lang.String.format;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.*;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.QUERY_DELETE_A_NODE;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.QUERY_RETURN_A_NODE;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL2;
+
+import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,10 +18,6 @@ import org.mule.modules.neo4j.internal.connector.Neo4jConnector;
 import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.List;
-import java.util.Map;
 
 public class AbstractTestCases extends AbstractTestCase<Neo4jConnector> {
 
@@ -37,7 +39,7 @@ public class AbstractTestCases extends AbstractTestCase<Neo4jConnector> {
         cleanUpDB();
     }
 
-    private void cleanUpDB(){
+    private void cleanUpDB() {
         getConnector().execute(format(QUERY_DELETE_A_NODE, TEST_LABEL), null);
         getConnector().execute(format(QUERY_DELETE_A_NODE, TEST_LABEL2), null);
     }
