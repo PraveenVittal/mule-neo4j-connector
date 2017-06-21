@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class DeleteNodesIT extends AbstractTestCases {
 
+    @Override
     @Before
     public void setUp() {
         getConnector().createNode(TEST_LABEL, PARAMS_MAP);

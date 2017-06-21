@@ -26,6 +26,7 @@ public class BasicAuthenticationConnectionBuilder implements ConnectionBuilder<B
         return this;
     }
 
+    @Override
     public BasicAuthenticationConnection create() {
         return new BasicAuthenticationConnection(boltUrl, username, password);
     }

@@ -3,11 +3,13 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
+import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.QUERY_DELETE_A_NODE;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.QUERY_RETURN_A_NODE;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL2;
+import static java.lang.System.getProperty;
+import static java.lang.System.setProperty;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.*;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TRUSTSTORE_PWD_PROPERTY;
 
 import java.util.List;
 import java.util.Map;

@@ -3,16 +3,20 @@
  */
 package org.mule.modules.neo4j.automation.system;
 
+import static java.lang.System.getProperty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.*;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TRUSTSTORE_PWD_PROPERTY;
 
 import java.util.List;
 import java.util.Properties;
 
 import javax.ws.rs.ProcessingException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.ConnectionException;
@@ -27,9 +31,14 @@ public class BasicAuthenticationConfigIT {
     private String username;
     private String password;
 
+    private String defaultTrustStore = getProperty(TRUSTSTORE_PROPERTY);
+    private String defaultTrustStorePass = getProperty(TRUSTSTORE_PWD_PROPERTY);
+
     @Before
     public void setUp() throws ConfigurationLoadingFailedException {
         final Properties properties = ConfigurationUtils.getAutomationCredentialsProperties();
+
+        setTrustStores(TRUSTSTORE_PROPERTY_VALUE, TRUSTSTORE_PWD_PROPERTY_VALUE);
 
         config = new BasicAuthenticationConfig();
         username = properties.getProperty("config.username");
@@ -90,6 +99,11 @@ public class BasicAuthenticationConfigIT {
         config.setRestUrl("");
         config.connect(username, password);
         getLabelsWithRestConnection();
+    }
+
+    @After
+    public void tearDown(){
+        setTrustStores(defaultTrustStore,defaultTrustStorePass);
     }
 
     private List<String> getLabelsWithRestConnection() {
