@@ -63,7 +63,7 @@ NOTE: Refer to https://neo4j.com/docs/operations-manual/current/security/authent
 
 
 === Currently Available in the Connector
-The Neo4J Connector v1.0.0 *only* implements the  *Basic Authentication*.
+The Neo4J Connector v2.0.0 *only* implements the  *Basic Authentication*.
 
 == Troubleshooting
 
