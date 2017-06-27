@@ -90,7 +90,7 @@ The Neo4J Connector v2.0.0 *only* implements the  *Basic Authentication*.
 Package/s to log:
 
 * org.mule.modules.neo4j.internal.connector.Neo4JConnector
-* org.mule.modules.neo4j.client.Neo4JClientImpl
+* org.mule.modules.neo4j.internal.client.Neo4JClientImpl
 * org.mule.modules.neo4j.connection.basic.BasicAuthenticationConnection
 
 === Communication Debug
