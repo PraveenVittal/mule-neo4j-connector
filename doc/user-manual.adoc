@@ -13,40 +13,25 @@ toc::[]
 
 Anypoint Connector for Neo4J provides the capability of execute CQL statements and run basic operations (such as create, update, delete, select nodes) against a Neo4J Graph DB instance.
 
-Read through this user guide to understand how to set up and configure a basic flow using the connector. Track feature additions, compatibility, limitations, and API version updates with each release of the connector using the link:/release-notes/neo4j-connector-release-notes[Connector Release Notes]. Review the connector operations and functionality using the link:http://mulesoft.github.io/neo4j-connector/[Technical Reference] along side the link:https://www.mulesoft.com/exchange#!/?filters=neo4j&sortBy=rank[demo applications].
+See:
 
-MuleSoft maintains this connector under the link:/mule-user-guide/v/3.8/anypoint-connectors#connector-categories[Select] support policy.
+* link:/release-notes/neo4j-connector-release-notes[Connector Release Notes]
+* link:http://mulesoft.github.io/neo4j-connector/[Technical Reference]
+* link:https://www.mulesoft.com/exchange#!/?filters=neo4j&sortBy=rank[Anypoint Exchange demo applications].
 
-[[important-concepts]]
-== Important Concepts
+MuleSoft maintains this connector under the link:https://www.mulesoft.com/legal/versioning-back-support-policy#anypoint-connectors[Connector Support Policy - Select].
 
-This document assumes that you are familiar with Mule,
-link:/mule-user-guide/v/3.8/anypoint-connectors[Anypoint Connectors], and
-link:/anypoint-studio/v/6[Anypoint Studio]. To increase your familiarity with Studio, consider completing a link:/anypoint-studio/v/6/basic-studio-tutorial[Anypoint Studio Tutorial]. This page requires basic knowledge of link:/mule-user-guide/v/3.8/mule-concepts[Mule Concepts], link:/mule-user-guide/v/3.8/elements-in-a-mule-flow[Elements in a Mule Flow], and link:/mule-user-guide/v/3.8/global-elements[Global Elements].
+This document assumes that you are familiar with Mule, Anypoint Connectors, Anypoint Studio, Mule Concepts, and Global Elements.
 
-
-[[requirements]]
-== Hardware and Software Requirements
-
-For hardware and software requirements, visit the link:/release-notes/connector[Connector Release Notes].
+For hardware and software requirements, see the link:/release-notes/neo4jconnector[Neo4J Connector Release Notes].
 
 [[install]]
 == How to Install
 
 You can install the connector in Anypoint Studio using the instructions in
-link:/getting-started/anypoint-exchange#installing-a-connector-from-anypoint-exchange[Installing a Connector from Anypoint Exchange].
+link:/getting-started/anypoint-exchange#installing-a-connector-from-anypoint-exchange[Installing a Connector from Anypoint Exchange]. 
 
-[[upgrading]]
-=== Upgrading from an Older Version
-
-If you’re currently using an older version of the connector, a small popup appears in the bottom right corner of Anypoint Studio with an "Updates Available" message.
-
-. Click the popup and check for available updates. 
-. Click the Connector version checkbox, click *Next*, and follow the instructions provided by the user interface. 
-. *Restart* Studio when prompted. 
-. After restarting, when creating a flow and using the connector, if you have several versions of the connector installed, you may be asked which version you would like to use. Choose the version you would like to use.
-
-Additionally, we recommend that you keep Studio up to date with its latest version.
+If you are upgrading from a previous version of the connector, a small popup appears in the bottom right corner of Anypoint Studio with the "Updates Available" message. Click the popup and follow the prompts to install the latest version. 
 
 [[ns-schema]]
 == Connector Namespace and Schema
@@ -91,27 +76,22 @@ For Maven dependency management, include this XML snippet in your `pom.xml` file
 </dependency>
 ----
 
-[TIP]
-====
 Inside the `<version>` tags, put the desired version number, the word `RELEASE` for the latest release, or `SNAPSHOT` for the latest available version.
-
-====
 
 [[configure]]
 == How to Configure
 
 Place the connector in your flow as applicable for your use case.
 
-To use the Neo4J connector in your Mule application, you must configure a global Neo4J element that can be used by the Neo4J connector (read more about  link:/mule-user-guide/v/3.8/global-elements[Global Elements]). The Neo4J connector provides the following global configuration, requiring the following information:
+To use the Neo4J connector in your Mule application, you must configure a global Neo4J element that can be used by the Neo4J connector. The Neo4J connector provides the following global configuration, requiring the following information:
 
 [%header%autowidth.spread]
 |===
 |Field |Description
-|*Username* |Enter the username to log in with.
-|*Password* |Enter the corresponding password.
-|*BOLT URL* |Bolt endpoint.
-|*REST URL* |Rest endpoint url (works with http or https).
-
+|Username |Enter the username to log in with.
+|Password |Enter the corresponding password.
+|BOLT URL |Bolt endpoint.
+|REST URL |Rest endpoint URL (works with HTTP or HTTPS).
 |===
 
 image:neo4j-global-element-props.png[neo4j-config]
@@ -123,15 +103,13 @@ image:neo4j-global-element-props.png[neo4j-config]
 |===
 |Name | Description
 |Execute   | Execute any CQL statement against DB.
-
 |Create Node| Create a node with a specific initial label. Optionally, properties for the node can be added.
 |Select Nodes| Query nodes with a specific label. Optionally, properties used as filter can be provided.
 |Update Nodes| Modified properties for one or multiple nodes with a specific label. Optional Properties can be added as search filter criteria.
-|Delete Nodes| Delete one or multiples nodes based on a specific label. It allows to delete nodes who has inbound/outbound relationships. Optional Properties can be added as search filter criteria.
+|Delete Nodes| Delete one or multiples nodes based on a specific label. This lets you delete nodes with inbound/outbound relationships. Optional Properties can be added as search filter criteria.
 |===
 
-[NOTE]
-See a full list of operations for any version of the connector link:http://mulesoft.github.io/neo4j-connector[here].
+For a full list of operations for any version of the connector, see the link:http://mulesoft.github.io/neo4j-connector[Neo4J Connector Reference].
 
 
 == Common Use Cases
@@ -153,8 +131,8 @@ config.boltUrl=<BOLT_URL_ENDOPOINT>
 config.restUrl=<REST_URL_ENDPOINT>
 ----
 +
-. Drag a **HTTP endpoint** onto the canvas and configure it with the default values.
-. Drag a **Transform Message** onto the canvas and create a flowVar called 'params' with the following code:
+. Drag an HTTP connector onto the canvas and configure it with the default values.
+. Drag a Transform Message onto the canvas and create a flowVar called 'params' with the following code:
 +
 [source,code,linenums]
 ----
@@ -167,7 +145,7 @@ config.restUrl=<REST_URL_ENDPOINT>
 }
 ----
 +
-. Drag a **Neo4J connector** onto the canvas and configure a new Global Element according to the table below:
+. Drag the Neo4J connector onto the canvas and configure a new Global Element according to the table below:
 +
 [%header]
 |===
@@ -183,7 +161,7 @@ config.restUrl=<REST_URL_ENDPOINT>
 <neo4j:config name="Neo4j__Basic_Authentication" username="${neo4j.username}" password="${neo4j.password}" boltUrl="${neo4j.boltUrl}" restUrl="${neo4j.restUrl}" doc:name="Neo4j: Basic Authentication"/>
 ----
 +
-.. In the *Properties editor*, configure:
+.. In the Properties Editor, configure:
 +
 [%header]
 |===
@@ -196,9 +174,9 @@ config.restUrl=<REST_URL_ENDPOINT>
 |===
 image::CreateNode.png[Create node, align="center"]
 +
-NOTE: Click Test Connection to confirm that Mule can connect with the Neo4J instance. If the connection is successful, click OK to save the configuration. Otherwise, review or correct any invalid parameters and test again.
+Note: Click Test Connection to confirm that Mule can connect with the Neo4J instance. If the connection is successful, click OK to save the configuration. Otherwise, review or correct any invalid parameters and test again.
 +
-. Drag a **Neo4J connector** onto the canvas, in the *Properties editor*, configure the parameters:
+. Drag a Neo4J connector onto the canvas, in the Properties Editor, configure the parameters:
 +
 [%header]
 |===
@@ -207,7 +185,7 @@ NOTE: Click Test Connection to confirm that Mule can connect with the Neo4J inst
 |Label | `Person`
 |===
 +
-. Drag a **Neo4J connector** onto the canvas, in the *Properties editor*, configure the parameters:
+. Drag a Neo4J connector onto the canvas, in the Properties Editor, configure the parameters:
 +
 [%header]
 |===
@@ -216,8 +194,8 @@ NOTE: Click Test Connection to confirm that Mule can connect with the Neo4J inst
 |Label | `Person`
 |===
 +
-. Drag an **Object to JSON** onto the canvas.
-. *Save* the changes and *deploy* the project as a Mule Application. Open a *web browser* and make a request to the following URL:
+. Drag an *Object to JSON* onto the canvas.
+. Save the changes and deploy the project as a Mule Application. Open a browser and make a request to the following URL:
 +
 [source,code]
 ----
@@ -233,12 +211,13 @@ If the node was successfully created and deleted, information should be displaye
 
 == Connector Performance
 
-To define the pooling profile for the connector manually, access the *Pooling Profile* tab in the applicable global element for the connector.
+To define the pooling profile for the connector manually, access the Pooling Profile tab in the global element for the connector.
 
 For background information on pooling, see link:/mule-user-guide/v/3.8/tuning-performance[Tuning Performance].
 
-For general documentation, see link:https://neo4j.com/docs[Neo4J Docs]
 
-== Resources
 
+== See Also
+
+* For general documentation, see link:https://neo4j.com/docs[Neo4J Documentation].
 * Access the link:/release-notes/neo4j-connector-release-notes[Neo4J Connector Release Notes].
