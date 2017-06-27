@@ -52,6 +52,24 @@ For continuous integration and local testing of the Neo4J connector, we use the 
 * Neo4J Version: Neo4j 3.2.0 CE
 * Host: ec2-54-88-71-203.compute-1.amazonaws.com
 
+=== Usign docker
+
+```
+docker run \
+    --publish=7474:7474 --publish=7687:7687 \
+    --volume=$HOME/neo4j/data:/data \
+    neo4j
+```
+
+NOTE: Probably the installation will require to change the password. Visit http://localhost:7474/browser/ for local browsing.
+
+<neo4j:config name="Neo4j__Configuration" username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" doc:name="Neo4j: Configuration" restUrl="${config.restUrl}"/>
+
+config.username=neo4j
+config.password=neo4jneo4j
+config.boltUrl=bolt://localhost:7687
+config.restUrl=http://localhost:7474
+
 == Authentication Methods
 
 === Available for the Platform
