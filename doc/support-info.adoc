@@ -98,6 +98,11 @@ Package/s to log:
 === Communication Debug
 For all the operations, you can capture the requests in the class *Neo4JClientImpl*, which use the Neo4J Bolt SDK.
 
+For more infor about these requests please refer to the following documentation links:
+https://boltprotocol.org/
+https://boltprotocol.org/v1/
+https://boltprotocol.org/v1/#handshake
+
 == Entry Points
 
 Most of the logic constructing requests, sending and receiving messages from the server is done in class `org.mule.modules.neo4j.client.Neo4JClientImpl`.
