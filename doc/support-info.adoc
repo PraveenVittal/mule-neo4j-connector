@@ -103,6 +103,9 @@ https://boltprotocol.org/
 https://boltprotocol.org/v1/
 https://boltprotocol.org/v1/#handshake
 
+=== Certificate usage
+https://neo4j.com/docs/operations-manual/current/configuration/install-certificates/
+
 == Entry Points
 
 Most of the logic constructing requests, sending and receiving messages from the server is done in class `org.mule.modules.neo4j.client.Neo4JClientImpl`.
