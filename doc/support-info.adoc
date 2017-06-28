@@ -61,7 +61,7 @@ docker run \
     neo4j
 ```
 
-NOTE: Probably the installation will require to change the password. Visit http://localhost:7474/browser/ for local browsing.
+NOTE: Probably the installation will require to change the password. Visit http://localhost:7474/browser/ for local browsing. Default login credentials are neo4j/neo4j.
 
 <neo4j:config name="Neo4j__Configuration" username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" doc:name="Neo4j: Configuration" restUrl="${config.restUrl}"/>
 
