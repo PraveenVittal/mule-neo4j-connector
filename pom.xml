@@ -35,6 +35,7 @@
             </plugin>
         </plugins>
     </build>
+
     <repositories>
         <repository>
             <id>mulesoft-releases</id>
@@ -72,4 +73,25 @@
             <version>2.4.3</version>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>mule-ee-releases</id>
+            <name>MuleEE Releases Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases-ee/</url>
+        </repository>
+        <snapshotRepository>
+            <id>mule-ee-snapshots</id>
+            <name>MuleEE Snapshots Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:git:git://github.com:mulesoft/neo4j-connector.git</connection>
+        <developerConnection>scm:git:git@github.com:mulesoft/neo4j-connector.git</developerConnection>
+        <url>http://github.com/mulesoft/neo4j-connector</url>
+    </scm>
+
 </project>

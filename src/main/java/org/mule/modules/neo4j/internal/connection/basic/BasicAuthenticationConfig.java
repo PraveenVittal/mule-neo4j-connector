@@ -28,6 +28,8 @@ import org.neo4j.driver.v1.exceptions.ClientException;
 import org.neo4j.driver.v1.exceptions.ServiceUnavailableException;
 
 import com.google.common.collect.ImmutableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ConnectionManagement(friendlyName = "Basic Authentication")
 public class BasicAuthenticationConfig {
@@ -44,6 +46,7 @@ public class BasicAuthenticationConfig {
 
     private Neo4JConnection connection;
     private Map<String, Object> metadataInfoConnection;
+    private static final Logger logger = LoggerFactory.getLogger(BasicAuthenticationConfig.class);
 
     /**
      * Connect
@@ -62,10 +65,13 @@ public class BasicAuthenticationConfig {
             this.connection.validate();
             this.metadataInfoConnection = ImmutableMap.<String, Object>builder().put("username", username).put("password", password).put("restUrl", restUrl).build();
         } catch (ClientException | AuthenticationException e) {
+            logger.trace("Connection failed: incorrect credentials", e);
             throw new ConnectionException(INCORRECT_CREDENTIALS, e.code(), e.getMessage());
         } catch (IllegalArgumentException | SecurityException e) {
+            logger.trace("Connection failed: unknown host", e);
             throw new ConnectionException(UNKNOWN_HOST, "", e.getMessage());
         } catch (ServiceUnavailableException e) {
+            logger.trace("Connection failed: cannot reach", e);
             throw new ConnectionException(CANNOT_REACH, e.code(), e.getMessage());
         }
     }
@@ -91,6 +97,7 @@ public class BasicAuthenticationConfig {
             connection.validate();
             return true;
         } catch (RuntimeException e) {
+            logger.trace("isConnected() failed: not connected" ,e);
             return false;
         }
     }
