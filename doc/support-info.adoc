@@ -7,6 +7,7 @@ Neo4J is a non-relational database based on Graph's principles
 
 === Documentation Links
 * link:https://neo4j.com/docs[General Documentation]
+* link:https://boltprotocol.org[Bolt protocol (supportability)]
 
 === Documentation Used by the Development Team
 * link:https://neo4j.com/docs/developer-manual[Neo4J JAVA API Reference]
@@ -61,14 +62,16 @@ docker run \
     neo4j
 ```
 
-NOTE: Probably the installation will require to change the password. Visit http://localhost:7474/browser/ for local browsing.
+NOTE: Probably the installation will require to change the password. Visit http://localhost:7474/browser/ for local browsing. Default login credentials are neo4j/neo4j.
 
 <neo4j:config name="Neo4j__Configuration" username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" doc:name="Neo4j: Configuration" restUrl="${config.restUrl}"/>
 
+```
 config.username=neo4j
 config.password=neo4jneo4j
 config.boltUrl=bolt://localhost:7687
 config.restUrl=http://localhost:7474
+```
 
 == Authentication Methods
 
@@ -95,6 +98,15 @@ Package/s to log:
 
 === Communication Debug
 For all the operations, you can capture the requests in the class *Neo4JClientImpl*, which use the Neo4J Bolt SDK.
+
+For more info about these requests please refer to the following documentation links:
+
+* link:https://boltprotocol.org/[Bolt protocol - Docs]
+* link:https://boltprotocol.org/v1/[Bolt protocol - V1]
+* link:https://boltprotocol.org/v1/#handshake[Bolt protocol - Handshake]
+
+=== Certificate usage
+link:https://neo4j.com/docs/operations-manual/current/configuration/install-certificates/[Certification usage Docs]
 
 == Entry Points
 

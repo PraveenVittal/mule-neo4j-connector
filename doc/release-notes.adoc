@@ -13,7 +13,7 @@ Anypoint Connector for Neo4J provides the capability of execute CQL statements a
 |===
 |Software |Version
 |Mule Runtime EE |3.7.0
-|Neo4J Java SDK |1.2.1
+|Neo4J Bolt API |1.2.1 link:https://github.com/neo4j/neo4j-java-driver/wiki[(Compatibility list)]
 |===
 
 === Features

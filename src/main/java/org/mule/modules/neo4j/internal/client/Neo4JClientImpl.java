@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 import org.mule.modules.neo4j.internal.connection.Neo4JConnection;
 import org.mule.modules.neo4j.internal.util.FormatFunction;
@@ -27,6 +28,7 @@ public class Neo4JClientImpl implements Neo4JClient {
 
     private static final Map<String, Object> EMPTY_MAP = Collections.emptyMap();
     private final Neo4JConnection connection;
+    private static final Logger logger = Logger.getLogger(Neo4JClientImpl.class);
 
     public Neo4JClientImpl(Neo4JConnection connection) {
         this.connection = connection;
@@ -54,6 +56,10 @@ public class Neo4JClientImpl implements Neo4JClient {
 
     @Override
     public List<Map<String, Object>> execute(String cqlStatement, Map<String, Object> parameters) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("cqlStatement=" + cqlStatement);
+            logger.debug("parameters=" + parameters);
+        }
         List<Map<String, Object>> result = new ArrayList<>();
         for (Record record : connection.getSession().run(cqlStatement, parameters).list()) {
             Map<String, Object> resultMap = new HashMap<>();
