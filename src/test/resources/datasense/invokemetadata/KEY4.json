@@ -1,0 +1,8 @@
+{
+  "payload-type": "map",
+  "payload": {
+    "born": "long",
+    "name": "string",
+    "height": "double"
+  }
+}

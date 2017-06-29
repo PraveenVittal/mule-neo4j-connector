@@ -1,11 +1,21 @@
-# Neo4j Connector
+Neo4J Connector
+=============================
 
-<img src="http://graphlab.org/wp-content/uploads/2013/05/neo4j_notag_whitebg.png" />
+The Anypoint Connector for Neo4J is a closed-source, SDK-based connector that provides automation of processes for Neo4J operations.
 
-Allows Mule to interact with [Neo4j graph databases](http://www.neo4j.org/).
+## Author
+MuleSoft Inc.
 
-## Testing
+## Supported Mule runtime versions
+Mule 3.7.x, 3.8.x
 
-To run the integration tests on a locally running instance of Neo4j, use:
+## Neo4J Bolt API supported versions
+Neo4J API 1.2.1
 
-    mvn -Pit clean verify
+## Supported modules
+
+* CQL
+* Nodes
+
+## Installation and Usage
+You can access the full documentation [here](doc/user-manual.adoc).

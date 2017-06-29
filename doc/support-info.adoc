@@ -1,0 +1,156 @@
+= Mule Neo4J Connector - Support Information
+:imagesdir: ./_images
+:toc:
+
+== Neo4J Information
+Neo4J is a non-relational database based on Graph's principles
+
+=== Documentation Links
+* link:https://neo4j.com/docs[General Documentation]
+* link:https://boltprotocol.org[Bolt protocol (supportability)]
+
+=== Documentation Used by the Development Team
+* link:https://neo4j.com/docs/developer-manual[Neo4J JAVA API Reference]
+* link:https://neo4j.com/docs/operations-manual[Operations Manual]
+
+== Contact Names
+
+=== Developers
+
+==== Development Team Leader
+
+* mailto:gaston.ortiz@mulesoft.com[Gastón Ortiz]
+* slack-user: @gaston.ortiz
+
+==== Development Team
+
+* Main developer:
+** mailto:ezequiel.sandoval@mulesoft.com[Ezequiel Sandoval]
+** slack-user: @ezequiel.sandoval
+* Developer:
+** mailto:dario.vega@mulesoft.com[Dario Vega]
+** slack-user: @dario.vega
+
+=== Engineering Manager
+
+* mailto:marcos.nunezcortes@mulesoft.com[Marcos Nuñez Cortes]
+* slack-user: @marcos.nunezcortes
+
+=== SME on the Platform
+There is no expert for Neo4J but, if you have inquiries, ask any of the connector developers.
+
+== Slack Channels
+
+* Connectors Support Channel - https://mulesoft.slack.com/archives/connectors
+
+== Sandbox
+There are one Standalone AWS environment used by Engineering team.
+
+**Environment installed is configured and maintained by Mulesoft**. Any requirements and problems related to sandboxes are tracked in https://www.mulesoft.org/jira/browse/N4JC[Neo4J] project.
+
+For continuous integration and local testing of the Neo4J connector, we use the following sandbox:
+
+* Neo4J Version: Neo4j 3.2.0 CE
+* Host: ec2-54-88-71-203.compute-1.amazonaws.com
+
+=== Usign docker
+
+```
+docker run \
+    --publish=7474:7474 --publish=7687:7687 \
+    --volume=$HOME/neo4j/data:/data \
+    neo4j
+```
+
+NOTE: Probably the installation will require to change the password. Visit http://localhost:7474/browser/ for local browsing. Default login credentials are neo4j/neo4j.
+
+<neo4j:config name="Neo4j__Configuration" username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" doc:name="Neo4j: Configuration" restUrl="${config.restUrl}"/>
+
+```
+config.username=neo4j
+config.password=neo4jneo4j
+config.boltUrl=bolt://localhost:7687
+config.restUrl=http://localhost:7474
+```
+
+== Authentication Methods
+
+=== Available for the Platform
+Neo4J supports one form of authentication:
+
+* *Basic Authentication*: The 'username' and 'password' are the "master keys" to the Neo4J environment. To authenticate, both are set to the username and password respectively of an HTTP Basic authentication scheme. These values can be gotten by Neo4J DB Administrator.
+
+NOTE: Refer to https://neo4j.com/docs/operations-manual/current/security/authentication-authorization/introduction/[this link] for more information on Neo4J's API authentication.
+
+
+=== Currently Available in the Connector
+The Neo4J Connector v2.0.0 *only* implements the  *Basic Authentication*.
+
+== Troubleshooting
+
+=== Logging Level
+
+Package/s to log:
+
+* org.mule.modules.neo4j.internal.connector.Neo4JConnector
+* org.mule.modules.neo4j.internal.client.Neo4JClientImpl
+* org.mule.modules.neo4j.connection.basic.BasicAuthenticationConnection
+
+=== Communication Debug
+For all the operations, you can capture the requests in the class *Neo4JClientImpl*, which use the Neo4J Bolt SDK.
+
+For more info about these requests please refer to the following documentation links:
+
+* link:https://boltprotocol.org/[Bolt protocol - Docs]
+* link:https://boltprotocol.org/v1/[Bolt protocol - V1]
+* link:https://boltprotocol.org/v1/#handshake[Bolt protocol - Handshake]
+
+=== Certificate usage
+link:https://neo4j.com/docs/operations-manual/current/configuration/install-certificates/[Certification usage Docs]
+
+== Entry Points
+
+Most of the logic constructing requests, sending and receiving messages from the server is done in class `org.mule.modules.neo4j.client.Neo4JClientImpl`.
+
+The main way to better understand how to put the breakpoints is to go to the processor that needs debugging and see which method it is using from *Neo4JClientImpl*.
+
+== Logging from Platform Side
+
+There is no way of logging activity from the platform side
+
+== Escalation Process
+
+=== JIRA Projects / Components
+
+* JIRA Project Key: https://www.mulesoft.org/jira/browse/N4JC[N4JC]
+
+
+== General links
+
+=== Release notes
+
+* https://docs.mulesoft.com/release-notes/neo4j-connector-release-notes[Neo4J Release Notes]
+
+=== Connector Documentation
+
+* For the last version: https://docs.mulesoft.com/mule-user-guide/v/3.8/neo4j-connector[Exchange Neo4J User Manual]
+* For earlier versions choose the right branch/tag in https://github.com/mulesoft/neo4j-connector/blob/develop/doc/user-manual.adoc[Neo4J User Manual]
+* http://mulesoft.github.io/neo4j-connector/[APIDocs] reference
+
+=== GitHub Project
+
+* https://github.com/mulesoft/neo4j-connector[Neo4J GitHub Repo]
+
+=== Example GitHub Project
+
+* https://github.com/mulesoft/neo4j-connector/tree/develop/demo[GitHub Demo Folder]
+* Also available (public) at: http://mulesoft.github.io/neo4j-connector/[Neo4J GitHub.io]
+
+== Additional Information
+
+The account type determines the set of operations that can be performed with the connector. If you authenticate as the admin you will be allowed to do all operations.
+For more details please check the user-manual.
+
+== Known Issues
+
+Please check the link:https://docs.mulesoft.com/release-notes/neo4j-connector-release-notes[Connector Release Notes].
