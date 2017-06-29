@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "javaType" : "org.mule.modules.neo4j.model.IndexedNode",
+  "extends" : {
+    "$ref" : "node.json"
+  },
+  "properties" : {
+    "indexed": {
+      "type": "string"
+    },
+    "score": {
+      "type": "number"
+    }
+  }
+}

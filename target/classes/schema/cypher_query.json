@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties" : {
+    "query": {
+      "type": "string"
+    },
+    "params": {
+      "type": "object",
+      "additionalProperties": true,
+      "javaType" : "org.mule.modules.neo4j.model.CypherQueryParams"
+    }
+  }
+}

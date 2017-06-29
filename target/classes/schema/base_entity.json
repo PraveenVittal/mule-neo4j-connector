@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "extends" : {
+    "$ref" : "base_extensible.json"
+  },
+  "properties" : {
+    "self": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    },
+    "properties": {
+      "type": "string"
+    },
+    "data": {
+      "$ref" : "data.json"
+    }
+  }
+}
