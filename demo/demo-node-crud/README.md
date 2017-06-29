@@ -33,7 +33,7 @@ The present demo is an application that provides a **complete workflow** to sequ
 
 * Open the **Global Element Configuration**.
 
-   ![Global Element](../doc/_images/neo4j-global-element-props.png)
+   ![Global Element](images/neo4j-global-element-props.png)
 
 * Click the **Test Connection** button to ensure there is connectivity with the sandbox. A successful message should pop-up.
 
