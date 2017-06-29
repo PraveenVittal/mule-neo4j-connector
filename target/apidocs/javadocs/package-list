@@ -1,8 +1,0 @@
-org.mule.modules.neo4j.api
-org.mule.modules.neo4j.internal.client
-org.mule.modules.neo4j.internal.connection
-org.mule.modules.neo4j.internal.connection.basic
-org.mule.modules.neo4j.internal.connector
-org.mule.modules.neo4j.internal.exception
-org.mule.modules.neo4j.internal.metadata
-org.mule.modules.neo4j.internal.util
