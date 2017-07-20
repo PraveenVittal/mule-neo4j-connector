@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 
+import org.mule.modules.neo4j.internal.config.Neo4JConfig;
 import org.mule.modules.neo4j.internal.connection.Neo4JConnection;
 import org.mule.modules.neo4j.internal.util.FormatFunction;
 import org.neo4j.driver.v1.Record;
@@ -24,13 +25,13 @@ import org.neo4j.driver.v1.util.Pair;
 
 import com.google.common.collect.ImmutableMap;
 
-public class Neo4JClientImpl implements Neo4JClient {
+public class Neo4JServiceImpl implements Neo4JService {
 
     private static final Map<String, Object> EMPTY_MAP = Collections.emptyMap();
     private final Neo4JConnection connection;
-    private static final Logger logger = Logger.getLogger(Neo4JClientImpl.class);
+    private static final Logger logger = Logger.getLogger(Neo4JServiceImpl.class);
 
-    public Neo4JClientImpl(Neo4JConnection connection) {
+    public Neo4JServiceImpl(Neo4JConnection connection) {
         this.connection = connection;
     }
 

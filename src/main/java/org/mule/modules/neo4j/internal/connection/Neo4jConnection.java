@@ -3,9 +3,10 @@
  */
 package org.mule.modules.neo4j.internal.connection;
 
-import java.io.Closeable;
-
+import org.mule.runtime.core.api.routing.ValidationException;
 import org.neo4j.driver.v1.Session;
+
+import java.io.Closeable;
 
 public interface Neo4JConnection extends Closeable {
 
@@ -13,5 +14,6 @@ public interface Neo4JConnection extends Closeable {
 
     Session getSession();
 
-    void validate();
+    void validate() throws ValidationException;
+
 }

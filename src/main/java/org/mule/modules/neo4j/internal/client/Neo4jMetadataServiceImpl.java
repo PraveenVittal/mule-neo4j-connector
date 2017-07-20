@@ -3,27 +3,26 @@
  */
 package org.mule.modules.neo4j.internal.client;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static java.lang.String.format;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import com.mule.connectors.commons.rest.builder.RequestBuilder;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.String.format;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-import com.mule.connectors.commons.rest.builder.RequestBuilder;
-
-public class Neo4JMetadataClientImpl implements Neo4JMetadataClient {
+public class Neo4jMetadataClientImpl implements Neo4jMetadataClient {
 
     private final Client client = ClientBuilder.newClient();
     private String username;
     private String password;
     private String endpointUrl;
 
-    public Neo4JMetadataClientImpl(Map<String, Object> metadataInfoConnection) {
+    public Neo4jMetadataClientImpl(Map<String, Object> metadataInfoConnection) {
         this.username = String.class.cast(metadataInfoConnection.get("username"));
         this.password = String.class.cast(metadataInfoConnection.get("password"));
         this.endpointUrl = String.class.cast(metadataInfoConnection.get("restUrl"));
@@ -42,7 +41,6 @@ public class Neo4JMetadataClientImpl implements Neo4JMetadataClient {
     @Override
     public Set<String> getConstraintProperties(String label) {
         Set<String> result = newHashSet();
-
         for (Map<String, Object> obj : RequestBuilder.<List<Map<String, Object>>>get(client, format("%s/db/data/schema/constraint/%s", endpointUrl, label))
                 .accept(APPLICATION_JSON)
                 .contentType(APPLICATION_JSON)
@@ -52,7 +50,6 @@ public class Neo4JMetadataClientImpl implements Neo4JMetadataClient {
             List<String> str = List.class.cast(obj.get("property_keys"));
             result.addAll(str);
         }
-
         return result;
     }
 

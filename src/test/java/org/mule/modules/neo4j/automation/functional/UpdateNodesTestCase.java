@@ -3,6 +3,9 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.A_NODE;
@@ -12,32 +15,26 @@ import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TOMHANKS_BORN_PARAM;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TOMHANKS_NAME_PARAM;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 public class UpdateNodesIT extends AbstractTestCases {
 
     @Override
     @Before
-    public void setUp() {
-        getConnector().createNode(TEST_LABEL, PARAMS_MAP);
+    public void setUp() throws Exception {
+        createNode(TEST_LABEL, PARAMS_MAP);
     }
 
     @Test
-    public void updateNodesTest() throws JsonProcessingException {
-        assertThat(getTestLabelNode(TEST_LABEL), contains(A_NODE));
-        getConnector().updateNodes(TEST_LABEL, null, TOMHANKS_BORN_PARAM);
-        assertThat(getTestLabelNode(TEST_LABEL), contains(A_NODE_1980));
+    public void updateNodesTest() throws Exception {
+        assertThat(execute(TEST_LABEL), contains(A_NODE));
+        updateNodes(TEST_LABEL, null, TOMHANKS_BORN_PARAM);
+        assertThat(execute(TEST_LABEL), contains(A_NODE_1980));
     }
 
     @Test
-    public void updateNodesWithParamsTest() throws JsonProcessingException {
-        assertThat(getTestLabelNode(TEST_LABEL), contains(A_NODE));
-        getConnector().updateNodes(TEST_LABEL, TOMHANKS_NAME_PARAM, TOMHANKS_BORN_PARAM);
-        assertThat(getTestLabelNode(TEST_LABEL), contains(A_NODE_1980));
-
+    public void updateNodesWithParamsTest() throws Exception {
+        assertThat(execute(TEST_LABEL), contains(A_NODE));
+        updateNodes(TEST_LABEL, TOMHANKS_NAME_PARAM, TOMHANKS_BORN_PARAM);
+        assertThat(execute(TEST_LABEL), contains(A_NODE_1980));
     }
 
 }
