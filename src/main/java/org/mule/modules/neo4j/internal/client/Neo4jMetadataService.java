@@ -6,7 +6,7 @@ package org.mule.modules.neo4j.internal.client;
 import java.util.List;
 import java.util.Set;
 
-public interface Neo4jMetadataClient {
+public interface Neo4jMetadataService {
 
     List<String> getLabels();
 

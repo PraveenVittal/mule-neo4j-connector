@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 
-public enum Neo4JErrors implements ErrorTypeDefinition<Neo4JErrors> {
+public enum Neo4jErrors implements ErrorTypeDefinition<Neo4jErrors> {
     CONNECTIVITY(MuleErrors.CONNECTIVITY),
     REQUEST_FAILED(CONNECTIVITY),
     INCORRECT_CREDENTIALS(CONNECTIVITY),
@@ -18,7 +18,7 @@ public enum Neo4JErrors implements ErrorTypeDefinition<Neo4JErrors> {
     private ErrorTypeDefinition<?> parentErrorType;
 
     @SuppressWarnings("rawtypes")
-    Neo4JErrors(ErrorTypeDefinition parentErrorType) {
+    Neo4jErrors(ErrorTypeDefinition parentErrorType) {
         this.parentErrorType = parentErrorType;
     }
 

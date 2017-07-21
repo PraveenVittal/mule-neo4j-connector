@@ -12,7 +12,7 @@ import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.A_NOD
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_MAP;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 
-public class SelectNodesIT extends AbstractTestCases {
+public class SelectNodesTestCase extends AbstractTestCases {
 
     @Override
     @After

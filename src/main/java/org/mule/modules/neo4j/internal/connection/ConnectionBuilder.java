@@ -3,7 +3,7 @@
  */
 package org.mule.modules.neo4j.internal.connection;
 
-public interface ConnectionBuilder<C extends Neo4JConnection> {
+public interface ConnectionBuilder<C extends Neo4jConnection> {
 
     C create();
 }

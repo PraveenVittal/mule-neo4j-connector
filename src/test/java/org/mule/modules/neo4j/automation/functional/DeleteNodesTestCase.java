@@ -5,7 +5,7 @@ package org.mule.modules.neo4j.automation.functional;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mule.modules.neo4j.api.Neo4JConnectorException;
+import org.mule.modules.neo4j.api.Neo4jException;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
@@ -16,7 +16,7 @@ import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAM
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL2;
 
-public class DeleteNodesIT extends AbstractTestCases {
+public class DeleteNodesTestCase extends AbstractTestCases {
 
     @Override
     @Before
@@ -38,10 +38,10 @@ public class DeleteNodesIT extends AbstractTestCases {
         assertThat(execute(TEST_LABEL), hasSize(0));
     }
 
-    @Test(expected = Neo4JConnectorException.class)
+    @Test(expected = Neo4jException.class)
     public void deleteNodeFailTest() throws Exception {
         createNode(TEST_LABEL2, PARAMS_MAP);
-        execute(CREATE_TEST_RELATION, null);
+        execute(CREATE_TEST_RELATION);
         assertThat(execute(TEST_LABEL), contains(A_NODE));
         assertThat(execute(TEST_LABEL2), contains(A_NODE));
         try {
@@ -52,14 +52,14 @@ public class DeleteNodesIT extends AbstractTestCases {
     }
 
     @Test
-    public void deleteNodeWithAllReleationshipsTest() throws Exception {
+    public void deleteNodeWithAllRelationshipsTest() throws Exception {
         assertThat(execute(TEST_LABEL), contains(A_NODE));
         deleteNodes(TEST_LABEL, true, null);
         assertThat(execute(TEST_LABEL), hasSize(0));
     }
 
     @Test
-    public void deleteNodeWithAllReleationshipsWithParamsTest() throws Exception {
+    public void deleteNodeWithAllRelationshipsWithParamsTest() throws Exception {
         assertThat(execute(TEST_LABEL), contains(A_NODE));
         deleteNodes(TEST_LABEL, true, PARAMS_MAP);
         assertThat(execute(TEST_LABEL), hasSize(0));

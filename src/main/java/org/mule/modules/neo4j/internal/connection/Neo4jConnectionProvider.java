@@ -8,15 +8,15 @@ import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.failure;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.success;
 
-public abstract class Neo4JConnectionProvider implements ConnectionProvider<Neo4JConnection> {
+public abstract class Neo4jConnectionProvider implements ConnectionProvider<Neo4jConnection> {
 
     @Override
-    public void disconnect(Neo4JConnection connection) {
+    public void disconnect(Neo4jConnection connection) {
         closeQuietly(connection);
     }
 
     @Override
-    public ConnectionValidationResult validate(Neo4JConnection connection) {
+    public ConnectionValidationResult validate(Neo4jConnection connection) {
         try {
             connection.validate();
             return success();

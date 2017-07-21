@@ -3,35 +3,33 @@
  */
 package org.mule.modules.neo4j.internal.client;
 
-import static com.google.common.base.Joiner.on;
-import static com.google.common.base.Optional.fromNullable;
-import static com.google.common.base.Strings.emptyToNull;
-import static com.google.common.collect.Iterables.transform;
-import static java.lang.String.format;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
 import org.apache.log4j.Logger;
-
-import org.mule.modules.neo4j.internal.config.Neo4JConfig;
-import org.mule.modules.neo4j.internal.connection.Neo4JConnection;
+import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
 import org.mule.modules.neo4j.internal.util.FormatFunction;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.util.Pair;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class Neo4JServiceImpl implements Neo4JService {
+import static com.google.common.base.Joiner.on;
+import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.base.Strings.emptyToNull;
+import static com.google.common.collect.Iterables.transform;
+import static java.lang.String.format;
+import static java.util.Collections.emptyMap;
 
-    private static final Map<String, Object> EMPTY_MAP = Collections.emptyMap();
-    private final Neo4JConnection connection;
-    private static final Logger logger = Logger.getLogger(Neo4JServiceImpl.class);
+public class Neo4jServiceImpl implements Neo4jService {
 
-    public Neo4JServiceImpl(Neo4JConnection connection) {
+    private static final Logger logger = Logger.getLogger(Neo4jServiceImpl.class);
+    private static final Map<String, Object> EMPTY_MAP = emptyMap();
+    private final Neo4jConnection connection;
+
+    public Neo4jServiceImpl(Neo4jConnection connection) {
         this.connection = connection;
     }
 

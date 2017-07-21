@@ -6,7 +6,7 @@ package org.mule.modules.neo4j.internal.client;
 import java.util.List;
 import java.util.Map;
 
-public interface Neo4JService {
+public interface Neo4jService {
 
     List<Map<String, Object>> execute(String query, Map<String, Object> parameters);
 

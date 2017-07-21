@@ -15,14 +15,14 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-public class Neo4jMetadataClientImpl implements Neo4jMetadataClient {
+public class Neo4jMetadataServiceImpl implements Neo4jMetadataService {
 
     private final Client client = ClientBuilder.newClient();
     private String username;
     private String password;
     private String endpointUrl;
 
-    public Neo4jMetadataClientImpl(Map<String, Object> metadataInfoConnection) {
+    public Neo4jMetadataServiceImpl(Map<String, Object> metadataInfoConnection) {
         this.username = String.class.cast(metadataInfoConnection.get("username"));
         this.password = String.class.cast(metadataInfoConnection.get("password"));
         this.endpointUrl = String.class.cast(metadataInfoConnection.get("restUrl"));

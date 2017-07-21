@@ -3,6 +3,8 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
+import org.junit.Test;
+
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
@@ -10,22 +12,18 @@ import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.A_NOD
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_MAP;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 
-import org.junit.Test;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-public class CreateNodeIT extends AbstractTestCases {
+public class CreateNodeTestCase extends AbstractTestCases {
 
     @Test
-    public void createNodeTest() throws JsonProcessingException {
-        assertThat(getTestLabelNode(TEST_LABEL), hasSize(0));
-        getConnector().createNode(TEST_LABEL, null);
-        assertThat(getTestLabelNode(TEST_LABEL), hasSize(1));
+    public void createNodeTest() throws Exception {
+        assertThat(execute(TEST_LABEL), hasSize(0));
+        createNode(TEST_LABEL, null);
+        assertThat(execute(TEST_LABEL), hasSize(1));
     }
 
     @Test
-    public void createNodeWithParamsTest() throws JsonProcessingException {
-        getConnector().createNode(TEST_LABEL, PARAMS_MAP);
-        assertThat(getTestLabelNode(TEST_LABEL), contains(A_NODE));
+    public void createNodeWithParamsTest() throws Exception {
+        createNode(TEST_LABEL, PARAMS_MAP);
+        assertThat(execute(TEST_LABEL), contains(A_NODE));
     }
 }

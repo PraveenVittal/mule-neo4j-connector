@@ -30,4 +30,5 @@ public class BasicAuthenticationConnectionBuilder implements ConnectionBuilder<B
     public BasicAuthenticationConnection create() {
         return new BasicAuthenticationConnection(boltUrl, username, password);
     }
+
 }

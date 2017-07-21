@@ -3,27 +3,24 @@
  */
 package org.mule.modules.neo4j.internal.connection.basic;
 
+import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.Session;
+
 import java.io.IOException;
 import java.util.UUID;
 
-import org.mule.modules.neo4j.internal.connection.Neo4JConnection;
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Session;
+import static org.neo4j.driver.v1.AuthTokens.basic;
+import static org.neo4j.driver.v1.GraphDatabase.driver;
 
-public class BasicAuthenticationConnection implements Neo4JConnection {
+public class BasicAuthenticationConnection implements Neo4jConnection {
 
-    private final Driver neo4jClient;
+    private final Driver client;
     private final Session session;
-    private final String username;
-    private final String password;
 
     public BasicAuthenticationConnection(String url, String username, String password) {
-        this.username = username;
-        this.password = password;
-        neo4jClient = GraphDatabase.driver(url, AuthTokens.basic(username, password));
-        session = neo4jClient.session();
+        client = driver(url, basic(username, password));
+        session = client.session();
     }
 
     @Override
@@ -36,7 +33,7 @@ public class BasicAuthenticationConnection implements Neo4JConnection {
         try {
             session.close();
         } finally {
-            neo4jClient.close();
+            client.close();
         }
     }
 

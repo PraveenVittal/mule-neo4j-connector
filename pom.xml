@@ -2,25 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.mule.modules</groupId>
-    <artifactId>neo4j-connector</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
-    <packaging>mule-module</packaging>
-    <name>Mule Neo4j Anypoint Connector</name>
-
+    <groupId>org.mule.connectors</groupId>
+    <artifactId>mule-neo4j-connector</artifactId>
+    <version>3.0.0-BETA.4</version>
+    <packaging>mule-extension</packaging>
+    <name>Neo4j Connector</name>
     <parent>
-        <groupId>org.mule.tools.devkit</groupId>
-        <artifactId>certified-mule-connector-parent</artifactId>
-        <version>3.9.0</version>
+        <groupId>org.mule.extensions</groupId>
+        <artifactId>mule-modules-parent</artifactId>
+        <version>1.0.0-BETA.4</version>
     </parent>
-
     <properties>
-        <category>Select</category>
+        <catiegory>Select</catiegory>
         <licensePath>LICENSE.md</licensePath>
-        <devkit.studio.package.skip>false</devkit.studio.package.skip>
-        <neo4j-java-driver.version>1.2.1</neo4j-java-driver.version>
-        <commons-rest.version>1.1.1</commons-rest.version>
-        <ctf.connector.class>org.mule.modules.neo4j.internal.connector.Neo4jConnector</ctf.connector.class>
+        <jdk.version>1.8</jdk.version>
+        <neo4j.version>1.2.1</neo4j.version>
     </properties>
 
     <build>
@@ -35,15 +31,12 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <id>mulesoft-releases</id>
-            <name>MuleSoft Releases Repository</name>
-            <url>http://repository.mulesoft.org/releases/</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
     <dependencies>
+        <dependency>
+            <groupId>org.neo4j.driver</groupId>
+            <artifactId>neo4j-java-driver</artifactId>
+            <version>${neo4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
@@ -57,19 +50,91 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.neo4j.driver</groupId>
-            <artifactId>neo4j-java-driver</artifactId>
-            <version>${neo4j-java-driver.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.mule.connectors.commons</groupId>
             <artifactId>commons-rest</artifactId>
-            <version>${commons-rest.version}</version>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>2.4.3</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <id>deploy-devx-maven-facade</id>
+            <distributionManagement>
+                <repository>
+                    <id>maven-facade-devx</id>
+                    <name>Mozart Dev Environment</name>
+                    <url>https://maven.devx.anypoint.mulesoft.com/api/v1/organizations/68ef9520-24e9-4cf2-b2f5-620025690913/maven</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>deploy-qax-maven-facade</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>maven-facade-qax</id>
+                    <name>Mozart QA Environment</name>
+                    <url>https://maven.qax.anypoint.mulesoft.com/api/v1/organizations/68ef9520-24e9-4cf2-b2f5-620025690913/maven</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>deploy-stgx-maven-facade</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>maven-facade-stgx</id>
+                    <name>Mozart STGX Environment</name>
+                    <url>https://maven.stgx.anypoint.mulesoft.com/api/v1/organizations/68ef9520-24e9-4cf2-b2f5-620025690913/maven</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+    <repositories>
+        <repository>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Releases Repository</name>
+            <url>http://repository.mulesoft.org/releases/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>mule-ee-releases</id>
+            <name>MuleEE Releases Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases-ee/</url>
+        </repository>
+        <snapshotRepository>
+            <id>mule-ee-snapshots</id>
+            <name>MuleEE Snapshots Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+    <scm>
+        <connection>scm:git:git://github.com:mulesoft/neo4j-connector.git</connection>
+        <developerConnection>scm:git:git@github.com:mulesoft/neo4j-connector.git</developerConnection>
+        <url>http://github.com/mulesoft/neo4j-connector</url>
+    </scm>
 </project>

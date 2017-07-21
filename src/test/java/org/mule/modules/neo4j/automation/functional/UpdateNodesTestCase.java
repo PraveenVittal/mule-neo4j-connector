@@ -15,7 +15,7 @@ import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TOMHANKS_BORN_PARAM;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TOMHANKS_NAME_PARAM;
 
-public class UpdateNodesIT extends AbstractTestCases {
+public class UpdateNodesTestCase extends AbstractTestCases {
 
     @Override
     @Before

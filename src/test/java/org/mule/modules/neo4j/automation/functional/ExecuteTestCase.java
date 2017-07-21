@@ -15,7 +15,7 @@ import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAM
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_STRING;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 
-public class ExecuteIT extends AbstractTestCases {
+public class ExecuteTestCase extends AbstractTestCases {
 
     @Test
     public void executeTest() throws Exception {

@@ -8,7 +8,7 @@ import org.neo4j.driver.v1.Session;
 
 import java.io.Closeable;
 
-public interface Neo4JConnection extends Closeable {
+public interface Neo4jConnection extends Closeable {
 
     String getId();
 

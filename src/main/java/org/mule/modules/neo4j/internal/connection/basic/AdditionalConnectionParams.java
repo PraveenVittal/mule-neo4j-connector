@@ -1,4 +1,4 @@
-package org.mule.modules.neo4j.internal.config;
+package org.mule.modules.neo4j.internal.connection.basic;
 
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;

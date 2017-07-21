@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 
 @RunnerDelegateTo(Parameterized.class)
-public class InvokeMetadataResolverTestCase extends AbstractTestCases {
+public class AbstractMetadataTestCases extends AbstractTestCases {
 
     protected static final String FAIL_MESSAGE = "No assertions file was found for metadata key =  '%s'. It was created in the file %s. Please move it into src/test/resources/datasense/%s and re-run the test.";
     private static final String PATH_TEMPLATE = "/datasense/%s/%s/%s__%s.json";
@@ -54,7 +54,7 @@ public class InvokeMetadataResolverTestCase extends AbstractTestCases {
         return FLOW_CONFIG_LOCATION;
     }
 
-    public InvokeMetadataResolverTestCase(MetadataKey metadataKey){
+    public AbstractMetadataTestCases(MetadataKey metadataKey){
         this.metadataKey = metadataKey;
         serializedInputMetadataFile = createSerializedFile(Scope.INPUT);
         serializedOutputMetadataFile = createSerializedFile(Scope.OUTPUT);
