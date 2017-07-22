@@ -3,19 +3,17 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.lang.String.format;
-import static java.lang.System.setProperty;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.lang.String.format;
+import static java.lang.System.setProperty;
 
 public class TestDataBuilder {
-
-    public static final String EMPTY_STRING = "";
 
     public static final String TEST_LABEL = "TestLabel";
     public static final String TEST_LABEL2 = "TestLabel2";
@@ -48,15 +46,15 @@ public class TestDataBuilder {
     public static final Map<String, Object> METADATA_NODE_PROPERTIES = ImmutableMap.<String, Object>builder().put("name", "metadata").put("born", 2017).put("height", 1.78).build();
 
     // System Properties
-    public static final String TRUSTSTORE_PROPERTY = "javax.net.ssl.trustStore";
-    public static final String TRUSTSTORE_PROPERTY_VALUE = "trustStore.ts";
-    public static final String TRUSTSTORE_PWD_PROPERTY = "javax.net.ssl.trustStorePassword";
-    public static final String TRUSTSTORE_PWD_PROPERTY_VALUE = "changeit";
+    public static final String TRUST_STORE_PROPERTY = "javax.net.ssl.trustStore";
+    public static final String TRUST_STORE_PROPERTY_VALUE = "trustStore.ts";
+    public static final String TRUST_STORE_PWD_PROPERTY = "javax.net.ssl.trustStorePassword";
+    public static final String TRUST_STORE_PWD_PROPERTY_VALUE = "changeit";
 
     public static void setTrustStores(String propertyValue, String password){
         if(!isNullOrEmpty(propertyValue) && !isNullOrEmpty(password)) {
-            setProperty(TRUSTSTORE_PROPERTY, propertyValue);
-            setProperty(TRUSTSTORE_PWD_PROPERTY, password);
+            setProperty(TRUST_STORE_PROPERTY, propertyValue);
+            setProperty(TRUST_STORE_PWD_PROPERTY, password);
         }
     }
 }

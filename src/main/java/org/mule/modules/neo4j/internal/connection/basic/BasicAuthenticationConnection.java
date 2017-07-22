@@ -3,6 +3,9 @@
  */
 package org.mule.modules.neo4j.internal.connection.basic;
 
+import org.mule.modules.neo4j.internal.client.Neo4jMetadataService;
+import org.mule.modules.neo4j.internal.client.Neo4jMetadataServiceImpl;
+import org.mule.modules.neo4j.internal.client.Neo4jServiceImpl;
 import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
@@ -17,10 +20,12 @@ public class BasicAuthenticationConnection implements Neo4jConnection {
 
     private final Driver client;
     private final Session session;
+    private final Neo4jMetadataService metadataService;
 
-    public BasicAuthenticationConnection(String url, String username, String password) {
-        client = driver(url, basic(username, password));
+    public BasicAuthenticationConnection(String username, String password, String boltUrl, String restUrl) {
+        client = driver(boltUrl, basic(username, password));
         session = client.session();
+        metadataService = new Neo4jMetadataServiceImpl(restUrl, username, password);
     }
 
     @Override
@@ -45,5 +50,10 @@ public class BasicAuthenticationConnection implements Neo4jConnection {
     @Override
     public Session getSession() {
         return session;
+    }
+
+    @Override
+    public Neo4jMetadataService getMetadataService() {
+        return metadataService;
     }
 }

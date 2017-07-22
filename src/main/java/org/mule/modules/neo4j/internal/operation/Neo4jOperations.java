@@ -8,6 +8,7 @@ import org.mule.modules.neo4j.internal.metadata.InvokeMetadataResolver;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataKeyId;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
+import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -21,11 +22,11 @@ import java.util.Map;
 public class Neo4jOperations {
 
     @OutputResolver(output = InvokeMetadataResolver.class)
-    public List<Map<String, Object>> execute(@Connection Neo4jConnection connection, @MetadataKeyId(InvokeMetadataResolver.class) @Content String query, @Optional Map<String, Object> parameters) {
+    public List<Map<String, Object>> execute(@Connection Neo4jConnection connection, @Content String query, @Optional @DefaultValue("#[payload]") Map<String, Object> parameters) {
         return getClient(connection).execute(query, parameters);
     }
 
-    public void createNode(@Connection Neo4jConnection connection, @Content String label, @Optional Map<String, Object> parameters) {
+    public void createNode(@Connection Neo4jConnection connection, @MetadataKeyId(InvokeMetadataResolver.class) @Content String label, @TypeResolver(InvokeMetadataResolver.class) @Optional Map<String, Object> parameters) {
         getClient(connection).createNode(label, parameters);
     }
 

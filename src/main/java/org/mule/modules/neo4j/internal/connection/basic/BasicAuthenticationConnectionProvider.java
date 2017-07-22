@@ -25,9 +25,10 @@ public class BasicAuthenticationConnectionProvider extends Neo4jConnectionProvid
     @Override
     public Neo4jConnection connect() throws ConnectionException {
             return new BasicAuthenticationConnectionBuilder()
-                    .withBoltUrl(additionalConnectionParams.getBoltUrl())
                     .withUsername(username)
                     .withPassword(password)
+                    .withBoltUrl(additionalConnectionParams.getBoltUrl())
+                    .withRestUrl(additionalConnectionParams.getRestUrl())
                     .create();
     }
 

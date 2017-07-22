@@ -16,31 +16,31 @@
     </neo4j:config>
 
     <flow name="executeFlow">
-        <neo4j:execute config-ref="config" parameters="#[parameters]">
+        <neo4j:execute config-ref="config" parameters="#[variables.parameters]">
             <neo4j:query>#[payload]</neo4j:query>
         </neo4j:execute>
     </flow>
 
     <flow name="createNodeFlow">
-        <neo4j:create-node config-ref="config" parameters="#[parameters]">
+        <neo4j:create-node config-ref="config" parameters="#[variables.parameters]">
             <neo4j:label>#[payload]</neo4j:label>
         </neo4j:create-node>
     </flow>
 
     <flow name="selectNodesFlow">
-        <neo4j:select-nodes config-ref="config" parameters="#[parameters]">
+        <neo4j:select-nodes config-ref="config" parameters="#[variables.parameters]">
             <neo4j:label>#[payload]</neo4j:label>
         </neo4j:select-nodes>
     </flow>
 
     <flow name="updateNodesFlow">
-        <neo4j:update-nodes config-ref="config" parameters="#[parameters]" setParameters="#[setParameters]">
+        <neo4j:update-nodes config-ref="config" parameters="#[variables.parameters]" setParameters="#[variables.setParameters]">
             <neo4j:label>#[payload]</neo4j:label>
         </neo4j:update-nodes>
     </flow>
 
     <flow name="deleteNodesFlow">
-        <neo4j:delete-nodes config-ref="config" removeRelationships="#[removeRelationships]" parameters="#[parameters]">
+        <neo4j:delete-nodes config-ref="config" removeRelationships="#[variables.removeRelationships]" parameters="#[variables.parameters]">
             <neo4j:label>#[payload]</neo4j:label>
         </neo4j:delete-nodes>
     </flow>

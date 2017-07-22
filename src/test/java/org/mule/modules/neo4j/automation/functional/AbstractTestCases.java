@@ -39,7 +39,7 @@ public class AbstractTestCases extends MuleArtifactFunctionalTestCase {
         cleanUpDB();
     }
 
-    private void cleanUpDB() throws Exception {
+    protected void cleanUpDB() throws Exception {
         execute(format(QUERY_DELETE_A_NODE, TEST_LABEL), null);
         execute(format(QUERY_DELETE_A_NODE, TEST_LABEL2), null);
     }
