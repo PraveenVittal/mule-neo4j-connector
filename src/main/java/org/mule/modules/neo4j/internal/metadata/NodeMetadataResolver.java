@@ -4,9 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.builder.ObjectTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
-import org.mule.metadata.java.api.JavaTypeLoader;
 import org.mule.modules.neo4j.internal.client.Neo4jMetadataService;
-import org.mule.modules.neo4j.internal.client.Neo4jService;
 import org.mule.modules.neo4j.internal.client.Neo4jServiceImpl;
 import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
 import org.mule.runtime.api.connection.ConnectionException;
@@ -24,9 +22,10 @@ import java.util.Set;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
+import static org.mule.metadata.java.api.JavaTypeLoader.JAVA;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 
-public class InvokeMetadataResolver implements InputTypeResolver<String>, TypeKeysResolver, OutputTypeResolver<String> {
+public class NodeMetadataResolver implements InputTypeResolver<String>, TypeKeysResolver, OutputTypeResolver<String> {
 
     private Map<Class<?>, DataType> dataMapping = ImmutableMap.<Class<?>, DataType>builder()
             .put(Boolean.class, DataType.BOOLEAN)
@@ -39,30 +38,31 @@ public class InvokeMetadataResolver implements InputTypeResolver<String>, TypeKe
 
     @Override
     public MetadataType getInputMetadata(MetadataContext context, String key) throws MetadataResolvingException, ConnectionException {
-        List<Map<String, Object>> nodes = getService(context).execute(format("MATCH (a:%s) RETURN a LIMIT 1", key), null);
-        ObjectTypeBuilder builder = new BaseTypeBuilder(JavaTypeLoader.JAVA).objectType().label(key);
+        List<Map<String, Object>> nodes = new Neo4jServiceImpl((Neo4jConnection) context.getConnection().get()).execute(format("MATCH (a:%s) RETURN a LIMIT 1", key), null);
+        ObjectTypeBuilder builder = new BaseTypeBuilder(JAVA).objectType().label(key);
         if (nodes.size() == 1) {
             getMetadataService(context).getConstraintProperties(key)
-                    .forEach(field -> builder.addField().key(field).value().typeParameter(String.valueOf(dataMapping.get(Map.class.cast(nodes.get(0).get("a")).get(field).getClass()))));
+                    .forEach(field -> builder.addField().key(field).value().typeParameter(dataMapping.get(Map.class.cast(nodes.get(0).get("a")).get(field).getClass()).getType().getName()));
         }
         return builder.build();
     }
 
     @Override
     public MetadataType getOutputType(MetadataContext context, String key) throws MetadataResolvingException, ConnectionException {
-        return null;
+        return BaseTypeBuilder.create(JAVA).nullType().build();
     }
 
     @Override
     public Set<MetadataKey> getKeys(MetadataContext context) throws MetadataResolvingException, ConnectionException {
-        return getMetadataService(context).getLabels().stream()
+        return getMetadataService(context).getLabels()
+                .stream()
                 .map(label -> newKey(label).withDisplayName(label).build())
                 .collect(toSet());
     }
 
     @Override
     public String getCategoryName() {
-        return InvokeMetadataResolver.class.getCanonicalName();
+        return NodeMetadataResolver.class.getCanonicalName();
     }
 
     @Override
@@ -74,7 +74,4 @@ public class InvokeMetadataResolver implements InputTypeResolver<String>, TypeKe
         return ((Neo4jConnection) context.getConnection().get()).getMetadataService();
     }
 
-    private Neo4jService getService(MetadataContext context) throws ConnectionException {
-        return new Neo4jServiceImpl((Neo4jConnection) context.getConnection().get());
-    }
 }

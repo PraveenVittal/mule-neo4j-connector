@@ -3,7 +3,7 @@
  */
 package org.mule.modules.neo4j.internal.exception;
 
-public class Neo4jException extends RuntimeException {
+public abstract class Neo4jException extends RuntimeException {
 
     public Neo4jException() {
         super();
@@ -20,5 +20,7 @@ public class Neo4jException extends RuntimeException {
     public Neo4jException(Throwable cause, String message) {
         super(message, cause);
     }
+
+    protected abstract Neo4jErrors getErrorCode();
 
 }

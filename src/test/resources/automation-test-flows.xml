@@ -2,14 +2,11 @@
 
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:context="http://www.springframework.org/schema/context"
       xmlns:neo4j="http://www.mulesoft.org/schema/mule/neo4j"
-      xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
-            http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
             http://www.mulesoft.org/schema/mule/neo4j http://www.mulesoft.org/schema/mule/neo4j/current/mule-neo4j.xsd">
 
-
-    <context:property-placeholder location="automation-credentials.properties" />
+    <configuration-properties file="automation-credentials.properties" />
 
     <neo4j:config name="config">
         <neo4j:connection username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" restUrl="${config.restUrl}" />
@@ -22,27 +19,22 @@
     </flow>
 
     <flow name="createNodeFlow">
-        <neo4j:create-node config-ref="config" parameters="#[variables.parameters]">
-            <neo4j:label>#[payload]</neo4j:label>
+        <neo4j:create-node config-ref="config" label="#[variables.label]" parameters="#[variables.parameters]">
         </neo4j:create-node>
     </flow>
 
     <flow name="selectNodesFlow">
-        <neo4j:select-nodes config-ref="config" parameters="#[variables.parameters]">
-            <neo4j:label>#[payload]</neo4j:label>
-        </neo4j:select-nodes>
+        <neo4j:select-nodes config-ref="config" label="#[variables.label]" parameters="#[variables.parameters]" />
     </flow>
 
     <flow name="updateNodesFlow">
-        <neo4j:update-nodes config-ref="config" parameters="#[variables.parameters]" setParameters="#[variables.setParameters]">
-            <neo4j:label>#[payload]</neo4j:label>
+        <neo4j:update-nodes config-ref="config" label="#[variables.label]" parameters="#[variables.parameters]">
+            <neo4j:set-parameters>#[payload]</neo4j:set-parameters>
         </neo4j:update-nodes>
     </flow>
 
     <flow name="deleteNodesFlow">
-        <neo4j:delete-nodes config-ref="config" removeRelationships="#[variables.removeRelationships]" parameters="#[variables.parameters]">
-            <neo4j:label>#[payload]</neo4j:label>
-        </neo4j:delete-nodes>
+        <neo4j:delete-nodes config-ref="config" label="#[variables.label]" removeRelationships="#[variables.removeRelationships]" parameters="#[variables.parameters]" />
     </flow>
 
 </mule>

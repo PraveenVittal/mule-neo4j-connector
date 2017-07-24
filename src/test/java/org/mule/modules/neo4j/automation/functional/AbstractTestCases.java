@@ -56,7 +56,7 @@ public class AbstractTestCases extends MuleArtifactFunctionalTestCase {
 
     public List<Map<String, Object>> execute(String query) throws Exception {
         return (List<Map<String, Object>>) flowRunner("executeFlow")
-                .withPayload(format(QUERY_RETURN_A_NODE, query))
+                .withVariable("label", format(QUERY_RETURN_A_NODE, query))
                 .withVariable("parameters", null)
                 .run()
                 .getMessage()
@@ -66,14 +66,14 @@ public class AbstractTestCases extends MuleArtifactFunctionalTestCase {
 
     public void createNode(String label, Map<String, Object> parameters) throws Exception {
         flowRunner("createNodeFlow")
-                .withPayload(label)
+                .withVariable("label", label)
                 .withVariable("parameters", parameters)
                 .run();
     }
 
     public List<Map<String, Object>> selectNodes(String label, Map<String, Object> parameters) throws Exception {
         return (List<Map<String, Object>>) flowRunner("selectNodesFlow")
-                .withPayload(label)
+                .withVariable("label", label)
                 .withVariable("parameters", parameters)
                 .run()
                 .getMessage()
@@ -83,15 +83,15 @@ public class AbstractTestCases extends MuleArtifactFunctionalTestCase {
 
     public void updateNodes(String label, Map<String, Object> parameters, Map<String, Object> setParameters) throws Exception {
         flowRunner("updateNodesFlow")
-                .withPayload(label)
-                .withVariable("parameters", parameters)
-                .withVariable("setParameters", setParameters)
+                .withPayload(setParameters)
+                .withVariable("label", parameters)
+                .withVariable("parameters", setParameters)
                 .run();
     }
 
     public void deleteNodes(String label, boolean removeRelationships, Map<String, Object> parameters) throws Exception {
         flowRunner("deleteNodesFlow")
-                .withPayload(label)
+                .withVariable("label", label)
                 .withVariable("removeRelationships", removeRelationships)
                 .withVariable("parameters", parameters)
                 .run();

@@ -5,24 +5,18 @@ package org.mule.modules.neo4j.internal.exception;
 
 import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.extension.api.runtime.exception.ExceptionHandler;
-import org.neo4j.driver.v1.exceptions.ClientException;
 
-import static org.mule.modules.neo4j.internal.exception.Neo4jErrors.REQUEST_FAILED;
 import static org.mule.modules.neo4j.internal.exception.Neo4jErrors.UNKNOWN;
 
 public class Neo4jExceptionHandler extends ExceptionHandler {
 
     @Override
     public ModuleException enrichException(Exception exception) {
-        try {
-            throw exception;
-        } catch(org.mule.modules.neo4j.api.Neo4jException e) {
-            return new ModuleException(e.getErrorCode(), e);
+        if(exception instanceof Neo4jException) {
+            return new ModuleException(((Neo4jException) exception).getErrorCode(), exception);
         }
-        catch (Neo4jException | ClientException e) {
-            return new ModuleException(REQUEST_FAILED, e);
-        } catch (Exception e) {
-            return new ModuleException(UNKNOWN, e);
+        else {
+            return new ModuleException(UNKNOWN, exception);
         }
     }
 }

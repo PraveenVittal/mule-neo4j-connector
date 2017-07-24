@@ -8,6 +8,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.meta.model.operation.OperationModel;
+import org.mule.runtime.api.meta.model.parameter.ParameterModel;
 import org.mule.runtime.api.metadata.MetadataKey;
 import org.mule.runtime.api.metadata.MetadataService;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
@@ -26,6 +27,7 @@ import static org.apache.commons.io.FileUtils.readFileToString;
 import static org.apache.commons.io.FileUtils.write;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.CREATE_CONSTRAINT_BORN;
@@ -46,14 +48,13 @@ import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 
 @RunnerDelegateTo(Parameterized.class)
-public class InvokeMetadataResolverTestCase extends AbstractTestCases {
+public class NodeMetadataResolverTestCase extends AbstractTestCases {
 
     private static final String FAIL_MESSAGE = "No assertions file was found for metadata key =  '%s'. It was created in the file %s. Please move it into src/test/resources/datasense/%s and re-run the test.";
-    private static final String PATH_TEMPLATE = "/datasense/%s/%s/%s__%s.json";
+    private static final String PATH_TEMPLATE = "/datasense/%s/%s.json";
     private static Location location;
     private static MetadataService metadataService;
-    private File serializedInputMetadataFile;
-    private File serializedOutputMetadataFile;
+    private File serializedMetadataFile;
     private MetadataKey metadataKey;
 
     @Override
@@ -68,14 +69,13 @@ public class InvokeMetadataResolverTestCase extends AbstractTestCases {
         };
     }
 
-    public InvokeMetadataResolverTestCase(MetadataKey metadataKey){
+    public NodeMetadataResolverTestCase(MetadataKey metadataKey){
         this.metadataKey = metadataKey;
-        serializedInputMetadataFile = createSerializedFile(Scope.INPUT);
-        serializedOutputMetadataFile = createSerializedFile(Scope.OUTPUT);
+        serializedMetadataFile = createSerializedFile();
     }
 
-    private File createSerializedFile(Scope scope){
-        File metadataFile = new File(getClass().getResource("/").getFile(), format(PATH_TEMPLATE, getMetadataCategory(), scope.toString().toLowerCase(), metadataKey, scope.toString().toLowerCase()));
+    private File createSerializedFile(){
+        File metadataFile = new File(getClass().getResource("/").getFile(), format(PATH_TEMPLATE, getMetadataCategory(), metadataKey.getId()));
         metadataFile.getParentFile().mkdirs();
         return metadataFile;
     }
@@ -121,29 +121,21 @@ public class InvokeMetadataResolverTestCase extends AbstractTestCases {
 
     @Test
     public void testInputMetadata() throws Exception {
-        assertMetadataContents(serializedInputMetadataFile, Scope.INPUT);
+        assertMetadataContents(serializedMetadataFile);
     }
 
-//    @Test
-//    public void testOutputMetadata() throws Exception {
-//        assertMetadataContents(serializedOutputMetadataFile, Scope.OUTPUT);
-//    }
-
-    public void assertMetadataContents(File serializedMetadataFile, Scope scope) throws Exception {
+    public void assertMetadataContents(File serializedMetadataFile) throws Exception {
         MetadataResult<ComponentMetadataDescriptor<OperationModel>> result = metadataService.getOperationMetadata(location, metadataKey);
-        assertThat(result.getFailures().size(), equalTo(0));
+        assertThat(result.isSuccess(), is(true));
+        assertThat(result.getFailures(), hasSize(equalTo(0)));
 
-        String actualMetadata;
-        if(scope == Scope.INPUT) {
-            OperationModel bodyParams = result.get().getModel();
-            actualMetadata = new Gson().toJson(bodyParams);
-        }
-        else {
-            actualMetadata = new Gson().toJson(result.get().getModel().getOutput().getType());
-        }
+        String actualMetadata = new Gson().toJson(result.get().getModel().getAllParameterModels().stream()
+                .filter(parameterModel -> parameterModel.getName().equals("parameters"))
+                .map(ParameterModel::getType)
+                .collect(toList()));
         if (serializedMetadataFile.createNewFile()) {
             write(serializedMetadataFile, actualMetadata);
-            fail(format(FAIL_MESSAGE, metadataKey, serializedMetadataFile.getAbsolutePath(), getMetadataCategory()));
+            fail(format(FAIL_MESSAGE, metadataKey.getId(), serializedMetadataFile.getAbsolutePath(), getMetadataCategory()));
         } else {
             assertThat(actualMetadata, is(readFileToString(serializedMetadataFile)));
         }
@@ -162,11 +154,6 @@ public class InvokeMetadataResolverTestCase extends AbstractTestCases {
         createNode(METADATA_KEYS.get(1), METADATA_NODE_PROPERTIES);
         createNode(METADATA_KEYS.get(2), METADATA_NODE_PROPERTIES);
         createNode(METADATA_KEYS.get(3), METADATA_NODE_PROPERTIES);
-    }
-
-    private enum Scope {
-        INPUT,
-        OUTPUT
     }
 
     private String getMetadataCategory() {

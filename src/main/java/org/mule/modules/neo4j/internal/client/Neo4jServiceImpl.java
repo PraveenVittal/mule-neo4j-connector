@@ -4,6 +4,7 @@
 package org.mule.modules.neo4j.internal.client;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
 import org.mule.modules.neo4j.internal.util.FormatFunction;
@@ -85,7 +86,7 @@ public class Neo4jServiceImpl implements Neo4jService {
     }
 
     private Object convert(Value value) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = Maps.newHashMap();
         for (String key : value.keys()) {
             result.put(key, convert(value.get(key)));
         }
