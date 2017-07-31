@@ -3,6 +3,8 @@ package org.mule.modules.neo4j.automation.functional;
 import org.junit.After;
 import org.junit.Before;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.runtime.extension.api.annotation.param.Content;
+import org.mule.runtime.extension.api.annotation.param.Optional;
 
 import java.util.List;
 import java.util.Map;
@@ -56,7 +58,7 @@ public class AbstractTestCases extends MuleArtifactFunctionalTestCase {
 
     public List<Map<String, Object>> execute(String query) throws Exception {
         return (List<Map<String, Object>>) flowRunner("executeFlow")
-                .withVariable("label", format(QUERY_RETURN_A_NODE, query))
+                .withPayload(format(QUERY_RETURN_A_NODE, query))
                 .withVariable("parameters", null)
                 .run()
                 .getMessage()
@@ -83,9 +85,9 @@ public class AbstractTestCases extends MuleArtifactFunctionalTestCase {
 
     public void updateNodes(String label, Map<String, Object> parameters, Map<String, Object> setParameters) throws Exception {
         flowRunner("updateNodesFlow")
-                .withPayload(setParameters)
-                .withVariable("label", parameters)
-                .withVariable("parameters", setParameters)
+                .withPayload(parameters)
+                .withVariable("label", label)
+                .withVariable("setParameters", setParameters)
                 .run();
     }
 

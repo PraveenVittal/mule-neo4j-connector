@@ -13,28 +13,28 @@
     </neo4j:config>
 
     <flow name="executeFlow">
-        <neo4j:execute config-ref="config" parameters="#[variables.parameters]">
+        <neo4j:execute config-ref="config" parameters="#[vars.parameters]">
             <neo4j:query>#[payload]</neo4j:query>
         </neo4j:execute>
     </flow>
 
     <flow name="createNodeFlow">
-        <neo4j:create-node config-ref="config" label="#[variables.label]" parameters="#[variables.parameters]">
+        <neo4j:create-node config-ref="config" label="#[vars.label]" parameters="#[vars.parameters]">
         </neo4j:create-node>
     </flow>
 
     <flow name="selectNodesFlow">
-        <neo4j:select-nodes config-ref="config" label="#[variables.label]" parameters="#[variables.parameters]" />
+        <neo4j:select-nodes config-ref="config" label="#[vars.label]" parameters="#[vars.parameters]" />
     </flow>
 
     <flow name="updateNodesFlow">
-        <neo4j:update-nodes config-ref="config" label="#[variables.label]" parameters="#[variables.parameters]">
-            <neo4j:set-parameters>#[payload]</neo4j:set-parameters>
+        <neo4j:update-nodes config-ref="config" label="#[vars.label]" parameters="#[payload]">
+            <neo4j:set-parameters>#[vars.setParameters]</neo4j:set-parameters>
         </neo4j:update-nodes>
     </flow>
 
     <flow name="deleteNodesFlow">
-        <neo4j:delete-nodes config-ref="config" label="#[variables.label]" removeRelationships="#[variables.removeRelationships]" parameters="#[variables.parameters]" />
+        <neo4j:delete-nodes config-ref="config" label="#[vars.label]" removeRelationships="#[vars.removeRelationships]" parameters="#[vars.parameters]" />
     </flow>
 
 </mule>
