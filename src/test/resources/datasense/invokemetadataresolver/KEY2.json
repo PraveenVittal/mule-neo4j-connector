@@ -1,1 +1,1 @@
-[{"fields":[],"ordered":false,"annotations":{"class org.mule.metadata.api.annotation.LabelAnnotation":{"value":"KEY2"}},"metadataFormat":{"label":"Java","id":"java","validMimeTypes":["application/java"]}}]
+[{"ordered":false,"description":"Optional.empty","metadataFormat":{"validMimeTypes":["application/java"],"label":"Optional[Java]","id":"java"},"annotations":[{"public":true,"name":"label","value":"KEY2"}],"fields":[],"openRestriction":"Optional.empty","open":false}]

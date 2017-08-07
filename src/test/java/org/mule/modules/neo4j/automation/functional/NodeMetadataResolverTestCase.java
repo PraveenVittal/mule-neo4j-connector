@@ -1,6 +1,6 @@
 package org.mule.modules.neo4j.automation.functional;
 
-import com.google.gson.Gson;
+import org.json.JSONArray;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,6 @@ import org.mule.runtime.api.metadata.MetadataKey;
 import org.mule.runtime.api.metadata.MetadataService;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
-import org.mule.runtime.core.internal.metadata.MuleMetadataService;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import java.io.File;
@@ -86,7 +85,7 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
         cleanUpDB();
         createMetadataKeys();
         location = builder().globalName("createNodeFlow").addProcessorsPart().addIndexPart(0).build();
-        metadataService = muleContext.getRegistry().lookupObject(MuleMetadataService.class);
+        metadataService = muleContext.getRegistry().lookupObject(MetadataService.class);
     }
 
     @Override
@@ -128,16 +127,15 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
         MetadataResult<ComponentMetadataDescriptor<OperationModel>> result = metadataService.getOperationMetadata(location, metadataKey);
         assertThat(result.isSuccess(), is(true));
         assertThat(result.getFailures(), hasSize(equalTo(0)));
-
-        String actualMetadata = new Gson().toJson(result.get().getModel().getAllParameterModels().stream()
+        JSONArray actualMetadataJson = new JSONArray(result.get().getModel().getAllParameterModels().stream()
                 .filter(parameterModel -> parameterModel.getName().equals("parameters"))
                 .map(ParameterModel::getType)
                 .collect(toList()));
         if (serializedMetadataFile.createNewFile()) {
-            write(serializedMetadataFile, actualMetadata);
+            write(serializedMetadataFile, actualMetadataJson.toString());
             fail(format(FAIL_MESSAGE, metadataKey.getId(), serializedMetadataFile.getAbsolutePath(), getMetadataCategory()));
         } else {
-            assertThat(actualMetadata, is(readFileToString(serializedMetadataFile)));
+            assertThat(actualMetadataJson.toString(), is(readFileToString(serializedMetadataFile)));
         }
     }
 
