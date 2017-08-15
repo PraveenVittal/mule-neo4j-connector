@@ -135,7 +135,7 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
             write(serializedMetadataFile, actualMetadataJson.toString());
             fail(format(FAIL_MESSAGE, metadataKey.getId(), serializedMetadataFile.getAbsolutePath(), getMetadataCategory()));
         } else {
-            assertThat(actualMetadataJson.toString(), is(readFileToString(serializedMetadataFile)));
+            assertThat(actualMetadataJson.toList(), is(new JSONArray(readFileToString(serializedMetadataFile)).toList()));
         }
     }
 
