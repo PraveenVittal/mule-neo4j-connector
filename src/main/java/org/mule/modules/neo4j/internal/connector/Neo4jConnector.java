@@ -29,7 +29,7 @@ import org.mule.modules.neo4j.internal.exception.Neo4JExceptionHandler;
 import org.mule.modules.neo4j.internal.metadata.InvokeMetaData;
 
 @Connector(name = "neo4j", friendlyName = "Neo4j")
-@RequiresEnterpriseLicense
+@RequiresEnterpriseLicense(allowEval = true)
 @OnException(handler = Neo4JExceptionHandler.class)
 @MetaDataScope(InvokeMetaData.class)
 public class Neo4jConnector {
