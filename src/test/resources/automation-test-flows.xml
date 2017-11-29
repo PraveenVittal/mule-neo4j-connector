@@ -19,7 +19,7 @@
     </flow>
 
     <flow name="createNodeFlow">
-        <neo4j:create-node config-ref="config" label="#[vars.label]" parameters="#[vars.parameters]">
+        <neo4j:create-node config-ref="config" label="#[vars.label]" parameters="#[vars.parameters]" >
         </neo4j:create-node>
     </flow>
 

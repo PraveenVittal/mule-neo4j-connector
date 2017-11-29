@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 
+
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.A_NODE;
@@ -41,12 +41,13 @@ public class DeleteNodesTestCase extends AbstractTestCases {
 
     @Test
     public void deleteNodeFailTest() throws Exception {
+
         createNode(TEST_LABEL2, PARAMS_MAP);
         execute(CREATE_TEST_RELATION, null);
         assertThat(execute(TEST_LABEL), contains(A_NODE));
         assertThat(execute(TEST_LABEL2), contains(A_NODE));
         try {
-            deleteNodes(TEST_LABEL2, false, PARAMS_MAP);
+            deleteNodes(TEST_LABEL2, true, PARAMS_MAP);
         } finally {
             deleteNodes(TEST_LABEL2, true, null);
         }
