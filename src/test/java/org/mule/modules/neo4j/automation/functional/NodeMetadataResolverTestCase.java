@@ -15,6 +15,7 @@ import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.test.runner.RunnerDelegateTo;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,6 +53,7 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
     private static final String FAIL_MESSAGE = "No assertions file was found for metadata key =  '%s'. It was created in the file %s. Please move it into src/test/resources/datasense/%s and re-run the test.";
     private static final String PATH_TEMPLATE = "/datasense/%s/%s.json";
     private static Location location;
+    @Inject
     private static MetadataService metadataService;
     private File serializedMetadataFile;
     private MetadataKey metadataKey;
@@ -85,7 +87,6 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
         cleanUpDB();
         createMetadataKeys();
         location = builder().globalName("createNodeFlow").addProcessorsPart().addIndexPart(0).build();
-        metadataService = muleContext.getRegistry().lookupObject(MetadataService.class);
     }
 
     @Override

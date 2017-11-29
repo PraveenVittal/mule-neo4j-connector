@@ -9,7 +9,7 @@ import org.mule.runtime.extension.api.annotation.OnException;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 
-@Extension(name = "Neo4j", description = "Neo4j Extension")
+@Extension(name = "Neo4j")
 @Xml(prefix = "neo4j")
 @Configurations(Neo4jConfig.class)
 @OnException(Neo4jExceptionHandler.class)

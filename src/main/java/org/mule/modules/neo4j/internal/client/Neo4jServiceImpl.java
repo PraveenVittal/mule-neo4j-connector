@@ -5,12 +5,13 @@ package org.mule.modules.neo4j.internal.client;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import org.apache.log4j.Logger;
 import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
 import org.mule.modules.neo4j.internal.util.FormatFunction;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Value;
 import org.neo4j.driver.v1.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,8 +26,7 @@ import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 
 public class Neo4jServiceImpl implements Neo4jService {
-
-    private static final Logger logger = Logger.getLogger(Neo4jServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(Neo4jServiceImpl.class);
     private static final Map<String, Object> EMPTY_MAP = emptyMap();
     private final Neo4jConnection connection;
 

@@ -4,7 +4,6 @@
 package org.mule.modules.neo4j.internal.connection;
 
 import org.mule.modules.neo4j.internal.client.Neo4jMetadataService;
-import org.mule.runtime.core.api.routing.ValidationException;
 import org.neo4j.driver.v1.Session;
 
 import java.io.Closeable;
@@ -15,7 +14,7 @@ public interface Neo4jConnection extends Closeable {
 
     Session getSession();
 
-    void validate() throws ValidationException;
+    void validate();
 
     Neo4jMetadataService getMetadataService();
 
