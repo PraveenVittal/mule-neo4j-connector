@@ -5,6 +5,7 @@ package org.mule.modules.neo4j.internal.client;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import org.mule.connectors.commons.template.connection.ConnectorConnection;
 import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
 import org.mule.modules.neo4j.internal.util.FormatFunction;
 import org.neo4j.driver.v1.Record;
@@ -25,7 +26,7 @@ import static com.google.common.collect.Iterables.transform;
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 
-public class Neo4jServiceImpl implements Neo4jService {
+public abstract class Neo4jServiceImpl implements ConnectorConnection {
     private static final Logger logger = LoggerFactory.getLogger(Neo4jServiceImpl.class);
     private static final Map<String, Object> EMPTY_MAP = emptyMap();
     private final Neo4jConnection connection;
@@ -34,27 +35,22 @@ public class Neo4jServiceImpl implements Neo4jService {
         this.connection = connection;
     }
 
-    @Override
     public void createNode(String label, Map<String, Object> parameters) {
         execute("CREATE (a:`%s` %s) RETURN a", label, parameters);
     }
 
-    @Override
     public List<Map<String, Object>> selectNodes(String label, Map<String, Object> parameters) {
         return execute("MATCH (a:`%s` %s) RETURN a", label, parameters);
     }
 
-    @Override
     public void updateNodes(String label, Map<String, Object> parameters, Map<String, Object> setParameters) {
         execute("MATCH (a:`%s` %s) %s RETURN a", label, parameters, setParameters);
     }
 
-    @Override
     public void deleteNodes(String label, boolean removeRelationships, Map<String, Object> parameters) {
         execute(format("MATCH (a:`%%s` %%s) %s DELETE a", removeRelationships ? "DETACH" : ""), label, parameters);
     }
 
-    @Override
     public List<Map<String, Object>> execute(String cqlStatement, Map<String, Object> parameters) {
         if (logger.isDebugEnabled()) {
             logger.debug("cqlStatement=" + cqlStatement);

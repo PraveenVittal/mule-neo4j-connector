@@ -21,6 +21,6 @@ public abstract class Neo4jException extends RuntimeException {
         super(message, cause);
     }
 
-    protected abstract Neo4jErrors getErrorCode();
+    public abstract Neo4jErrors getErrorCode();
 
 }

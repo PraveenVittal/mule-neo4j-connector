@@ -3,18 +3,12 @@
  */
 package org.mule.modules.neo4j.internal.client;
 
+import org.mule.connectors.commons.template.service.ConnectorService;
+
 import java.util.List;
 import java.util.Map;
 
-public interface Neo4jService {
+public interface Neo4jService extends ConnectorService {
 
-    List<Map<String, Object>> execute(String query, Map<String, Object> parameters);
 
-    void createNode(String label, Map<String, Object> parameters);
-
-    List<Map<String, Object>> selectNodes(String label, Map<String, Object> parameters);
-
-    void updateNodes(String label, Map<String, Object> parameters, Map<String, Object> setParameters);
-
-    void deleteNodes(String label, boolean removeRelationships, Map<String, Object> parameters);
 }

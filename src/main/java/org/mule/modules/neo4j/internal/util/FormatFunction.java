@@ -5,6 +5,12 @@ package org.mule.modules.neo4j.internal.util;
 
 import com.google.common.base.Function;
 
+import javax.swing.text.Document;
+import java.io.InputStream;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.io.IOUtils.toInputStream;
+
 /**
  * {@link Function} that applies a format that follows the {@link java.util.Formatter} conventions to the input.
  */
@@ -19,5 +25,16 @@ public class FormatFunction implements Function<String, String> {
     @Override
     public String apply(String input) {
         return String.format(template, input);
+    }
+
+    /**
+     * Convert a Document to Json InputStream
+     */
+    public static InputStream toJsonResult(Document document) {
+        if (document != null) {
+            return toInputStream(document.toString(), UTF_8);
+        } else {
+            return null;
+        }
     }
 }

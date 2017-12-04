@@ -54,7 +54,7 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
     private static final String PATH_TEMPLATE = "/datasense/%s/%s.json";
     private static Location location;
     @Inject
-    private MetadataService metadataService;
+    protected MetadataService metadataService;
     private File serializedMetadataFile;
     private MetadataKey metadataKey;
 

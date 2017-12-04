@@ -10,6 +10,10 @@ import static org.mule.modules.neo4j.internal.exception.Neo4jErrors.UNKNOWN;
 
 public class Neo4jExceptionHandler extends ExceptionHandler {
 
+    public Neo4jExceptionHandler(Exception unknown, Neo4jErrors exception) {
+    }
+
+
     @Override
     public ModuleException enrichException(Exception exception) {
         if(exception instanceof Neo4jException) {
