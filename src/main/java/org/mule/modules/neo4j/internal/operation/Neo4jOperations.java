@@ -1,60 +1,52 @@
 package org.mule.modules.neo4j.internal.operation;
 
-import org.mule.modules.neo4j.internal.client.Neo4jServiceImpl;
+import org.mule.connectors.atlantic.commons.builder.config.exception.DefinedExceptionHandler;
+import org.mule.connectors.atlantic.commons.builder.execution.ExecutionBuilder;
+import org.mule.modules.neo4j.internal.client.Neo4jService;
 import org.mule.modules.neo4j.internal.config.Neo4jConfig;
 import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
-import org.mule.modules.neo4j.internal.exception.Neo4jErrorTypeProvider;
-import org.mule.modules.neo4j.internal.metadata.NodeMetadataResolver;
-import org.mule.runtime.extension.api.annotation.error.Throws;
-import org.mule.runtime.extension.api.annotation.metadata.MetadataKeyId;
-import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
-import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
-import org.mule.runtime.extension.api.annotation.param.*;
-import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+import org.mule.connectors.commons.template.operation.ConnectorOperations;
+import org.mule.connectors.atlantic.commons.builder.lambda.function.BiFunction;
+import org.mule.modules.neo4j.internal.exception.Neo4jErrors;
+import org.mule.modules.neo4j.internal.exception.Neo4jException;
+import org.mule.runtime.extension.api.exception.ModuleException;
+import org.neo4j.driver.v1.exceptions.*;
+import org.neo4j.driver.v1.exceptions.SecurityException;
 
-import javax.ws.rs.DefaultValue;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+import static org.mule.modules.neo4j.internal.exception.Neo4jErrors.*;
 
-import static org.mule.modules.neo4j.internal.util.FormatFunction.toJsonResult;
-import static org.mule.runtime.extension.api.annotation.param.MediaType.APPLICATION_JSON;
 
-@Throws(Neo4jErrorTypeProvider.class)
-public class Neo4jOperations {
+public class Neo4jOperations extends ConnectorOperations<Neo4jConfig, Neo4jConnection, Neo4jService>{
 
-    @OutputResolver(output = NodeMetadataResolver.class)
-    @MediaType(APPLICATION_JSON)
-    public InputStream createNode(@Config Neo4jConfig config,
-                               @Connection Neo4jConnection connection,
-                               String username,
-                               String password) {
-        return toJsonResult(newExecutionBuilder(config, connection).execute(DatabaseService::addUser)
-                .withParam(username)
-                .withParam(password));
+
+
+    public Neo4jOperations(BiFunction<Neo4jConfig, Neo4jConnection, Neo4jService> serviceConstructor) {
+        super(  serviceConstructor );
     }
 
-    @OutputResolver(output = NodeMetadataResolver.class)
-    public List<Map<String, Object>> execute(@Connection Neo4jConnection connection, @Content String query, @Optional(defaultValue = "#[payload]") Map<String, Object> parameters) {
-        return new Neo4jServiceImpl(connection).execute(query, parameters);
+    private <T extends Throwable> DefinedExceptionHandler<T> handle(Class<T> exceptionClass, Neo4jErrors errorCode) {
+        return new DefinedExceptionHandler<>(exceptionClass, exception -> {
+            throw new ModuleException(errorCode, exception);
+        });
     }
 
-    public void createNode(@Connection Neo4jConnection connection, @MetadataKeyId(NodeMetadataResolver.class) String label, @TypeResolver(NodeMetadataResolver.class) @Optional(defaultValue = "#[payload]") Map<String, Object> parameters) {
-        new Neo4jServiceImpl(connection).createNode(label, parameters);
+    @Override
+    protected ExecutionBuilder<Neo4jService> newExecutionBuilder(Neo4jConfig config, Neo4jConnection connection) {
+        return super.newExecutionBuilder(config, connection)
+                .withExceptionHandler(handle(AuthenticationException.class, AUTHENTICATION_ERROR))
+                .withExceptionHandler(handle(ClientException.class,CLIENT_ERROR))
+                .withExceptionHandler(handle(DatabaseException.class, DATABASE_EXCEPTION))
+                .withExceptionHandler(handle(Neo4jException.class, EXCEPTION))
+                .withExceptionHandler(handle(NoSuchRecordException.class, NO_SUCH_RECORD_EXCEPTION))
+                .withExceptionHandler(handle(ProtocolException.class,PROTOCOL_EXCEPTION))
+                .withExceptionHandler(handle(SecurityException.class, SECURITY_EXCEPTION))
+                .withExceptionHandler(handle(ServiceUnavailableException.class, SERVICE_UNAVAILABLE_EXCEPTION))
+                .withExceptionHandler(handle(SessionExpiredException.class, SESSION_EXPIRED_EXCEPTION))
+                .withExceptionHandler(handle(TransientException.class, TRANSIENT_EXCEPTION))
+                .withExceptionHandler(Neo4jException.class, exception -> new ModuleException(exception.getErrorCode(), exception));
     }
 
-    @OutputResolver(output = NodeMetadataResolver.class)
-    public List<Map<String, Object>> selectNodes(@Connection Neo4jConnection connection, @MetadataKeyId(NodeMetadataResolver.class) String label, @Optional(defaultValue = "#[payload]") Map<String, Object> parameters) {
-        return new Neo4jServiceImpl(connection).selectNodes(label, parameters);
-    }
 
-    public void updateNodes(@Connection Neo4jConnection connection, @MetadataKeyId(NodeMetadataResolver.class) String label, @Optional(defaultValue = "#[payload]") Map<String, Object> parameters, @Content Map<String, Object> setParameters) {
-        new Neo4jServiceImpl(connection).updateNodes(label, parameters, setParameters);
-    }
 
-    public void deleteNodes(@Connection Neo4jConnection connection, @MetadataKeyId(NodeMetadataResolver.class) String label,
-            @DisplayName("Also remove existing relationships") @DefaultValue("false") boolean removeRelationships, @Optional(defaultValue = "#[payload]") Map<String, Object> parameters) {
-        new Neo4jServiceImpl(connection).deleteNodes(label, removeRelationships, parameters);
-    }
 
 }

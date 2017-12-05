@@ -3,6 +3,7 @@
  */
 package org.mule.modules.neo4j.internal.connection.basic;
 
+import org.mule.connectors.commons.template.connection.ConnectorConnection;
 import org.mule.modules.neo4j.internal.client.Neo4jMetadataService;
 import org.mule.modules.neo4j.internal.client.Neo4jMetadataServiceImpl;
 import org.mule.modules.neo4j.internal.client.Neo4jServiceImpl;
@@ -29,18 +30,17 @@ public class BasicAuthenticationConnection implements Neo4jConnection {
     }
 
     @Override
+    public void disconnect() {
+
+    }
+
+    @Override
     public void validate() {
         session.run("MATCH (a) RETURN a LIMIT 1");
     }
 
-    @Override
-    public void close() throws IOException {
-        try {
-            session.close();
-        } finally {
-            client.close();
-        }
-    }
+
+
 
     @Override
     public String getId() {

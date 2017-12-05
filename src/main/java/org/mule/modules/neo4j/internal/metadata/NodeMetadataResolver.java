@@ -6,6 +6,7 @@ import org.mule.metadata.api.builder.ObjectTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.modules.neo4j.internal.client.Neo4jMetadataService;
 import org.mule.modules.neo4j.internal.client.Neo4jServiceImpl;
+import org.mule.modules.neo4j.internal.config.Neo4jConfig;
 import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.DataType;
@@ -38,7 +39,7 @@ public class NodeMetadataResolver implements InputTypeResolver<String>, TypeKeys
 
     @Override
     public MetadataType getInputMetadata(MetadataContext context, String key) throws MetadataResolvingException, ConnectionException {
-        List<Map<String, Object>> nodes = new Neo4jServiceImpl((Neo4jConnection) context.getConnection().get()).execute(format("MATCH (a:%s) RETURN a LIMIT 1", key), null);
+        List<Map<String, Object>> nodes = new Neo4jServiceImpl( (Neo4jConfig) context.getConfig().get()  ,(Neo4jConnection) context.getConnection().get()).execute(format("MATCH (a:%s) RETURN a LIMIT 1", key), null);
         ObjectTypeBuilder builder = new BaseTypeBuilder(JAVA).objectType().label(key);
         if (nodes.size() == 1) {
             getMetadataService(context).getConstraintProperties(key)

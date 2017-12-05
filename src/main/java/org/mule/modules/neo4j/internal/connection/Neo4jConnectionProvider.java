@@ -3,6 +3,8 @@ package org.mule.modules.neo4j.internal.connection;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
 
+import java.io.Closeable;
+
 import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.failure;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.success;
@@ -11,7 +13,7 @@ public abstract class Neo4jConnectionProvider implements ConnectionProvider<Neo4
 
     @Override
     public void disconnect(Neo4jConnection connection) {
-        closeQuietly(connection);
+        closeQuietly( (Closeable) connection );
     }
 
     @Override
