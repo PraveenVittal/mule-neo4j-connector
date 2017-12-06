@@ -59,7 +59,7 @@ public  class Neo4jServiceImpl extends DefaultConnectorService<Neo4jConfig, Neo4
         execute(format("MATCH (a:`%%s` %%s) %s DELETE a", removeRelationships ? "DETACH" : ""), label, parameters);
     }
 
-
+    @Override
     public List<Map<String, Object>> execute(String cqlStatement, Map<String, Object> parameters) {
         if (logger.isDebugEnabled()) {
             logger.debug("cqlStatement=" + cqlStatement);

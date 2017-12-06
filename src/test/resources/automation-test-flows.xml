@@ -13,18 +13,17 @@
     </neo4j:config>
 
     <flow name="executeFlow">
-        <neo4j:execute config-ref="config" parameters="#[vars.parameters]">
-            <neo4j:query>#[payload]</neo4j:query>
+        <neo4j:execute config-ref="config"   map='#[vars.parameters]'  >
         </neo4j:execute>
     </flow>
 
     <flow name="createNodeFlow">
-        <neo4j:create-node config-ref="config" label="#[vars.label]" parameters="#[vars.parameters]" >
+        <neo4j:create-node config-ref="config" label="#[vars.label]"  map='#[vars.parameters]' >
         </neo4j:create-node>
     </flow>
 
     <flow name="selectNodesFlow">
-        <neo4j:select-nodes config-ref="config" label="#[vars.label]" parameters="#[vars.parameters]" />
+        <neo4j:select-nodes config-ref="config" label="#[vars.label]" map='#[vars.parameters]' />
     </flow>
 
     <flow name="updateNodesFlow">

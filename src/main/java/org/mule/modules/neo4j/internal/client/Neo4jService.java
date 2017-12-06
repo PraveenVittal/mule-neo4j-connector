@@ -14,5 +14,5 @@ public interface Neo4jService extends ConnectorService {
     List<Map<String, Object>> selectNodes(String label, Map<String, Object> parameters) ;
     void updateNodes(String label, Map<String, Object> parameters, Map<String, Object> setParameters);
     void deleteNodes(String label, boolean removeRelationships, Map<String, Object> parameters);
-    List<Map<String, Object>> execute(String cql, String label, Map<String, Object> parameters);
+    List<Map<String, Object>> execute( String label, Map<String, Object> parameters);
 }

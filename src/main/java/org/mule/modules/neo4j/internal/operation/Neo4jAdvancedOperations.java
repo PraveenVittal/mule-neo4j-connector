@@ -28,7 +28,7 @@ public class Neo4jAdvancedOperations extends Neo4jOperations {
     @MediaType(APPLICATION_JSON)
     public void createNode(@Config Neo4jConfig config,
                                @Connection Neo4jConnection connection,
-                               String label,Map<String, Object> map) {
+                               String label, @Optional Map<String, Object> map) {
         newExecutionBuilder(config, connection).execute(Neo4jService::createNode)
                 .withParam(label)
                 .withParam(map);
@@ -37,11 +37,11 @@ public class Neo4jAdvancedOperations extends Neo4jOperations {
     @OutputResolver(output = NodeMetadataResolver.class)
 
     public  List<Map<String, Object>>  execute(@Config Neo4jConfig config,
-                           @Connection Neo4jConnection connection,String cql,
-                           String label,Map<String, Object> map) {
+                           @Connection Neo4jConnection connection,
+                           @Content String query , @Optional Map<String, Object> map) {
         return newExecutionBuilder(config, connection).execute(Neo4jService::execute)
-                .withParam(cql)
-                .withParam(label)
+
+                .withParam(query)
                 .withParam(map);
     }
 
@@ -50,7 +50,7 @@ public class Neo4jAdvancedOperations extends Neo4jOperations {
 
     public  List<Map<String, Object>>  selectNodes(@Config Neo4jConfig config,
                                                    @Connection Neo4jConnection connection,
-                                                   String label, Map<String, Object> map) {
+                                                   String label, @Optional Map<String, Object> map) {
         return newExecutionBuilder(config, connection).execute(Neo4jService::selectNodes)
                 .withParam(label)
                 .withParam(map);
@@ -58,7 +58,7 @@ public class Neo4jAdvancedOperations extends Neo4jOperations {
 
     public void  updateNodes(@Config Neo4jConfig config,
                              @Connection Neo4jConnection connection,
-                             String label, Map<String, Object> parameters, Map<String, Object> setParameters) {
+                             String label, @Optional Map<String, Object> parameters, @Content Map<String, Object> setParameters) {
        newExecutionBuilder(config, connection).execute(Neo4jService::updateNodes)
                 .withParam(label)
                 .withParam(parameters)
@@ -67,7 +67,7 @@ public class Neo4jAdvancedOperations extends Neo4jOperations {
 
     public void  deleteNodes(@Config Neo4jConfig config,
                              @Connection Neo4jConnection connection,
-                             String label, boolean removeRelationships, Map<String, Object> parameters) {
+                             String label, boolean removeRelationships, @Optional Map<String, Object> parameters) {
         newExecutionBuilder(config, connection).execute(Neo4jService::deleteNodes)
                 .withParam(label)
                 .withParam( removeRelationships )

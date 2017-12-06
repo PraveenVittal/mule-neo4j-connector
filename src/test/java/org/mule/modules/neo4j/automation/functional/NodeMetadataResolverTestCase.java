@@ -3,6 +3,7 @@ package org.mule.modules.neo4j.automation.functional;
 import org.json.JSONArray;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -46,7 +47,7 @@ import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TRUST
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.setTrustStores;
 import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
-
+@Ignore
 @RunnerDelegateTo(Parameterized.class)
 public class NodeMetadataResolverTestCase extends AbstractTestCases {
 
