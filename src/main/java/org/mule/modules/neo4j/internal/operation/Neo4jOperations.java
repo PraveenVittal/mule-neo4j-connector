@@ -53,7 +53,7 @@ public class Neo4jOperations extends ConnectorOperations<Neo4jConfig, Neo4jConne
 
 	public void createNode(@Config Neo4jConfig config, @Connection Neo4jConnection connection,
 			@MetadataKeyId(NodeMetadataResolver.class) String label,
-			@Optional @TypeResolver(NodeMetadataResolver.class) InputStream input) throws IOException {
+			@Optional @Content @TypeResolver(NodeMetadataResolver.class) InputStream input) throws IOException {
 		newExecutionBuilder(config, connection).execute(Neo4jService::createNode).withParam(label).withParam(input,
 				ConverterUtils::toMap);
 	}
@@ -70,13 +70,13 @@ public class Neo4jOperations extends ConnectorOperations<Neo4jConfig, Neo4jConne
 	@OutputResolver(output = NodeMetadataResolver.class)
 	@MediaType(APPLICATION_JSON)
 	public InputStream selectNodes(@Config Neo4jConfig config, @Connection Neo4jConnection connection, @MetadataKeyId(NodeMetadataResolver.class) String label,
-			@TypeResolver(NodeMetadataResolver.class) @Optional InputStream input) {
+			@TypeResolver(NodeMetadataResolver.class) @Content @Optional InputStream input) {
 		return newExecutionBuilder(config, connection).execute(Neo4jService::selectNodes, ConverterUtils::toJSONStream)
 				.withParam(label).withParam(input, ConverterUtils::toMap);
 	}
 
 	public void updateNodes(@Config Neo4jConfig config, @Connection Neo4jConnection connection, @MetadataKeyId(NodeMetadataResolver.class) String label,
-			@Optional @TypeResolver(NodeMetadataResolver.class) InputStream parameters, @Content InputStream setParameters) throws IOException {
+			@Optional InputStream parameters, @TypeResolver(NodeMetadataResolver.class) @Content InputStream setParameters) throws IOException {
 		newExecutionBuilder(config, connection).execute(Neo4jService::updateNodes).withParam(label)
 				.withParam(parameters, ConverterUtils::toMap).withParam(setParameters, ConverterUtils::toMap);
 	}
