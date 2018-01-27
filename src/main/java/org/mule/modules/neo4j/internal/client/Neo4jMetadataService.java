@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface Neo4jMetadataService {
 
-    List<String> getLabels();
+	List<String> getLabels();
 
-    Set<String> getConstraintProperties(String label);
+	Set<String> getConstraintProperties(String label);
 }

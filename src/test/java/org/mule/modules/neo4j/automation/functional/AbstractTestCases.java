@@ -1,102 +1,101 @@
 package org.mule.modules.neo4j.automation.functional;
 
-import org.junit.After;
-import org.junit.Before;
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.runtime.extension.api.annotation.param.Content;
-import org.mule.runtime.extension.api.annotation.param.Optional;
-
-import java.util.List;
-import java.util.Map;
-
 import static java.lang.String.format;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.QUERY_DELETE_A_NODE;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.QUERY_RETURN_A_NODE;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
 import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL2;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.toList;
 
-public class AbstractTestCases extends MuleArtifactFunctionalTestCase {
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Scanner;
 
-    protected static final String FLOW_CONFIG_LOCATION = "src/test/resources/automation-test-flows.xml";
+import org.junit.After;
+import org.junit.Before;
+import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 
-    @Override
-    public int getTestTimeoutSecs() {
-        return 999999;
-    }
+public abstract class AbstractTestCases extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    protected String[] getConfigFiles() {
-        return new String[] {
-                FLOW_CONFIG_LOCATION
-        };
-    }
+	protected static final String FLOW_CONFIG_LOCATION = "src/test/resources/automation-test-flows.xml";
 
-    @Before
-    public void setUp() throws Exception {
-        cleanUpDB();
-    }
+	@Override
+	public int getTestTimeoutSecs() {
+		return 999999;
+	}
 
-    @After
-    public void tearDown() throws Exception {
-        cleanUpDB();
-    }
+	@Override
+	protected String[] getConfigFiles() {
+		return new String[] { FLOW_CONFIG_LOCATION };
+	}
 
-    protected void cleanUpDB() throws Exception {
-        execute(format(QUERY_DELETE_A_NODE, TEST_LABEL), null);
-        execute(format(QUERY_DELETE_A_NODE, TEST_LABEL2), null);
-    }
+	@Before
+	public void setUp() throws Exception {
+		cleanUpDB();
+	}
 
-    public List<Map<String, Object>> execute(String query, Map<String, Object> parameters) throws Exception {
-        return (List<Map<String, Object>>) flowRunner("executeFlow")
-                .withPayload(query)
-                .withVariable("parameters", parameters)
-                .run()
-                .getMessage()
-                .getPayload()
-                .getValue();
-    }
+	@After
+	public void tearDown() throws Exception {
+		cleanUpDB();
+	}
 
-    public List<Map<String, Object>> execute(String query) throws Exception {
-        return (List<Map<String, Object>>) flowRunner("executeFlow")
-                .withPayload(format(QUERY_RETURN_A_NODE, query))
-                .withVariable("parameters", null)
-                .run()
-                .getMessage()
-                .getPayload()
-                .getValue();
-    }
+	protected void cleanUpDB() throws Exception {
+		execute(format(QUERY_DELETE_A_NODE, TEST_LABEL), null);
+		execute(format(QUERY_DELETE_A_NODE, TEST_LABEL2), null);
+	}
 
-    public void createNode(String label, Map<String, Object> parameters) throws Exception {
-        flowRunner("createNodeFlow")
-                .withVariable("label", label)
-                .withVariable("parameters", parameters)
-                .run();
-    }
+	public InputStream execute(String query, InputStream parameters) throws Exception {
+		return ((CursorStreamProvider) flowRunner("executeFlow").withPayload(query)
+				.withVariable("parameters", parameters).keepStreamsOpen().run().getMessage().getPayload().getValue())
+						.openCursor();
+	}
 
-    public List<Map<String, Object>> selectNodes(String label, Map<String, Object> parameters) throws Exception {
-        return (List<Map<String, Object>>) flowRunner("selectNodesFlow")
-                .withVariable("label", label)
-                .withVariable("parameters", parameters)
-                .run()
-                .getMessage()
-                .getPayload()
-                .getValue();
-    }
+	public InputStream execute(String query) throws Exception {
+		return ((CursorStreamProvider) flowRunner("executeFlow").withPayload(format(QUERY_RETURN_A_NODE, query))
+				.withVariable("parameters", null).keepStreamsOpen().run().getMessage().getPayload().getValue())
+						.openCursor();
+	}
 
-    public void updateNodes(String label, Map<String, Object> parameters, Map<String, Object> setParameters) throws Exception {
-        flowRunner("updateNodesFlow")
-                .withPayload(parameters)
-                .withVariable("label", label)
-                .withVariable("setParameters", setParameters)
-                .run();
-    }
+	public void createNode(String label, InputStream parameters) throws Exception {
+		flowRunner("createNodeFlow").withVariable("label", label).withVariable("parameters", parameters).run();
+	}
 
-    public void deleteNodes(String label, boolean removeRelationships, Map<String, Object> parameters) throws Exception {
-        flowRunner("deleteNodesFlow")
-                .withVariable("label", label)
-                .withVariable("removeRelationships", removeRelationships)
-                .withVariable("parameters", parameters)
-                .run();
-    }
+	public InputStream selectNodes(String label, InputStream parameters) throws Exception {
+		return ((CursorStreamProvider) flowRunner("selectNodesFlow").withVariable("label", label)
+				.withVariable("parameters", parameters).keepStreamsOpen().run().getMessage().getPayload().getValue())
+						.openCursor();
+	}
+
+	public void updateNodes(String label, InputStream parameters, InputStream setParameters) throws Exception {
+		flowRunner("updateNodesFlow").withPayload(parameters).withVariable("label", label)
+				.withVariable("setParameters", setParameters).run();
+	}
+
+	public void deleteNodes(String label, boolean removeRelationships, InputStream parameters) throws Exception {
+		flowRunner("deleteNodesFlow").withVariable("label", label)
+				.withVariable("removeRelationships", removeRelationships).withVariable("parameters", parameters).run();
+	}
+
+	protected static String inputStreamToString(InputStream inputStream) {
+		Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
+		return scanner.hasNext() ? scanner.next() : "";
+	}
+
+	protected String getMapKeyValue(String test, String key) throws Exception {
+		return Map.class.cast(toList(execute(test)).get(0).get("a")).get(key).toString();
+	}
+
+	protected String getMapQueryValue(String query, String test, String params, String key) throws Exception {
+		return Map.class.cast(toList(execute(format(query, test, params), null)).get(0).get("a")).get(key).toString();
+	}
+
+	protected String getMapKeyValueWihtParams(String test, InputStream params, String key) throws Exception {
+		return Map.class.cast(toList(execute(test, params)).get(0).get("a")).get(key).toString();
+	}
+
+	protected String getSelectMapKeyValue(String test, InputStream params, String key) throws Exception {
+		return Map.class.cast(toList(selectNodes(test, params)).get(0).get("a")).get(key).toString();
+	}
 
 }

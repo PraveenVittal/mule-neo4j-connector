@@ -3,31 +3,31 @@
  */
 package org.mule.modules.neo4j.automation.functional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.NAME;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.NAME_TAG;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
+import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.getParamsMap;
+
 import org.junit.After;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertThat;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.A_NODE;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.PARAMS_MAP;
-import static org.mule.modules.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
-
 public class SelectNodesTestCase extends AbstractTestCases {
 
-    @Override
-    @After
-    public void setUp() throws Exception {
-        createNode(TEST_LABEL, PARAMS_MAP);
-    }
+	@Override
+	@After
+	public void setUp() throws Exception {
+		createNode(TEST_LABEL, getParamsMap());
+	}
 
-    @Test
-    public void selectNodesIT() throws Exception {
-        assertThat(selectNodes(TEST_LABEL, null), contains(A_NODE));
-    }
+	@Test
+	public void selectNodesIT() throws Exception {
+		assertThat(getSelectMapKeyValue(TEST_LABEL, null, NAME_TAG), is(NAME));
+	}
 
-    @Test
-    public void selectNodesWithParamsIT() throws Exception {
-        assertThat(selectNodes(TEST_LABEL, PARAMS_MAP), contains(A_NODE));
-    }
-
+	@Test
+	public void selectNodesWithParamsIT() throws Exception {
+		assertThat(getSelectMapKeyValue(TEST_LABEL, getParamsMap(), NAME_TAG), is(NAME));
+	}
 }

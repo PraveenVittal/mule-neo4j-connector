@@ -5,22 +5,22 @@ package org.mule.modules.neo4j.internal.exception;
 
 public abstract class Neo4jException extends RuntimeException {
 
-    public Neo4jException() {
-        super();
-    }
+	public Neo4jException() {
+		super();
+	}
 
-    public Neo4jException(Throwable cause) {
-        super(cause);
-    }
+	public Neo4jException(Throwable cause) {
+		super(cause);
+	}
 
-    public Neo4jException(String message) {
-        super(message);
-    }
+	public Neo4jException(String message) {
+		super(message);
+	}
 
-    public Neo4jException(Throwable cause, String message) {
-        super(message, cause);
-    }
+	public Neo4jException(Throwable cause, String message) {
+		super(message, cause);
+	}
 
-    public abstract Neo4jErrors getErrorCode();
+	public abstract Neo4jErrors getErrorCode();
 
 }

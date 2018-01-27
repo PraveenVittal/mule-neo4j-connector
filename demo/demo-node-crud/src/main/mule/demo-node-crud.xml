@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:neo4j="http://www.mulesoft.org/schema/mule/neo4j"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/neo4j http://www.mulesoft.org/schema/mule/neo4j/current/mule-neo4j.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<configuration-properties file="automation-credentials.properties"/>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="21d70d6d-735d-4c44-ba66-7c3ece8283f3" basePath="/" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<neo4j:config name="Neo4j_Config" doc:name="Neo4j Config" doc:id="768994d7-1649-4f60-b161-2c10023aee86" >
+		<neo4j:connection username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" restUrl="${config.restUrl}" />
+	</neo4j:config>
+	<flow name="createNode" doc:id="3f9f9402-185b-438a-883f-0f3208d26eb9" >
+		<http:listener doc:name="/createNode" doc:id="94c2e3d5-fa23-46b3-a283-9481398f120a" config-ref="HTTP_Listener_config" path="/createNode"/>
+		<ee:transform doc:name="Transform Message" doc:id="5fde9617-1960-4bc7-a937-0eedc7c9a8c0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"name":"Tom Hanks",
+	"born": 1956
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<neo4j:create-node doc:name="Create node" doc:id="bf02e477-fa59-4094-87bb-0afee011fd62" config-ref="Neo4j_Config" label="Person" input="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="6f35d4a1-5421-41af-925b-c24a9e903d9e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="selectNode" doc:id="204837eb-6971-4808-8511-e911af74b27c" >
+		<http:listener doc:name="/selectNode" doc:id="0325c130-5760-4334-b8de-489fbbdc0140" config-ref="HTTP_Listener_config" path="/selectNode"/>
+		<ee:transform doc:name="Transform Message" doc:id="57bfd15e-9f23-490e-a35b-57c831fcf601" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="select" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"name":"Tom Hanks"
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<neo4j:select-nodes doc:name="Select nodes" doc:id="bb1d84bf-fd57-467d-a64b-75163049b78c" config-ref="Neo4j_Config" label="Person" input="#[vars.select]"/>
+		<ee:transform doc:name="Transform Message" doc:id="4166396d-31a5-467c-86d4-35a16eb26ce3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="updateNode" doc:id="3de6d712-82aa-4b7d-8e3c-ac0482b55774" >
+		<http:listener doc:name="/updateNode" doc:id="3eee10b2-0e94-4e30-94cf-39fa57b58ae5" config-ref="HTTP_Listener_config" path="/updateNode"/>
+		<ee:transform doc:name="Transform Message" doc:id="82b99bdf-302d-4a59-8848-30bce20e12ac" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="existing" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"name": "Tom Hanks",
+	"born" : "1956"
+}]]></ee:set-variable>
+				<ee:set-variable variableName="newBorn" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"born" : "1980"
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<neo4j:update-nodes label="Person" doc:name="Update nodes" doc:id="7fa7b38f-cecc-4f42-8015-446faf1807aa" config-ref="Neo4j_Config" parameters="#[vars.existing]">
+			<neo4j:set-parameters ><![CDATA[#[vars.newBorn]]]></neo4j:set-parameters>
+		</neo4j:update-nodes>
+		<ee:transform doc:name="Transform Message" doc:id="0d527bbe-2c13-43fa-8728-dc3e5d8b04de" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="deleteNode" doc:id="4e59cfb9-3648-42c4-ae24-b39d86418897" >
+		<http:listener doc:name="/deleteNode" doc:id="3327280a-5a1a-42a7-8eef-b69aa8d290e9" config-ref="HTTP_Listener_config" path="/deleteNode"/>
+		<ee:transform doc:name="Transform Message" doc:id="575edb04-bc01-444b-8234-a9df2b74e479" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"name":"Tom Hanks",
+	"born":"1956"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<neo4j:delete-nodes label="Person" doc:name="Delete nodes" doc:id="28343482-5512-4747-a7d3-d584c85d9a82" config-ref="Neo4j_Config" parameters="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="3b642213-0c52-4e31-8b86-60a574b55478" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

@@ -4,7 +4,6 @@
 :toc: macro
 :toclevels: 2
 
-image:neo4j-connector-large.png[neo4j icon]
 
 toc::[]
 
@@ -21,98 +20,21 @@ See:
 
 MuleSoft maintains this connector under the link:https://www.mulesoft.com/legal/versioning-back-support-policy#anypoint-connectors[Connector Support Policy - Select].
 
-This document assumes that you are familiar with Mule, Anypoint Connectors, Anypoint Studio, Mule Concepts, and Global Elements.
+== Prerequisites
 
-For hardware and software requirements, see the link:/release-notes/neo4jconnector[Neo4J Connector Release Notes].
+This document assumes that you are familiar with Mule, Anypoint Connectors, Anypoint Studio, Mule concepts, elements in a Mule flow, and Global Elements.
 
-[[install]]
-== How to Install
+You need login credentials to test your connection to your target resource.
 
-You can install the connector in Anypoint Studio using the instructions in
-link:/getting-started/anypoint-exchange#installing-a-connector-from-anypoint-exchange[Installing a Connector from Anypoint Exchange].
+For hardware and software requirements and compatibility
+information, see the Connector Release Notes.
 
-If you are upgrading from a previous version of the connector, a small popup appears in the bottom right corner of Anypoint Studio with the "Updates Available" message. Click the popup and follow the prompts to install the latest version.
+To use this connector with Maven, view the pom.xml dependency information in
+the Dependency Snippets in Anypoint Exchange.
 
-[[ns-schema]]
-== Connector Namespace and Schema
+== What's New in this Connector
 
-When designing your application in Anypoint Studio, when you drag the connector from the palette onto the Anypoint Studio canvas, Studio automatically populates the XML code with the connector *namespace* and *schema location*.
-
-* *Namespace*: `+http://www.mulesoft.org/schema/mule/neo4j+` +
-* *Schema Location*: `+http://www.mulesoft.org/schema/mule/neo4j/current/mule-neo4j.xsd+`
-
-[TIP]
-If you are manually coding the Mule application in Studio's XML editor or another text editor, define the namespace and schema location in the header of your *Configuration XML*, inside the `<mule>` tag.
-
-[source, xml,linenums]
-----
-<mule xmlns="http://www.mulesoft.org/schema/mule/core"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:connector="http://www.mulesoft.org/schema/mule/neo4j"
-      xsi:schemaLocation="
-               http://www.mulesoft.org/schema/mule/core
-               http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-               http://www.mulesoft.org/schema/mule/neo4j
-               http://www.mulesoft.org/schema/mule/neo4j/current/mule-neo4j.xsd">
-
-      <!-- put your global configuration elements and flows here -->
-
-</mule>
-----
-
-NOTE: Use `current` in the schema path. Studio interprets this to the current Mule version.
-
-[[maven]]
-== Maven Dependency Information
-
-For Maven dependency management, include this XML snippet in your `pom.xml` file.
-
-[source,xml,linenums]
-----
-<dependency>
-    <groupId>org.mule.modules</groupId>
-    <artifactId>mule-module-neo4j</artifactId>
-    <version>2.0.0</version>
-</dependency>
-----
-
-Inside the `<version>` tags, put the desired version number, the word `RELEASE` for the latest release, or `SNAPSHOT` for the latest available version.
-
-[[configure]]
-== How to Configure
-
-Place the connector in your flow as applicable for your use case.
-
-To use the Neo4J connector in your Mule application, you must configure a global Neo4J element that can be used by the Neo4J connector. The Neo4J connector provides the following global configuration, requiring the following information:
-
-[%header%autowidth.spread]
-|===
-|Field |Description
-|Username |Enter the username to log in with.
-|Password |Enter the corresponding password.
-|BOLT URL |Bolt endpoint.
-|REST URL |Rest endpoint URL (works with HTTP or HTTPS).
-|===
-
-image:neo4j-global-element-props.png[neo4j-config]
-
-[[operations]]
-== Operations
-
-[%header,cols="20%,80%"]
-|===
-|Name | Description
-|Execute   | Execute any CQL statement against DB.
-|Create Node| Create a node with a specific initial label. Optionally, properties for the node can be added.
-|Select Nodes| Query nodes with a specific label. Optionally, properties used as filter can be provided.
-|Update Nodes| Modified properties for one or multiple nodes with a specific label. Optional Properties can be added as search filter criteria.
-|Delete Nodes| Delete one or multiples nodes based on a specific label. This lets you delete nodes with inbound/outbound relationships. Optional Properties can be added as search filter criteria.
-|===
-
-NOTE: Neo4J's connector basic operations can filter nodes by only one label in its query. If you want to filter in a query by multiple labels, please use Execute operation with a proper CQL statement. A multi-label query example is provided  link:#use-case-2[here]
-
-
-For a full list of operations for any version of the connector, see the link:http://mulesoft.github.io/neo4j-connector[Neo4J Connector Reference].
+. Support for Mule4 has been added.
 
 [[Metadata]]
 == Metadata
@@ -125,7 +47,117 @@ Neo4J connector metadata is based on the following premises:
 ** Property existance constraints
 ** At least one node with constraints values has to be defined in DB
 
-== Common Use Cases
+== To Connect in Design Center
+
+. In Design Center, click Set Up > Upload, browse for and select the driver for this connector on your file system, and upload it. Alternatively, search for and select a driver that is already uploaded.
+. Click a trigger. You can create a global element by selecting this connector as their trigger.
+If a global element is not needed, you can use an HTTP Listener or Scheduler trigger.
++
+image::trigger.png[Trigger options]
++
+. To create an HTTP global element for the connector, set these fields:
++
+image::httpListener.png[Http Listener configuration]
++
+[%header%autowidth.spread]
+|===
+|Field |Description
+|*Protocol*| Protocol selected for the http endpoint, it can be http or https (secure).
+|*Host*| IP address where our Mule Application will listen requests.
+|*Port*| Port address where our Mule Application will listen requests.
+|*Base Path*| path where our Mule Application will listen requests.
+|===
+
+. Select the plus sign to add a component.
++
+image::plusSign.png[add connector]
++
+. Select the connector as a component.
+. Select the operation.
++
+image::operations.png[operations connector]
++
+
+[%header,cols="20%,80%"]
+|===
+|Name | Description
+|Execute   | Execute any CQL statement against DB.
+|Create Node| Create a node with a specific initial label. Optionally, properties for the node can be added.
+|Select Nodes| Query nodes with a specific label. Optionally, properties used as filter can be provided.
+|Update Nodes| Modified properties for one or multiple nodes with a specific label. Optional Properties can be added as search filter criteria.
+|Delete Nodes| Delete one or multiples nodes based on a specific label. This lets you delete nodes with inbound/outbound relationships. Optional Properties can be added as search filter criteria.
+|===
++
+NOTE: Neo4J's connector basic operations can filter nodes by only one label in its query. If you want to filter in a query by multiple labels, please use Execute operation with a proper CQL statement.
++
+
+. Configure the Global element for the connector
++
+image::configConnector.png[config connector]
++
+[%header%autowidth.spread]
+|===
+|Field |Description
+|Username |Enter the username to log in with.
+|Password |Enter the corresponding password.
+|BOLT URL |Bolt endpoint.
+|REST URL |Rest endpoint URL (works with HTTP or HTTPS).
+|===
+
+== Connect in Anypoint Studio 7
+
+You can use this connector in Anypoint Studio by adding it as a dependency in your Mule application.
+
+=== Install Connector in Studio
+
+. Open your Mule project in Anypoint Studio.
+. Add the connector as a dependency in the pom.xml file:
+[source, linenums]
+----
+<dependency>
+  <groupId>org.mule.connectors</groupId>
+  <artifactId>mule-neo4j-connector</artifactId>
+  <version>3.0.0</version>
+  <classifier>mule-plugin</classifier>
+</dependency>
+----
+
+=== Configure in Studio
+
+. Drag and drop the connector to the Studio Canvas.
+. Select the operation.
++
+image::operationsStudio.png[operations connector]
++
+
+[%header,cols="20%,80%"]
+|===
+|Name | Description
+|Execute   | Execute any CQL statement against DB.
+|Create Node| Create a node with a specific initial label. Optionally, properties for the node can be added.
+|Select Nodes| Query nodes with a specific label. Optionally, properties used as filter can be provided.
+|Update Nodes| Modified properties for one or multiple nodes with a specific label. Optional Properties can be added as search filter criteria.
+|Delete Nodes| Delete one or multiples nodes based on a specific label. This lets you delete nodes with inbound/outbound relationships. Optional Properties can be added as search filter criteria.
+|===
++
+NOTE: Neo4J's connector basic operations can filter nodes by only one label in its query. If you want to filter in a query by multiple labels, please use Execute operation with a proper CQL statement.
++
+
+. Configure the Global element for the connector.
++
+image::configStudio1.png[config connector]
++
+[%header%autowidth.spread]
+|===
+|Field |Description
+|Username |Enter the username to log in with.
+|Password |Enter the corresponding password.
+|BOLT URL |Bolt endpoint.
+|REST URL |Rest endpoint URL (works with HTTP or HTTPS).
+|===
+
+
+== Use case: Studio
 
 * link:#use-case-1[Node Basic CRUD]
 * link:#use-case-2[Create a node with multiple labels]
@@ -134,7 +166,7 @@ Neo4J connector metadata is based on the following premises:
 === Node Basic CRUD
 image::ExampleFlow.png[Example Flow, align="center"]
 
-. Create a new **Mule Project** in Anypoint Studio and set your Neo4J environment properties in `src/main/resources/mule-app.properties`.
+. Create a new **Mule Project** in Anypoint Studio and set your Neo4J environment properties in `src/main/resources/automation-credentials.properties`.
 +
 [source,code,linenums]
 ----
@@ -149,8 +181,8 @@ config.restUrl=<REST_URL_ENDPOINT>
 +
 [source,code,linenums]
 ----
-%dw 1.0
-%output application/java
+%dw 2.0
+%output application/json
 ---
 {
 	"name":"Tom Hanks",
@@ -171,7 +203,10 @@ config.restUrl=<REST_URL_ENDPOINT>
 +
 [source,xml]
 ----
-<neo4j:config name="Neo4j__Basic_Authentication" username="${neo4j.username}" password="${neo4j.password}" boltUrl="${neo4j.boltUrl}" restUrl="${neo4j.restUrl}" doc:name="Neo4j: Basic Authentication"/>
+<neo4j:config name="Neo4j_Config" doc:name="Neo4j Config" doc:id="fc537081-263a-4879-8a6b-e461f9f41b09" >
+	<neo4j:connection username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" restUrl="${config.restUrl}" />
+	</neo4j:config>
+</neo4j:config>
 ----
 +
 .. In the Properties Editor, configure:
@@ -207,7 +242,17 @@ Note: Click Test Connection to confirm that Mule can connect with the Neo4J inst
 |Label | `Person`
 |===
 +
-. Drag an *Object to JSON* onto the canvas.
+. Drag an *Transform Message* onto the canvas.
++
+[source,code,linenums]
+----
+%dw 2.0
+%output application/json
+---
+payload
+----
++
+
 . Save the changes and deploy the project as a Mule Application. Open a browser and make a request to the following URL:
 +
 [source,code]
@@ -219,14 +264,14 @@ If the node was successfully created and deleted, information should be displaye
 +
 [source,code]
 ----
-[{"a":{"born":1956,"name":"Tom Hanks"}}]
+{"born":1956,"name":"Tom Hanks"}
 ----
 
 [use-case-2]
 === Create a node with multiple labels
 image::createNodeWithMultiLabels.png[Example Flow, align="center"]
 
-. Create a new **Mule Project** in Anypoint Studio and set your Neo4J environment properties in `src/main/resources/mule-app.properties`.
+. Create a new **Mule Project** in Anypoint Studio and set your Neo4J environment properties in `src/main/resources/automation-credentials.properties`.
 +
 [source,code,linenums]
 ----
@@ -238,22 +283,22 @@ config.restUrl=<REST_URL_ENDPOINT>
 +
 . Drag an HTTP connector onto the canvas and configure it with the default values.
 . Drag a Transform Message onto the canvas and create two flowVars with the following code:
-.. FlowVar-create
+.. Variable-create
 +
 [source,code,linenums]
 ----
-%dw 1.0
-%output application/java
+%dw 2.0
+%output application/json
 ---
 "CREATE (a:ACTOR:PERSON { name:\"Tom Hanks\", born:1956 })"
 ----
 +
-.. FlowVar-select
+.. Variable-select
 +
 [source,code,linenums]
 ----
-%dw 1.0
-%output application/java
+%dw 2.0
+%output application/json
 ---
 "MATCH (a:ACTOR:PERSON) RETURN a"
 ----
@@ -271,7 +316,10 @@ config.restUrl=<REST_URL_ENDPOINT>
 +
 [source,xml]
 ----
-<neo4j:config name="Neo4j__Basic_Authentication" username="${neo4j.username}" password="${neo4j.password}" boltUrl="${neo4j.boltUrl}" restUrl="${neo4j.restUrl}" doc:name="Neo4j: Basic Authentication"/>
+<neo4j:config name="Neo4j_Config" doc:name="Neo4j Config" doc:id="fc537081-263a-4879-8a6b-e461f9f41b09" >
+	<neo4j:connection username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" restUrl="${config.restUrl}" />
+	</neo4j:config>
+</neo4j:config>
 ----
 +
 .. In the Properties Editor, configure:
@@ -282,7 +330,7 @@ config.restUrl=<REST_URL_ENDPOINT>
 |Display Name | `Create node (advanced)`
 |Connector Configuration | `Neo4j__Basic_Authentication`
 |Operation | `Execute`
-|Query | `#[flowVars.create]`
+|Query | `#[vars.create]`
 |Parameters Reference | `#[payload]`
 |===
 image::executeCreate.png[Create node, align="center"]
@@ -296,10 +344,10 @@ NOTE: Click Test Connection to confirm that Mule can connect with the Neo4J inst
 |Parameter|Value
 |Display Name | `Select node (Multi-label)`
 |Operation | `Execute`
-|Query | `#[flowVars.select]`
+|Query | `#[vars.select]`
 |===
 +
-. Drag an *Object to JSON* onto the canvas.
+. Drag an *Transform Message* onto the canvas.
 . Drag a *Logger* onto the canvas.
 . Save the changes and deploy the project as a Mule Application. Open a browser and make a request to the following URL:
 +
@@ -315,11 +363,97 @@ If the node was successfully created and deleted, information should be displaye
 [{"a":{"born":1956,"name":"Tom Hanks"}}]
 ----
 
+== Use Case: XML
+
+[source,code]
+----
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:neo4j="http://www.mulesoft.org/schema/mule/neo4j" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/neo4j http://www.mulesoft.org/schema/mule/neo4j/current/mule-neo4j.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="65657c80-c96c-4121-aabb-23bdbf48bd0e" basePath="/" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<neo4j:config name="Neo4j_Config" doc:name="Neo4j Config" doc:id="fc537081-263a-4879-8a6b-e461f9f41b09" >
+		<neo4j:connection username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" restUrl="${config.restUrl}" />
+	</neo4j:config>
+	<flow name="CRUD" doc:id="a64d9dde-74da-4492-a836-a85c9e569e10" >
+		<http:listener doc:name="Listener" doc:id="79d6dcad-f7b6-43de-8022-4d62e46dfbd5" config-ref="HTTP_Listener_config" path="/CRUD"/>
+		<ee:transform doc:name="Transform Message" doc:id="33289a81-cd7d-4882-a31a-e694174f6f77" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"name":"Tom Hanks",
+	"born": "1956"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<neo4j:create-node label="Person" doc:name="Create node" doc:id="56bd04e3-8791-4a12-bf2f-57bec2ae4882" config-ref="Neo4j_Config" input="#[payload]"/>
+		<neo4j:select-nodes label="Person" doc:name="Select nodes" doc:id="859c9c1c-3a0e-42b3-bbd1-2540a6f957ae" config-ref="Neo4j_Config" input="#[payload]"/>
+		<neo4j:delete-nodes label="Person" doc:name="Delete nodes" doc:id="e71a3ad1-8571-49e4-92dd-5cb74f76ea59" config-ref="Neo4j_Config" parameters="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="58a131a7-29e9-4008-b612-9a699c963735" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="createNodeWithMultiLabels" doc:id="6d93108a-68c0-4451-a28b-73ff7359ee7f" >
+		<http:listener doc:name="Listener" doc:id="4e4dd746-e02f-48b2-83bc-c34c123082bc" config-ref="HTTP_Listener_config" path="/createNodeMultiLabel"/>
+		<ee:transform doc:name="Transform Message" doc:id="8514adde-a2e7-4765-a5ad-e13b4e67ac70" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="select" ><![CDATA[%dw 2.0
+output application/json
+---
+"MATCH (a:ACTOR:PERSON) RETURN a"]]></ee:set-variable>
+				<ee:set-variable variableName="create" ><![CDATA[%dw 2.0
+output application/json
+---
+"CREATE (a:ACTOR:PERSON { name:\"Tom Hanks\", born:1956 })"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<neo4j:execute doc:name="Create node (advanced)" doc:id="62ce0245-28a4-41dc-9b14-c59d57779f08" config-ref="Neo4j_Config" input="#[payload]">
+			<neo4j:query ><![CDATA[#[vars.create]]]></neo4j:query>
+		</neo4j:execute>
+		<neo4j:execute doc:name="Select node (Multi-label)" doc:id="655cdb47-9f7f-4169-93e3-f7d913727baa" config-ref="Neo4j_Config">
+			<neo4j:query ><![CDATA[#[vars.select]]]></neo4j:query>
+		</neo4j:execute>
+		<ee:transform doc:name="Transform Message" doc:id="0a8d9a2b-ba63-4d3b-a4f6-c8ed9440fcfe" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
+
+
+----
+
 == Connector Performance
 
 To define the pooling profile for the connector manually, access the Pooling Profile tab in the global element for the connector.
 
-For background information on pooling, see link:/mule-user-guide/v/3.8/tuning-performance[Tuning Performance].
+For background information on pooling, see link:/mule-user-guide/v/4.1/tuning-performance[Tuning Performance].
 
 
 

@@ -1,1 +1,1 @@
-[{"ordered":false,"description":"Optional.empty","metadataFormat":{"validMimeTypes":["application/java"],"label":"Optional[Java]","id":"java"},"annotations":[{"public":true,"name":"label","value":"KEY1"}],"fields":[],"openRestriction":"Optional.empty","open":false}]
+[{"ordered":false,"description":"Optional.empty","metadataFormat":{"validMimeTypes":["application/json"],"label":"Optional[Json]","id":"json"},"annotations":[{"public":true,"name":"label","value":"KEY1"}],"fields":[],"openRestriction":"Optional.empty","open":false}]

@@ -3,29 +3,29 @@
  */
 package org.mule.modules.neo4j.api;
 
-import org.mule.modules.neo4j.internal.exception.Neo4jErrors;
-
 import static org.mule.modules.neo4j.internal.exception.Neo4jErrors.UNKNOWN;
+
+import org.mule.modules.neo4j.internal.exception.Neo4jErrors;
 
 public class Neo4jException extends RuntimeException {
 
-    public Neo4jException() {
-        super();
-    }
+	public Neo4jException() {
+		super();
+	}
 
-    public Neo4jException(Throwable cause) {
-        super(cause);
-    }
+	public Neo4jException(Throwable cause) {
+		super(cause);
+	}
 
-    public Neo4jException(String message) {
-        super(message);
-    }
+	public Neo4jException(String message) {
+		super(message);
+	}
 
-    public Neo4jException(Throwable cause, String message) {
-        super(message, cause);
-    }
+	public Neo4jException(Throwable cause, String message) {
+		super(message, cause);
+	}
 
-    public Neo4jErrors getErrorCode() {
-        return UNKNOWN;
-    }
+	public Neo4jErrors getErrorCode() {
+		return UNKNOWN;
+	}
 }

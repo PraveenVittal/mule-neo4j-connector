@@ -4,7 +4,6 @@ import org.mule.modules.neo4j.internal.config.Neo4jConfig;
 import org.mule.modules.neo4j.internal.exception.Neo4jErrors;
 import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Extension;
-import org.mule.runtime.extension.api.annotation.OnException;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 

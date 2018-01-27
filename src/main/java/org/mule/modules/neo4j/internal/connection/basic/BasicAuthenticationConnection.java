@@ -3,57 +3,51 @@
  */
 package org.mule.modules.neo4j.internal.connection.basic;
 
-import org.mule.connectors.commons.template.connection.ConnectorConnection;
+import static org.neo4j.driver.v1.AuthTokens.basic;
+import static org.neo4j.driver.v1.GraphDatabase.driver;
+
+import java.util.UUID;
+
 import org.mule.modules.neo4j.internal.client.Neo4jMetadataService;
 import org.mule.modules.neo4j.internal.client.Neo4jMetadataServiceImpl;
-import org.mule.modules.neo4j.internal.client.Neo4jServiceImpl;
 import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
 
-import java.io.IOException;
-import java.util.UUID;
-
-import static org.neo4j.driver.v1.AuthTokens.basic;
-import static org.neo4j.driver.v1.GraphDatabase.driver;
-
 public class BasicAuthenticationConnection implements Neo4jConnection {
 
-    private final Driver client;
-    private final Session session;
-    private final Neo4jMetadataService metadataService;
+	private final Driver client;
+	private final Session session;
+	private final Neo4jMetadataService metadataService;
 
-    public BasicAuthenticationConnection(String username, String password, String boltUrl, String restUrl) {
-        client = driver(boltUrl, basic(username, password));
-        session = client.session();
-        metadataService = new Neo4jMetadataServiceImpl(restUrl, username, password);
-    }
+	public BasicAuthenticationConnection(String username, String password, String boltUrl, String restUrl) {
+		client = driver(boltUrl, basic(username, password));
+		session = client.session();
+		metadataService = new Neo4jMetadataServiceImpl(restUrl, username, password);
+	}
 
-    @Override
-    public void disconnect() {
+	@Override
+	public void disconnect() {
 
-    }
+	}
 
-    @Override
-    public void validate() {
-        session.run("MATCH (a) RETURN a LIMIT 1");
-    }
+	@Override
+	public void validate() {
+		session.run("MATCH (a) RETURN a LIMIT 1");
+	}
 
+	@Override
+	public String getId() {
+		return UUID.randomUUID().toString();
+	}
 
+	@Override
+	public Session getSession() {
+		return session;
+	}
 
-
-    @Override
-    public String getId() {
-        return UUID.randomUUID().toString();
-    }
-
-    @Override
-    public Session getSession() {
-        return session;
-    }
-
-    @Override
-    public Neo4jMetadataService getMetadataService() {
-        return metadataService;
-    }
+	@Override
+	public Neo4jMetadataService getMetadataService() {
+		return metadataService;
+	}
 }

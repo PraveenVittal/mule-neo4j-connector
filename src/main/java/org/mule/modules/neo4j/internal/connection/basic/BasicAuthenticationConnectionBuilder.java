@@ -7,34 +7,34 @@ import org.mule.modules.neo4j.internal.connection.ConnectionBuilder;
 
 public class BasicAuthenticationConnectionBuilder implements ConnectionBuilder<BasicAuthenticationConnection> {
 
-    private String username;
-    private String password;
-    private String restUrl;
-    private String boltUrl;
+	private String username;
+	private String password;
+	private String restUrl;
+	private String boltUrl;
 
-    public BasicAuthenticationConnectionBuilder withUsername(String username) {
-        this.username = username;
-        return this;
-    }
+	public BasicAuthenticationConnectionBuilder withUsername(String username) {
+		this.username = username;
+		return this;
+	}
 
-    public BasicAuthenticationConnectionBuilder withPassword(String password) {
-        this.password = password;
-        return this;
-    }
+	public BasicAuthenticationConnectionBuilder withPassword(String password) {
+		this.password = password;
+		return this;
+	}
 
-    public BasicAuthenticationConnectionBuilder withBoltUrl(String boltUrl) {
-        this.boltUrl = boltUrl;
-        return this;
-    }
+	public BasicAuthenticationConnectionBuilder withBoltUrl(String boltUrl) {
+		this.boltUrl = boltUrl;
+		return this;
+	}
 
-    public BasicAuthenticationConnectionBuilder withRestUrl(String restUrl) {
-        this.restUrl = restUrl;
-        return this;
-    }
+	public BasicAuthenticationConnectionBuilder withRestUrl(String restUrl) {
+		this.restUrl = restUrl;
+		return this;
+	}
 
-    @Override
-    public BasicAuthenticationConnection create() {
-        return new BasicAuthenticationConnection(username, password, boltUrl, restUrl);
-    }
+	@Override
+	public BasicAuthenticationConnection create() {
+		return new BasicAuthenticationConnection(username, password, boltUrl, restUrl);
+	}
 
 }
