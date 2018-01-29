@@ -1,33 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:neo4j="http://www.mulesoft.org/schema/mule/neo4j"
+<mule xmlns:neo4j="http://www.mulesoft.org/schema/mule/neo4j" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/neo4j http://www.mulesoft.org/schema/mule/neo4j/current/mule-neo4j.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<configuration-properties file="automation-credentials.properties"/>
-	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="21d70d6d-735d-4c44-ba66-7c3ece8283f3" basePath="/" >
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/neo4j http://www.mulesoft.org/schema/mule/neo4j/current/mule-neo4j.xsd">
+	<configuration-properties file="mule-app.properties" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b37d98dc-4a5e-4e96-80dd-4d29f8fbc35c" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
-	<neo4j:config name="Neo4j_Config" doc:name="Neo4j Config" doc:id="768994d7-1649-4f60-b161-2c10023aee86" >
+	<neo4j:config name="Neo4j_Config" doc:name="Neo4j Config" doc:id="69b22359-815e-4cf3-8eb7-3ab1d585e12f" >
 		<neo4j:connection username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" restUrl="${config.restUrl}" />
 	</neo4j:config>
-	<flow name="createNode" doc:id="3f9f9402-185b-438a-883f-0f3208d26eb9" >
-		<http:listener doc:name="/createNode" doc:id="94c2e3d5-fa23-46b3-a283-9481398f120a" config-ref="HTTP_Listener_config" path="/createNode"/>
-		<ee:transform doc:name="Transform Message" doc:id="5fde9617-1960-4bc7-a937-0eedc7c9a8c0" >
+	<flow name="createNode" doc:id="e6d9ed67-73fa-4a47-8140-4b35dcb99a82" >
+		<http:listener doc:name="/createNode" doc:id="4647fb71-a50c-48a6-8e33-08cb410463bb" config-ref="HTTP_Listener_config" path="/createNode"/>
+		<ee:transform doc:name="Transform Message" doc:id="89b6f836-0df6-4781-85b3-932c37dbf321">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"name" : attributes.queryParams.name,
+	"born" : attributes.queryParams.born
+}
+]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+			</ee:variables>
+		</ee:transform>
+		<neo4j:create-node doc:name="Create node" doc:id="102c04b9-5ab2-4c3f-8042-24466dee87da" config-ref="Neo4j_Config" label="Person">
+			<neo4j:input ><![CDATA[#[payload]]]></neo4j:input>
+		</neo4j:create-node>
+		<logger level="INFO" doc:name="Logger" doc:id="0d685dbb-bf31-4c2c-b373-ef37768a2048" />
+	</flow>
+	<flow name="selectNode" doc:id="a282643d-3646-4e58-b418-af71f054ad82" >
+		<http:listener doc:name="/selectNode" doc:id="d99b24f9-bf8e-4cc0-ac10-0c27d2c46259" config-ref="HTTP_Listener_config" path="/selectNode"/>
+		<ee:transform doc:name="Transform Message" doc:id="407101bd-3e84-40f7-9b39-660e247e4550" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	"name":"Tom Hanks",
-	"born": 1956
+	name:attributes.queryParams.name
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<neo4j:create-node doc:name="Create node" doc:id="bf02e477-fa59-4094-87bb-0afee011fd62" config-ref="Neo4j_Config" label="Person" input="#[payload]"/>
-		<ee:transform doc:name="Transform Message" doc:id="6f35d4a1-5421-41af-925b-c24a9e903d9e" >
+		<neo4j:select-nodes doc:name="Select nodes" doc:id="99f218d5-ea1e-41b9-9e32-41bab990b5f6" config-ref="Neo4j_Config" label="Person">
+			<neo4j:input ><![CDATA[#[payload]]]></neo4j:input>
+		</neo4j:select-nodes>
+		<ee:transform doc:name="Object to JSON" doc:id="70c4f1ec-2209-40dc-a014-ba87dce9d467" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -35,28 +57,66 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4a66bd2a-6ee1-4d12-9226-8d566f7894ff" />
 	</flow>
-	<flow name="selectNode" doc:id="204837eb-6971-4808-8511-e911af74b27c" >
-		<http:listener doc:name="/selectNode" doc:id="0325c130-5760-4334-b8de-489fbbdc0140" config-ref="HTTP_Listener_config" path="/selectNode"/>
-		<ee:transform doc:name="Transform Message" doc:id="57bfd15e-9f23-490e-a35b-57c831fcf601" >
+	<flow name="updateNode" doc:id="6a244a7e-d3d9-4027-a70d-b4361ea8e2a4" >
+		<http:listener doc:name="/updateNode" doc:id="5962978e-c093-4d0f-b689-8207ecc1d00f" config-ref="HTTP_Listener_config" path="/updateNode"/>
+		<ee:transform doc:name="Transform Message" doc:id="7d7f1a81-6444-4031-9ecb-10cdff008f02" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
+	"born":attributes.queryParams.newborn
 }]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="select" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="existingPerson" ><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	"name":"Tom Hanks"
+	"name":attributes.queryParams.name,
+	"born":attributes.queryParams.born
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<neo4j:select-nodes doc:name="Select nodes" doc:id="bb1d84bf-fd57-467d-a64b-75163049b78c" config-ref="Neo4j_Config" label="Person" input="#[vars.select]"/>
-		<ee:transform doc:name="Transform Message" doc:id="4166396d-31a5-467c-86d4-35a16eb26ce3" >
+		<neo4j:update-nodes label="Person" doc:name="Update nodes" doc:id="346f4aa9-6ef6-4349-a064-be33ee7212f2" config-ref="Neo4j_Config" parameters="#[vars.exitingPerson]"/>
+	</flow>
+	<flow name="deleteNode" doc:id="f9048001-8e7e-491c-95fd-ec7bb0b4a754" >
+		<http:listener doc:name="Listener" doc:id="d674221a-8ab7-4c40-afe6-0676df4d4eb1" config-ref="HTTP_Listener_config" path="/deleteNode"/>
+		<ee:transform doc:name="Transform Message" doc:id="d22fa891-e9f9-48a4-8309-63f837bc5b8b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"name" : attributes.queryParams.name,
+	"born" : attributes.queryParams.born
+	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<neo4j:delete-nodes label="Person" doc:name="Delete nodes" doc:id="6c28a39e-8911-476b-9db8-8c710548822b" config-ref="Neo4j_Config" parameters="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="6bc41c76-4bb6-4e73-8176-95df6e0670dc" />
+	</flow>
+	<flow name="getMovies" doc:id="ecc00404-057c-4252-8c6a-0004f0d7b7dd" >
+		<http:listener doc:name="/getMovies" doc:id="1f1c2062-31c4-4bbc-a433-a12ad5c108e9" path="/getMovies" config-ref="HTTP_Listener_config"/>
+		<ee:transform doc:name="Transform Message" doc:id="fd3539a9-ac90-4dd5-91d4-2b98a5ae874d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	
+	"released":attributes.queryParams.year
+	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<neo4j:select-nodes label="Movie" doc:name="Select nodes" doc:id="63cbbd55-2fb1-459d-a7ca-b8d84e67db2b" config-ref="Neo4j_Config">
+			<neo4j:input ><![CDATA[#[payload]]]></neo4j:input>
+		</neo4j:select-nodes>
+		<ee:transform doc:name="Object to JSON" doc:id="cc45f321-00fe-4dcc-9f5c-7fdea5291bc7" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -64,37 +124,32 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="ebf1280b-d735-4a72-9e11-a179d1c647b8" />
 	</flow>
-	<flow name="updateNode" doc:id="3de6d712-82aa-4b7d-8e3c-ac0482b55774" >
-		<http:listener doc:name="/updateNode" doc:id="3eee10b2-0e94-4e30-94cf-39fa57b58ae5" config-ref="HTTP_Listener_config" path="/updateNode"/>
-		<ee:transform doc:name="Transform Message" doc:id="82b99bdf-302d-4a59-8848-30bce20e12ac" >
+	<flow name="getNinetiesMovies" doc:id="0c2a34cc-cd3a-4ad5-b068-e3ca70dfcda5" >
+		<http:listener doc:name="/getNinetiesMovies" doc:id="f88f36b0-12f0-4920-9038-97e59be58ccc" config-ref="HTTP_Listener_config" path="/getNinetiesMovies"/>
+		<ee:transform doc:name="Transform Message" doc:id="bf239573-03df-4094-9106-db99415ce936" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
+	    "startYear" : attributes.queryParams.startyear as Number,
+	    "endYear" : attributes.queryParams.endyear as Number
+
 }]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="existing" ><![CDATA[%dw 2.0
-output application/json
+				<ee:set-variable variableName="query" ><![CDATA[%dw 2.0
+output application/java
 ---
-{
-	"name": "Tom Hanks",
-	"born" : "1956"
-}]]></ee:set-variable>
-				<ee:set-variable variableName="newBorn" ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"born" : "1980"
-}]]></ee:set-variable>
+"MATCH (nineties:Movie) WHERE nineties.released > {startYear} AND nineties.released < {endYear} RETURN nineties.title"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<neo4j:update-nodes label="Person" doc:name="Update nodes" doc:id="7fa7b38f-cecc-4f42-8015-446faf1807aa" config-ref="Neo4j_Config" parameters="#[vars.existing]">
-			<neo4j:set-parameters ><![CDATA[#[vars.newBorn]]]></neo4j:set-parameters>
-		</neo4j:update-nodes>
-		<ee:transform doc:name="Transform Message" doc:id="0d527bbe-2c13-43fa-8728-dc3e5d8b04de" >
+		<neo4j:execute doc:name="Execute" doc:id="dbcd3954-8d83-4038-b9fc-ff6c209ac2c5" config-ref="Neo4j_Config" input="#[payload]">
+			<neo4j:query ><![CDATA[#[vars.query]]]></neo4j:query>
+		</neo4j:execute>
+		<ee:transform doc:name="Object to JSON" doc:id="914556a8-768f-48d6-a917-718663946d5b" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -102,22 +157,30 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="c7a5cbf9-aef2-4ada-a4c1-594fefad7674" />
 	</flow>
-	<flow name="deleteNode" doc:id="4e59cfb9-3648-42c4-ae24-b39d86418897" >
-		<http:listener doc:name="/deleteNode" doc:id="3327280a-5a1a-42a7-8eef-b69aa8d290e9" config-ref="HTTP_Listener_config" path="/deleteNode"/>
-		<ee:transform doc:name="Transform Message" doc:id="575edb04-bc01-444b-8234-a9df2b74e479" >
+	<flow name="getMoviesForActor" doc:id="d5626853-5588-4203-b2e3-89beb178fda3" >
+		<http:listener doc:name="getMoviesForActor" doc:id="1a0cc4fe-6813-40d4-897b-a5cfe4561226" config-ref="HTTP_Listener_config" path="/getMoviesForActor"/>
+		<ee:transform doc:name="Transform Message" doc:id="32475e8e-88f6-46a5-b0b9-bc59d2a12bf4" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	"name":"Tom Hanks",
-	"born":"1956"
+	    "actor" : attributes.queryParams.name
 }]]></ee:set-payload>
 			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="query" ><![CDATA[%dw 2.0
+output application/java
+---
+"MATCH (actor:Person {name: {actor}})-[:ACTED_IN]->(movies) RETURN actor,movies"]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
-		<neo4j:delete-nodes label="Person" doc:name="Delete nodes" doc:id="28343482-5512-4747-a7d3-d584c85d9a82" config-ref="Neo4j_Config" parameters="#[payload]"/>
-		<ee:transform doc:name="Transform Message" doc:id="3b642213-0c52-4e31-8b86-60a574b55478" >
+		<neo4j:execute doc:name="Execute" doc:id="f9d14416-28e7-4880-bf66-f8b8198c7b08" config-ref="Neo4j_Config" input="#[payload]">
+			<neo4j:query ><![CDATA[#[vars.query]]]></neo4j:query>
+		</neo4j:execute>
+		<ee:transform doc:name="Object to JSON" doc:id="69aa1c79-36a9-413b-8339-10535fa48493" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -125,5 +188,41 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="90a0c65d-96c7-4273-9109-3f8c5bbd4052" />
+	</flow>
+	<flow name="getRecommendations" doc:id="6f14cccc-99e6-4876-bbf6-82e5462f7a72" >
+		<http:listener doc:name="getRecommendations" doc:id="2a12fc58-e2e2-4ade-898c-86ce118bbddf" config-ref="HTTP_Listener_config" path="/getRecommendations"/>
+		<ee:transform doc:name="Transform Message" doc:id="e2eee3e8-a064-493c-9acf-dc52b883e5af" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	    "actor" : attributes.queryParams.name
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="query" ><![CDATA[%dw 2.0
+output application/java
+---
+"MATCH (actor:Person {name:{actor}})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors),
+      (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cocoActors)
+WHERE NOT (actor)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoActors) AND actor <> cocoActors
+RETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC"
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<neo4j:execute doc:name="Execute" doc:id="2c0c0d54-61ec-445c-8aaf-e4ced5eaca6a" config-ref="Neo4j_Config" input="#[payload]">
+			<neo4j:query ><![CDATA[#[vars.query]]]></neo4j:query>
+		</neo4j:execute>
+		<ee:transform doc:name="Object to JSON" doc:id="cbaa7d7a-3f7c-45ce-b539-921cfe115feb" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="87aa0f1b-aa37-4f4e-b7be-6c8b9e7b6356" />
 	</flow>
 </mule>
