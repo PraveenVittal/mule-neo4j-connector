@@ -3,11 +3,10 @@
  */
 package com.mulesoft.connectors.neo4j.automation.functional;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.io.IOUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.lang.String.format;
+import static java.lang.System.setProperty;
+import static org.apache.commons.io.IOUtils.toInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,10 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.lang.String.format;
-import static java.lang.System.setProperty;
-import static org.apache.commons.io.IOUtils.toInputStream;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 public class TestDataBuilder {
 

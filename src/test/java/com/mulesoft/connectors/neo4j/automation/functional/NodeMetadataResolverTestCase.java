@@ -12,6 +12,7 @@ import org.mule.runtime.api.meta.model.parameter.ParameterModel;
 import org.mule.runtime.api.metadata.MetadataKey;
 import org.mule.runtime.api.metadata.MetadataService;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
+import org.mule.runtime.api.metadata.resolving.MetadataFailure;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.test.runner.RunnerDelegateTo;
 
@@ -20,6 +21,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
@@ -109,8 +111,7 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
     public void assertMetadataContents(File serializedMetadataFile) throws Exception {
         MetadataResult<ComponentMetadataDescriptor<OperationModel>> result = metadataService
                 .getOperationMetadata(location, metadataKey);
-        assertThat(result.isSuccess(), is(true));
-        assertThat(result.getFailures(), hasSize(equalTo(0)));
+        assertThat(result.getFailures().stream().findFirst().map(MetadataFailure::getMessage).orElse(""), result.getFailures(), hasSize(equalTo(0)));
         JSONArray actualMetadataJson = new JSONArray(result.get().getModel().getAllParameterModels().stream()
                 .filter(parameterModel -> parameterModel.getName().equals("input")).map(ParameterModel::getType)
                 .collect(toList()));
@@ -124,7 +125,7 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
                     is(new JSONArray(readFileToString(serializedMetadataFile)).toList()));
         }
     }
-
+    
     public void createMetadataKeys() throws Exception {
         // trust-stores
         TestDataBuilder.setTrustStores(TestDataBuilder.TRUST_STORE_PROPERTY_VALUE, TestDataBuilder.TRUST_STORE_PWD_PROPERTY_VALUE);
