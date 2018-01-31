@@ -21,8 +21,21 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.CREATE_CONSTRAINT_BORN;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.CREATE_CONSTRAINT_HEIGHT;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.CREATE_CONSTRAINT_NAME;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.CREATE_INDEX_QUERY;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.DROP_CONSTRAINT_BORN;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.DROP_CONSTRAINT_HEIGHT;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.DROP_CONSTRAINT_NAME;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.DROP_INDEX_QUERY;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.METADATA_KEYS;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.TRUST_STORE_PROPERTY;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.TRUST_STORE_PROPERTY_VALUE;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.TRUST_STORE_PWD_PROPERTY_VALUE;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.getMetadataParams;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.setTrustStores;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.io.FileUtils.readFileToString;
@@ -53,7 +66,7 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
 
     @Parameters(name = "{index}: {0}")
     public static Collection<Object[]> data() {
-        return TestDataBuilder.METADATA_KEYS.stream().map(key -> newKey(key).withDisplayName(key).build())
+        return METADATA_KEYS.stream().map(key -> newKey(key).withDisplayName(key).build())
                 .map(Collections::singletonList).map(List::toArray).collect(toList());
     }
 
@@ -86,13 +99,13 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
     @After
     public void tearDown() throws Exception {
         // drop constraints
-        execute(String.format(TestDataBuilder.DROP_INDEX_QUERY, TestDataBuilder.METADATA_KEYS.get(0)), null);
-        execute(String.format(TestDataBuilder.DROP_CONSTRAINT_NAME, TestDataBuilder.METADATA_KEYS.get(2)), null);
-        execute(String.format(TestDataBuilder.DROP_CONSTRAINT_NAME, TestDataBuilder.METADATA_KEYS.get(3)), null);
-        execute(String.format(TestDataBuilder.DROP_CONSTRAINT_BORN, TestDataBuilder.METADATA_KEYS.get(3)), null);
-        execute(String.format(TestDataBuilder.DROP_CONSTRAINT_HEIGHT, TestDataBuilder.METADATA_KEYS.get(3)), null);
+        execute(format(DROP_INDEX_QUERY, METADATA_KEYS.get(0)), null);
+        execute(format(DROP_CONSTRAINT_NAME, METADATA_KEYS.get(2)), null);
+        execute(format(DROP_CONSTRAINT_NAME, METADATA_KEYS.get(3)), null);
+        execute(format(DROP_CONSTRAINT_BORN, METADATA_KEYS.get(3)), null);
+        execute(format(DROP_CONSTRAINT_HEIGHT, METADATA_KEYS.get(3)), null);
         // drop nodes
-        TestDataBuilder.METADATA_KEYS.forEach(label -> {
+        METADATA_KEYS.forEach(label -> {
             try {
                 deleteNodes(label, true, null);
             } catch (Exception e) {
@@ -100,7 +113,7 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
             }
         });
         // reset trust-stores
-        TestDataBuilder.setTrustStores(TestDataBuilder.TRUST_STORE_PROPERTY, TestDataBuilder.TRUST_STORE_PROPERTY_VALUE);
+        setTrustStores(TRUST_STORE_PROPERTY, TRUST_STORE_PROPERTY_VALUE);
     }
 
     @Test
@@ -125,20 +138,20 @@ public class NodeMetadataResolverTestCase extends AbstractTestCases {
                     is(new JSONArray(readFileToString(serializedMetadataFile)).toList()));
         }
     }
-    
+
     public void createMetadataKeys() throws Exception {
         // trust-stores
-        TestDataBuilder.setTrustStores(TestDataBuilder.TRUST_STORE_PROPERTY_VALUE, TestDataBuilder.TRUST_STORE_PWD_PROPERTY_VALUE);
+        setTrustStores(TRUST_STORE_PROPERTY_VALUE, TRUST_STORE_PWD_PROPERTY_VALUE);
         // constraints
-        execute(String.format(TestDataBuilder.CREATE_INDEX_QUERY, TestDataBuilder.METADATA_KEYS.get(0)), null);
-        execute(String.format(TestDataBuilder.CREATE_CONSTRAINT_NAME, TestDataBuilder.METADATA_KEYS.get(2)), null);
-        execute(String.format(TestDataBuilder.CREATE_CONSTRAINT_NAME, TestDataBuilder.METADATA_KEYS.get(3)), null);
-        execute(String.format(TestDataBuilder.CREATE_CONSTRAINT_BORN, TestDataBuilder.METADATA_KEYS.get(3)), null);
-        execute(String.format(TestDataBuilder.CREATE_CONSTRAINT_HEIGHT, TestDataBuilder.METADATA_KEYS.get(3)), null);
+        execute(format(CREATE_INDEX_QUERY, METADATA_KEYS.get(0)), null);
+        execute(format(CREATE_CONSTRAINT_NAME, METADATA_KEYS.get(2)), null);
+        execute(format(CREATE_CONSTRAINT_NAME, METADATA_KEYS.get(3)), null);
+        execute(format(CREATE_CONSTRAINT_BORN, METADATA_KEYS.get(3)), null);
+        execute(format(CREATE_CONSTRAINT_HEIGHT, METADATA_KEYS.get(3)), null);
         // nodes
-        createNode(TestDataBuilder.METADATA_KEYS.get(1), TestDataBuilder.getMetadataParams());
-        createNode(TestDataBuilder.METADATA_KEYS.get(2), TestDataBuilder.getMetadataParams());
-        createNode(TestDataBuilder.METADATA_KEYS.get(3), TestDataBuilder.getMetadataParams());
+        createNode(METADATA_KEYS.get(1), getMetadataParams());
+        createNode(METADATA_KEYS.get(2), getMetadataParams());
+        createNode(METADATA_KEYS.get(3), getMetadataParams());
     }
 
     private String getMetadataCategory() {

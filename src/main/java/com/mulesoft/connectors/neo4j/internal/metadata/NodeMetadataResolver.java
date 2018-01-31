@@ -24,34 +24,41 @@ import java.util.Set;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
 import static org.mule.metadata.json.api.JsonTypeLoader.JSON;
+import static org.mule.runtime.api.metadata.DataType.BOOLEAN;
+import static org.mule.runtime.api.metadata.DataType.NUMBER;
+import static org.mule.runtime.api.metadata.DataType.STRING;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 
 public class NodeMetadataResolver implements InputTypeResolver<String>, TypeKeysResolver, OutputTypeResolver<String> {
 
     private Map<Class<?>, DataType> dataMapping = ImmutableMap.<Class<?>, DataType>builder()
-            .put(Boolean.class, DataType.BOOLEAN).put(String.class, DataType.STRING).put(Integer.class, DataType.NUMBER)
-            .put(Long.class, DataType.NUMBER).put(Float.class, DataType.NUMBER).put(Double.class, DataType.NUMBER)
+            .put(Boolean.class, BOOLEAN)
+            .put(String.class, STRING)
+            .put(Integer.class, NUMBER)
+            .put(Long.class, NUMBER)
+            .put(Float.class, NUMBER)
+            .put(Double.class, NUMBER)
             .build();
 
     @Override
     public MetadataType getInputMetadata(MetadataContext context, String key)
             throws MetadataResolvingException, ConnectionException {
-        List<Map<String, Object>> nodes = new Neo4jServiceImpl((Neo4jConfig) context.getConfig().get(),
-                (Neo4jConnection) context.getConnection().get()).execute(format("MATCH (a:%s) RETURN a LIMIT 1", key),
-                null);
+        List<Map<String, Object>> nodes = new Neo4jServiceImpl(context.<Neo4jConfig>getConfig().get(),
+                context.<Neo4jConnection>getConnection().get()).execute(format("MATCH (a:%s) RETURN a LIMIT 1", key), null);
         ObjectTypeBuilder builder = new BaseTypeBuilder(JSON).objectType().label(key);
         if (nodes.size() == 1) {
             for (String field : getMetadataService(context).getConstraintProperties(key)) {
-                builder.addField().key(field).value().typeParameter(dataMapping
-                        .get(Map.class.cast(nodes.get(0).get("a")).get(field).getClass()).getType().getName());
+                builder.addField()
+                        .key(field)
+                        .value()
+                        .typeParameter(dataMapping.get(Map.class.cast(nodes.get(0).get("a")).get(field).getClass()).getType().getName());
             }
         }
         return builder.build();
     }
 
     @Override
-    public MetadataType getOutputType(MetadataContext context, String key)
-            throws MetadataResolvingException, ConnectionException {
+    public MetadataType getOutputType(MetadataContext context, String key) throws MetadataResolvingException, ConnectionException {
         return BaseTypeBuilder.create(JSON).nullType().build();
     }
 
