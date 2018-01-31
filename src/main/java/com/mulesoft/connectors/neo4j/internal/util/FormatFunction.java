@@ -17,25 +17,25 @@ import static org.apache.commons.io.IOUtils.toInputStream;
  */
 public class FormatFunction implements Function<String, String> {
 
-	private final String template;
+    private final String template;
 
-	public FormatFunction(String template) {
-		this.template = template;
-	}
+    public FormatFunction(String template) {
+        this.template = template;
+    }
 
-	@Override
-	public String apply(String input) {
-		return String.format(template, input);
-	}
+    /**
+     * Convert a Document to Json InputStream
+     */
+    public static InputStream toJsonResult(Document document) {
+        if (document != null) {
+            return toInputStream(document.toString(), UTF_8);
+        } else {
+            return null;
+        }
+    }
 
-	/**
-	 * Convert a Document to Json InputStream
-	 */
-	public static InputStream toJsonResult(Document document) {
-		if (document != null) {
-			return toInputStream(document.toString(), UTF_8);
-		} else {
-			return null;
-		}
-	}
+    @Override
+    public String apply(String input) {
+        return String.format(template, input);
+    }
 }

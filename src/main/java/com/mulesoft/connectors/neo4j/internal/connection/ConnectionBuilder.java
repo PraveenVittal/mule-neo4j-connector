@@ -5,5 +5,5 @@ package com.mulesoft.connectors.neo4j.internal.connection;
 
 public interface ConnectionBuilder<C extends Neo4jConnection> {
 
-	C create();
+    C create();
 }

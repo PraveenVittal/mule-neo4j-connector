@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:neo4j="http://www.mulesoft.org/schema/mule/neo4j"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
             http://www.mulesoft.org/schema/mule/neo4j http://www.mulesoft.org/schema/mule/neo4j/current/mule-neo4j.xsd">
 
-    <configuration-properties file="automation-credentials.properties" />
+    <configuration-properties file="automation-credentials.properties"/>
 
     <neo4j:config name="config">
-        <neo4j:connection username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}" restUrl="${config.restUrl}" />
+        <neo4j:connection username="${config.username}" password="${config.password}" boltUrl="${config.boltUrl}"
+                          restUrl="${config.restUrl}"/>
     </neo4j:config>
 
     <flow name="executeFlow">
-        <neo4j:execute config-ref="config"  input="#[vars.parameters]">
+        <neo4j:execute config-ref="config" query="#[vars.query]">
+            <neo4j:input>#[vars.parameters]</neo4j:input>
         </neo4j:execute>
     </flow>
 
@@ -24,7 +26,7 @@
     </flow>
 
     <flow name="selectNodesFlow">
-        <neo4j:select-nodes config-ref="config" label="#[vars.label]" >
+        <neo4j:select-nodes config-ref="config" label="#[vars.label]">
         </neo4j:select-nodes>
     </flow>
 
@@ -35,6 +37,8 @@
     </flow>
 
     <flow name="deleteNodesFlow">
-        <neo4j:delete-nodes config-ref="config" label="#[vars.label]" removeRelationships="#[vars.removeRelationships]" parameters="#[vars.parameters]" />
+        <neo4j:delete-nodes config-ref="config" label="#[vars.label]" removeRelationships="#[vars.removeRelationships]">
+            <neo4j:parameters>#[vars.parameters]</neo4j:parameters>
+        </neo4j:delete-nodes>
     </flow>
 </mule>

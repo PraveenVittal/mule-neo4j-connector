@@ -3,18 +3,54 @@
  */
 package com.mulesoft.connectors.neo4j.internal.connection;
 
+import com.mulesoft.connectors.neo4j.internal.service.Neo4jMetadataService;
+import com.mulesoft.connectors.neo4j.internal.service.Neo4jMetadataServiceImpl;
 import org.mule.connectors.commons.template.connection.ConnectorConnection;
-import com.mulesoft.connectors.neo4j.internal.client.Neo4jMetadataService;
+import org.mule.runtime.http.api.HttpService;
+import org.mule.runtime.http.api.client.HttpClient;
+import org.mule.runtime.http.api.client.HttpClientConfiguration;
+import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
 
-public interface Neo4jConnection extends ConnectorConnection {
+import java.util.UUID;
 
-	String getId();
+import static org.neo4j.driver.v1.AuthTokens.basic;
+import static org.neo4j.driver.v1.GraphDatabase.driver;
 
-	Session getSession();
+public class Neo4jConnection implements ConnectorConnection {
 
-	void validate();
+    private final Driver client;
+    private final Session session;
+    private final Neo4jMetadataService metadataService;
+    private HttpClient httpClient;
 
-	Neo4jMetadataService getMetadataService();
+    public Neo4jConnection(String username, String password, String boltUrl, String restUrl, HttpService httpService) {
+        client = driver(boltUrl, basic(username, password));
+        session = client.session();
+        httpClient = httpService.getClientFactory().create(new HttpClientConfiguration.Builder().setName("Neo4JMetadata").build());
+        httpClient.start();
+        metadataService = new Neo4jMetadataServiceImpl(restUrl, username, password, httpClient);
+    }
 
+    @Override
+    public void disconnect() {
+        httpClient.stop();
+    }
+
+    @Override
+    public void validate() {
+        session.run("MATCH (a) RETURN a LIMIT 1");
+    }
+
+    public String getId() {
+        return UUID.randomUUID().toString();
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public Neo4jMetadataService getMetadataService() {
+        return metadataService;
+    }
 }

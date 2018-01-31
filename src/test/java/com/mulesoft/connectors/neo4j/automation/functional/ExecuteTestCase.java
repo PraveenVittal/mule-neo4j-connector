@@ -3,27 +3,28 @@
 //*//
 package com.mulesoft.connectors.neo4j.automation.functional;
 
+import org.junit.Test;
+
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.CREATE_A_NODE_QUERY;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.CREATE_A_WITH_PARAMS_NODE_QUERY;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.NAME;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.NAME_TAG;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.PARAMS_STRING;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.TEST_LABEL;
+import static com.mulesoft.connectors.neo4j.automation.functional.TestDataBuilder.getParamsMap;
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
 public class ExecuteTestCase extends AbstractTestCases {
 
-	@Test
-	public void executeTest() throws Exception {
+    @Test
+    public void executeTest() throws Exception {
+        assertThat(getMapQueryValue(CREATE_A_NODE_QUERY, TEST_LABEL, PARAMS_STRING, NAME_TAG), is(NAME));
+    }
 
-		assertThat(getMapQueryValue(TestDataBuilder.CREATE_A_NODE_QUERY, TestDataBuilder.TEST_LABEL, TestDataBuilder.PARAMS_STRING, TestDataBuilder.NAME_TAG), Matchers.is(
-                TestDataBuilder.NAME));
-	}
-
-	@Test
-	public void executeWithParamsTest() throws Exception {
-		assertThat(
-				getMapKeyValueWihtParams(
-                        String.format(TestDataBuilder.CREATE_A_WITH_PARAMS_NODE_QUERY, TestDataBuilder.TEST_LABEL), TestDataBuilder.getParamsMap(), TestDataBuilder.NAME_TAG),
-				Matchers.is(TestDataBuilder.NAME));
-	}
+    @Test
+    public void executeWithParamsTest() throws Exception {
+        assertThat(getMapKeyValueWihtParams(format(CREATE_A_WITH_PARAMS_NODE_QUERY, TEST_LABEL), getParamsMap(), NAME_TAG), is(NAME));
+    }
 }

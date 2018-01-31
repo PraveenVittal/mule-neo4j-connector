@@ -1,7 +1,7 @@
 package com.mulesoft.connectors.neo4j.internal.extension;
 
-import com.mulesoft.connectors.neo4j.internal.exception.Neo4jErrors;
 import com.mulesoft.connectors.neo4j.internal.config.Neo4jConfig;
+import com.mulesoft.connectors.neo4j.internal.exception.Neo4jErrors;
 import org.mule.runtime.extension.api.annotation.Configurations;
 import org.mule.runtime.extension.api.annotation.Extension;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
