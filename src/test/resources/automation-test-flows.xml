@@ -31,7 +31,8 @@
     </flow>
 
     <flow name="updateNodesFlow">
-        <neo4j:update-nodes config-ref="config" label="#[vars.label]" parameters="#[vars.parameters]">
+        <neo4j:update-nodes config-ref="config" label="#[vars.label]">
+            <neo4j:parameters>#[vars.parameters]</neo4j:parameters>
             <neo4j:set-parameters>#[payload]</neo4j:set-parameters>
         </neo4j:update-nodes>
     </flow>
