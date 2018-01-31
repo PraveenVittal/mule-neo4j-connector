@@ -3,10 +3,10 @@
  */
 package org.mule.modules.neo4j.internal.client;
 
+import org.mule.connectors.commons.template.service.ConnectorService;
+
 import java.util.List;
 import java.util.Map;
-
-import org.mule.connectors.commons.template.service.ConnectorService;
 
 public interface Neo4jService extends ConnectorService {
 

@@ -3,14 +3,13 @@
  */
 package org.mule.modules.neo4j.internal.util;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.io.IOUtils.toInputStream;
-
-import java.io.InputStream;
+import com.google.common.base.Function;
 
 import javax.swing.text.Document;
+import java.io.InputStream;
 
-import com.google.common.base.Function;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.io.IOUtils.toInputStream;
 
 /**
  * {@link Function} that applies a format that follows the

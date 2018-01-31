@@ -1,11 +1,11 @@
 package org.mule.modules.neo4j.internal.exception;
 
-import static java.util.Optional.ofNullable;
+import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
+import org.mule.runtime.extension.api.error.MuleErrors;
 
 import java.util.Optional;
 
-import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
-import org.mule.runtime.extension.api.error.MuleErrors;
+import static java.util.Optional.ofNullable;
 
 public enum Neo4jErrors implements ErrorTypeDefinition<Neo4jErrors> {
 	CONNECTIVITY(MuleErrors.CONNECTIVITY), REQUEST_FAILED(CONNECTIVITY), INCORRECT_CREDENTIALS(

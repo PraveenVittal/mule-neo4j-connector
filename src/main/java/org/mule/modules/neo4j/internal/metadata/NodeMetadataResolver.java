@@ -1,14 +1,6 @@
 package org.mule.modules.neo4j.internal.metadata;
 
-import static java.lang.String.format;
-import static java.util.stream.Collectors.toSet;
-import static org.mule.metadata.json.api.JsonTypeLoader.JSON;
-import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableMap;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.builder.ObjectTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
@@ -24,8 +16,16 @@ import org.mule.runtime.api.metadata.MetadataResolvingException;
 import org.mule.runtime.api.metadata.resolving.InputTypeResolver;
 import org.mule.runtime.api.metadata.resolving.OutputTypeResolver;
 import org.mule.runtime.api.metadata.resolving.TypeKeysResolver;
+import org.neo4j.driver.internal.InternalNode;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toSet;
+import static org.mule.metadata.json.api.JsonTypeLoader.JSON;
+import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 
 public class NodeMetadataResolver implements InputTypeResolver<String>, TypeKeysResolver, OutputTypeResolver<String> {
 
@@ -42,9 +42,10 @@ public class NodeMetadataResolver implements InputTypeResolver<String>, TypeKeys
 						null);
 		ObjectTypeBuilder builder = new BaseTypeBuilder(JSON).objectType().label(key);
 		if (nodes.size() == 1) {
-			getMetadataService(context).getConstraintProperties(key)
-					.forEach(field -> builder.addField().key(field).value().typeParameter(dataMapping
-							.get(Map.class.cast(nodes.get(0).get("a")).get(field).getClass()).getType().getName()));
+			for(String field:getMetadataService(context).getConstraintProperties(key)){
+				builder.addField().key(field).value().typeParameter(dataMapping
+						.get(Map.class.cast(nodes.get(0).get("a")).get(field).getClass()).getType().getName());
+			}
 		}
 		return builder.build();
 	}
@@ -74,5 +75,4 @@ public class NodeMetadataResolver implements InputTypeResolver<String>, TypeKeys
 	private Neo4jMetadataService getMetadataService(MetadataContext context) throws ConnectionException {
 		return ((Neo4jConnection) context.getConnection().get()).getMetadataService();
 	}
-
 }

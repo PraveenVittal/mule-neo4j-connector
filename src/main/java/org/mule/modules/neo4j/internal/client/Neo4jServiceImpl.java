@@ -3,18 +3,8 @@
  */
 package org.mule.modules.neo4j.internal.client;
 
-import static com.google.common.base.Joiner.on;
-import static com.google.common.base.Optional.fromNullable;
-import static com.google.common.base.Strings.emptyToNull;
-import static com.google.common.collect.Iterables.transform;
-import static java.lang.String.format;
-import static java.util.Collections.emptyMap;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.mule.connectors.commons.template.service.DefaultConnectorService;
 import org.mule.modules.neo4j.internal.config.Neo4jConfig;
 import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
@@ -25,8 +15,17 @@ import org.neo4j.driver.v1.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.base.Joiner.on;
+import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.base.Strings.emptyToNull;
+import static com.google.common.collect.Iterables.transform;
+import static java.lang.String.format;
+import static java.util.Collections.emptyMap;
 
 public class Neo4jServiceImpl extends DefaultConnectorService<Neo4jConfig, Neo4jConnection> implements Neo4jService {
 	private static final Logger logger = LoggerFactory.getLogger(Neo4jServiceImpl.class);

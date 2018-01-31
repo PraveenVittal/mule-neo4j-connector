@@ -19,6 +19,7 @@
 
     <flow name="createNodeFlow">
         <neo4j:create-node config-ref="config" label="#[vars.label]">
+            <neo4j:input>#[payload]</neo4j:input>
         </neo4j:create-node>
     </flow>
 

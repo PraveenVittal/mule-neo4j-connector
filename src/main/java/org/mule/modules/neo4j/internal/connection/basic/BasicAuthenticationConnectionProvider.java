@@ -7,8 +7,13 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.http.api.HttpService;
+
+import javax.inject.Inject;
 
 public class BasicAuthenticationConnectionProvider extends Neo4jConnectionProvider {
+
+	@Inject HttpService httpService;
 
 	@Parameter
 	@Placement(order = 1)
@@ -26,7 +31,8 @@ public class BasicAuthenticationConnectionProvider extends Neo4jConnectionProvid
 	public Neo4jConnection connect() throws ConnectionException {
 		return new BasicAuthenticationConnectionBuilder().withUsername(username).withPassword(password)
 				.withBoltUrl(additionalConnectionParams.getBoltUrl())
-				.withRestUrl(additionalConnectionParams.getRestUrl()).create();
+				.withRestUrl(additionalConnectionParams.getRestUrl())
+				.withHttpService(httpService).create();
 	}
 
 	public String getUsername() {

@@ -58,7 +58,7 @@ public abstract class AbstractTestCases extends MuleArtifactFunctionalTestCase {
 	}
 
 	public void createNode(String label, InputStream parameters) throws Exception {
-		flowRunner("createNodeFlow").withVariable("label", label).withVariable("parameters", parameters).run();
+		flowRunner("createNodeFlow").withVariable("label", label).withPayload(parameters).run();
 	}
 
 	public InputStream selectNodes(String label, InputStream parameters) throws Exception {

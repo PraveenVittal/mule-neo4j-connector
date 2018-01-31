@@ -3,9 +3,9 @@
  */
 package org.mule.modules.neo4j.api;
 
-import static org.mule.modules.neo4j.internal.exception.Neo4jErrors.UNKNOWN;
-
 import org.mule.modules.neo4j.internal.exception.Neo4jErrors;
+
+import static org.mule.modules.neo4j.internal.exception.Neo4jErrors.UNKNOWN;
 
 public class Neo4jException extends RuntimeException {
 

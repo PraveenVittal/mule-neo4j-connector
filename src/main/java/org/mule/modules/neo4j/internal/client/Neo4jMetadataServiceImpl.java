@@ -3,49 +3,81 @@
  */
 package org.mule.modules.neo4j.internal.client;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static java.lang.String.format;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mule.modules.neo4j.internal.exception.Neo4JMetadataException;
+import org.mule.runtime.core.api.util.IOUtils;
+import org.mule.runtime.http.api.client.HttpClient;
+import org.mule.runtime.http.api.client.auth.HttpAuthentication;
+import org.mule.runtime.http.api.domain.message.request.HttpRequest;
 
+import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeoutException;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-
-import com.mule.connectors.commons.rest.builder.RequestBuilder;
+import static java.lang.String.format;
+import static org.mule.runtime.extension.api.annotation.param.MediaType.APPLICATION_JSON;
+import static org.mule.runtime.http.api.HttpConstants.Method.GET;
+import static org.mule.runtime.http.api.HttpHeaders.Names.ACCEPT;
+import static org.mule.runtime.http.api.HttpHeaders.Names.CONTENT_TYPE;
 
 public class Neo4jMetadataServiceImpl implements Neo4jMetadataService {
 
-	private final Client client = ClientBuilder.newClient();
 	private String username;
 	private String password;
 	private String restUrl;
+	private HttpClient httpClient;
 
-	public Neo4jMetadataServiceImpl(String restUrl, String username, String password) {
+	public Neo4jMetadataServiceImpl(String restUrl, String username, String password, HttpClient httpClient) {
 		this.restUrl = restUrl;
 		this.username = username;
 		this.password = password;
+		this.httpClient = httpClient;
 	}
 
 	@Override
 	public List<String> getLabels() {
-		return RequestBuilder.<List<String>> get(client, format("%s/db/data/labels", restUrl)).accept(APPLICATION_JSON)
-				.contentType(APPLICATION_JSON).responseType(List.class, String.class)
-				.basicAuthorization(username, password).execute();
+		try {
+			HttpRequest request = HttpRequest.builder()
+				.method(GET)
+				.uri(format("%s/db/data/labels", restUrl))
+				.addHeader(ACCEPT, APPLICATION_JSON)
+				.addHeader(CONTENT_TYPE, APPLICATION_JSON)
+				.build();
+			return new ObjectMapper().readValue(IOUtils.toString(
+					httpClient.send(request, 30000 /* response timeout */, true,
+							HttpAuthentication.basic(username, password).build()).getEntity().getContent()
+			), new TypeReference<List<String>>() {});
+		} catch (IOException | TimeoutException e) {
+			throw new Neo4JMetadataException(e);
+		}
 	}
 
 	@Override
 	public Set<String> getConstraintProperties(String label) {
-		Set<String> result = newHashSet();
-		for (Map<String, Object> obj : RequestBuilder
-				.<List<Map<String, Object>>> get(client, format("%s/db/data/schema/constraint/%s", restUrl, label))
-				.accept(APPLICATION_JSON).contentType(APPLICATION_JSON).responseType(List.class, Map.class)
-				.basicAuthorization(username, password).execute()) {
-			List<String> str = List.class.cast(obj.get("property_keys"));
-			result.addAll(str);
+		try {
+			Set<String> result = new HashSet<>();
+			List<Map<String,Object>> list = new ObjectMapper().readValue(IOUtils.toString(
+                    httpClient.send(HttpRequest.builder()
+                            .method(GET)
+                            .uri(format("%s/db/data/schema/constraint/%s", restUrl, label))
+                            .addHeader(ACCEPT, APPLICATION_JSON)
+                            .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+                            .build()
+                            , 30000 /* response timeout */, true,
+                            HttpAuthentication.basic(username, password).build()).getEntity().getContent()
+            ), new TypeReference<List<Map<String,Object>>>() {});
+
+			for (Map<String, Object> obj : list){
+				List<String> str = List.class.cast(obj.get("property_keys"));
+				result.addAll(str);
+			}
+			return result;
+		} catch (IOException | TimeoutException e) {
+			throw new Neo4JMetadataException(e);
 		}
-		return result;
 	}
 }

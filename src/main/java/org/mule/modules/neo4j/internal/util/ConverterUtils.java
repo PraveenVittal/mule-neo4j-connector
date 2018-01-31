@@ -1,6 +1,9 @@
 package org.mule.modules.neo4j.internal.util;
 
-import static org.apache.commons.io.IOUtils.toInputStream;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mule.runtime.core.api.util.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,11 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.apache.commons.io.IOUtils.toInputStream;
 
 public class ConverterUtils {
 

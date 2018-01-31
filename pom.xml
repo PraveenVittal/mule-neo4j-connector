@@ -73,9 +73,17 @@
             <version>${neo4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.mule.connectors.commons</groupId>
-            <artifactId>commons-rest</artifactId>
-            <version>1.1.1</version>
+            <groupId>org.mule.services</groupId>
+            <artifactId>mule-service-http</artifactId>
+            <version>${mule.api.version}</version>
+            <classifier>mule-service</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.services</groupId>
+            <artifactId>mule-service-scheduler</artifactId>
+            <classifier>mule-service</classifier>
+            <version>${mule.api.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -83,10 +91,15 @@
             <version>2.4</version>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.3</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.google.guava</groupId>-->
+            <!--<artifactId>guava</artifactId>-->
+            <!--<version>18.0</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>

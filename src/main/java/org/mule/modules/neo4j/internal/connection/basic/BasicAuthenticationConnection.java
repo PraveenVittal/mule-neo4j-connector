@@ -3,32 +3,38 @@
  */
 package org.mule.modules.neo4j.internal.connection.basic;
 
-import static org.neo4j.driver.v1.AuthTokens.basic;
-import static org.neo4j.driver.v1.GraphDatabase.driver;
-
-import java.util.UUID;
-
 import org.mule.modules.neo4j.internal.client.Neo4jMetadataService;
 import org.mule.modules.neo4j.internal.client.Neo4jMetadataServiceImpl;
 import org.mule.modules.neo4j.internal.connection.Neo4jConnection;
+import org.mule.runtime.http.api.HttpService;
+import org.mule.runtime.http.api.client.HttpClient;
+import org.mule.runtime.http.api.client.HttpClientConfiguration;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Session;
+
+import java.util.UUID;
+
+import static org.neo4j.driver.v1.AuthTokens.basic;
+import static org.neo4j.driver.v1.GraphDatabase.driver;
 
 public class BasicAuthenticationConnection implements Neo4jConnection {
 
 	private final Driver client;
 	private final Session session;
 	private final Neo4jMetadataService metadataService;
+	HttpClient httpClient;
 
-	public BasicAuthenticationConnection(String username, String password, String boltUrl, String restUrl) {
+	public BasicAuthenticationConnection(String username, String password, String boltUrl, String restUrl, HttpService httpService) {
 		client = driver(boltUrl, basic(username, password));
 		session = client.session();
-		metadataService = new Neo4jMetadataServiceImpl(restUrl, username, password);
+		httpClient = httpService.getClientFactory().create(new HttpClientConfiguration.Builder().setName("Neo4JMetadata").build());
+		httpClient.start();
+		metadataService = new Neo4jMetadataServiceImpl(restUrl, username, password, httpClient);
 	}
 
 	@Override
 	public void disconnect() {
-
+		httpClient.stop();
 	}
 
 	@Override
