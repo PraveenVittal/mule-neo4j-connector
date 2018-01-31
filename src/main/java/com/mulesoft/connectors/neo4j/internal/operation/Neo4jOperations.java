@@ -50,6 +50,14 @@ public class Neo4jOperations extends ConnectorOperations<Neo4jConfig, Neo4jConne
         super(Neo4jServiceImpl::new);
     }
 
+    /**
+     * Creates a Node.
+     *
+     * @param config     The config of the connector.
+     * @param connection The connection of the connector.
+     * @param label      The label of the node.
+     * @param input      The content of the node.
+     */
     public void createNode(@Config Neo4jConfig config,
                            @Connection Neo4jConnection connection,
                            @MetadataKeyId(NodeMetadataResolver.class) String label,
@@ -59,6 +67,15 @@ public class Neo4jOperations extends ConnectorOperations<Neo4jConfig, Neo4jConne
                 .withParam(input, ConverterUtils::toMap);
     }
 
+    /**
+     * Executes a query.
+     *
+     * @param config     The config of the connector.
+     * @param connection The connection of the connector.
+     * @param query      The query to execute.
+     * @param input      The parameters.
+     * @return InputStream The result of the query.
+     */
     @OutputResolver(output = NodeMetadataResolver.class)
     @MediaType(APPLICATION_JSON)
     public InputStream execute(@Config Neo4jConfig config,
@@ -70,6 +87,15 @@ public class Neo4jOperations extends ConnectorOperations<Neo4jConfig, Neo4jConne
                 .withParam(input, ConverterUtils::toMap);
     }
 
+    /**
+     * Selects a series of nodes.
+     *
+     * @param config     The config of the connector.
+     * @param connection The connection of the connector.
+     * @param label      The label of the node to select.
+     * @param input      The parameters.
+     * @return InputStream the selected nodes.
+     */
     @OutputResolver(output = NodeMetadataResolver.class)
     @MediaType(APPLICATION_JSON)
     public InputStream selectNodes(@Config Neo4jConfig config,
@@ -81,15 +107,33 @@ public class Neo4jOperations extends ConnectorOperations<Neo4jConfig, Neo4jConne
                 .withParam(input, ConverterUtils::toMap);
     }
 
+    /**
+     * Updates a group of nodes.
+     *
+     * @param config        The config of the connector.
+     * @param connection    The connection of the connector.
+     * @param label         The label of the node to update.
+     * @param parameters    The parameters to change.
+     * @param setParameters The new parameters.
+     */
     public void updateNodes(@Config Neo4jConfig config,
                             @Connection Neo4jConnection connection,
                             @MetadataKeyId(NodeMetadataResolver.class) String label,
-                            @Optional InputStream parameters,
-                            @Content @TypeResolver(NodeMetadataResolver.class) InputStream setParameters) {
+                            @Content @Optional InputStream parameters,
+                            @Content(primary = true) @TypeResolver(NodeMetadataResolver.class) InputStream setParameters) {
         newExecutionBuilder(config, connection).execute(Neo4jService::updateNodes).withParam(label)
                 .withParam(parameters, ConverterUtils::toMap).withParam(setParameters, ConverterUtils::toMap);
     }
 
+    /**
+     * Deletes a group of nodes.
+     *
+     * @param config The config of the connector.
+     * @param connection The connection of the connector.
+     * @param label The label of the node to delete.
+     * @param removeRelationships Flag to indicate if the relationships should be removed.
+     * @param parameters The parameters to delete.
+     */
     public void deleteNodes(@Config Neo4jConfig config,
                             @Connection Neo4jConnection connection,
                             @MetadataKeyId(NodeMetadataResolver.class) String label,
