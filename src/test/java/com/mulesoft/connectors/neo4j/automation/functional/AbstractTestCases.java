@@ -63,8 +63,8 @@ public abstract class AbstractTestCases extends MuleArtifactFunctionalTestCase {
 	}
 
 	public void updateNodes(String label, InputStream parameters, InputStream setParameters) throws Exception {
-		flowRunner("updateNodesFlow").withPayload(parameters).withVariable("label", label)
-				.withVariable("setParameters", setParameters).run();
+		flowRunner("updateNodesFlow").withVariable("parameters", parameters).withVariable("label", label)
+				.withPayload(setParameters).run();
 	}
 
 	public void deleteNodes(String label, boolean removeRelationships, InputStream parameters) throws Exception {
